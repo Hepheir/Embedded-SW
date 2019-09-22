@@ -365,13 +365,13 @@ if __name__ == '__main__':
         mask = cv2.inRange(hsv, hsv_Lower, hsv_Upper)
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, (3,3)) # 마스크 이미지의 노이즈 제거
 
-        contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) #윤곽선 검출
+        (contours, hierarchy) = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) #윤곽선 검출
         center = None
 
 
         if len(contours) > 0:
             cont = max(contours, key=cv2.contourArea) #? 가장 큰 범위의 contour를 찾음
-            (X, Y), radius = cv2.minEnclosingCircle(cont) #? ^ 외접하는 원의 정보
+            ((X, Y), radius) = cv2.minEnclosingCircle(cont) #? ^ 외접하는 원의 정보
             cv2.circle(frame, (int(X), int(Y)), int(radius), (0,0,255),2) # 현재 로봇이 보는 시점
             Area = cv2.contourArea(cont) / min_area[now_color]
             if Area > 255: #? Saturation max 0xFF
