@@ -519,15 +519,19 @@ if __name__ == '__main__':
             # 마스크의 노이즈 제거
             tr_mask = cv2.morphologyEx(tr_mask, cv2.MORPH_OPEN, (3,3), iterations=2)
             # 마스크 이미지로부터 윤곽선 검출
-            contours = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+            contours = cv2.findContours(tr_mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
             center = None
             
             # 최적화
-            if len(contours) == 0: continue # 윤곽선이 검출되지 않으면, 아래 작업을 하지 않음
+            if len(contours) == 0: # 윤곽선이 검출되지 않으면, 아래 작업을 하지 않음
+                print('contour not found')
+                continue 
             
             target_contour = max(contours, key=cv2.contourArea) # 가장 큰 윤곽선을 찾음
             Area = cv2.contourArea(target_contour)
-            if Area < COLOR_REF['line']['minArea']: continue # 윤곽선의 면적이 기준치에 못 미치면 검출되지 않은 것으로 간주
+            if Area < COLOR_REF['line']['minArea']: # 윤곽선의 면적이 기준치에 못 미치면 검출되지 않은 것으로 간주
+                print('contour not big enough')
+                continue
             
             # 제대로 검출 된 경우.
             bx,by,bw,bh = cv2.boundingRect(target_contour) # boundingbox x, y, w, h
