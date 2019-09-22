@@ -29,19 +29,22 @@ hsv_Upper0 = 0
 hsv_Lower1 = 0
 hsv_Upper1 = 0
 
-#-----------  0:노란색, 1:빨강색, 3:파란색, 4: 000, 5:보라색
-color_num = [   0,  1,  2,  3,  4,   5]
+#-----------  0:노란색, 1:빨강색, 3:파란색, 4: 000, 5:보라색, 6:DEBUG
+color_num = [   0,  1,  2,  3,  4,   5,   6]
+
+debug_color = (66, 21, 242)
+bandwidth = 32
     
-h_max =     [ 252, 65,196,111,110, 111]
-h_min =     [ 150,  0,158, 59, 74,  81]
+h_max =     [ 252, 65,196,111,110, 111, debug_color[0]+bandwidth]
+h_min =     [ 150,  0,158, 59, 74,  81, debug_color[0]-bandwidth]
     
-s_max =     [ 194,200,223,110,255, 146]
-s_min =     [ 113,140,150, 51,133, 127]
+s_max =     [ 194,200,223,110,255, 146, debug_color[1]+bandwidth]
+s_min =     [ 113,140,150, 51,133, 127, debug_color[1]-bandwidth]
     
-v_max =     [  255,151,239,156,255, 141]
-v_min =     [   89,95,104, 61,104, 126]
+v_max =     [  255,151,239,156,255, 141, debug_color[2]+bandwidth]
+v_min =     [   89, 95,104, 61,104, 126, debug_color[2]-bandwidth]
     
-min_area =  [  50, 50, 50, 10, 10, 40]
+min_area =  [  50, 50, 50, 10, 10, 40, 50]
 
 now_color = 0
 serial_use = 1
@@ -365,7 +368,7 @@ if __name__ == '__main__':
         mask = cv2.inRange(hsv, hsv_Lower, hsv_Upper, iterations=1)
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, (3,3)) # 마스크 이미지의 노이즈 제거
 
-        contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2] #윤곽선 검출
+        contours = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2] #윤곽선 검출
         center = None
 
 
