@@ -305,7 +305,7 @@ if __name__ == '__main__':
     cv2.createTrackbar('Vmax', Top_name, v_max[now_color], 255, Vmax_change)
     cv2.createTrackbar('Vmin', Top_name, v_min[now_color], 255, Vmin_change)
     cv2.createTrackbar('Min_Area', Top_name, min_area[now_color], 255, min_area_change)
-    cv2.createTrackbar('Color_num', Top_name,color_num[now_color], 5, Color_num_change) # 임의 컬러 보라색을 위해서 4->5로 변경하여 num 값 추가
+    cv2.createTrackbar('Color_num', Top_name,color_num[now_color], len(color_num)-1, Color_num_change) # 임의 컬러 보라색을 위해서 4->5로 변경하여 num 값 추가
 
     Trackbar_change(now_color)
 
