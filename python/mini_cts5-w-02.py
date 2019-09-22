@@ -362,10 +362,10 @@ if __name__ == '__main__':
 
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)  # BGR => YUV
 
-        mask = cv2.inRange(hsv, hsv_Lower, hsv_Upper)
+        mask = cv2.inRange(hsv, hsv_Lower, hsv_Upper, iterations=1)
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, (3,3)) # 마스크 이미지의 노이즈 제거
 
-        (contours, hierarchy) = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) #윤곽선 검출
+        contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2] #윤곽선 검출
         center = None
 
 
