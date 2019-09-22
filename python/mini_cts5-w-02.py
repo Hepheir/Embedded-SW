@@ -19,7 +19,7 @@ Y_Size = 0
 Area = 0
 Angle = 0
 #-----------------------------------------------
-Top_name = 'mini CTS5 setting'
+Top_name = 'mini CTS5 setting' # 송출된 화면 창의 이름
 hsv_Lower = 0
 hsv_Upper = 0
 
@@ -147,7 +147,7 @@ def Color_num_change(a):
     hsv_Lower = (h_min[now_color], s_min[now_color], v_min[now_color])
     hsv_Upper = (h_max[now_color], s_max[now_color], v_max[now_color])
 #----------------------------------------------- 
-def TX_data(serial, one_byte):  # one_byte= 0~255
+def TX_data(serial, one_byte): # one_byte= 0~255
     global Temp_count
     try:
         serial.write(chr(int(one_byte)))
@@ -309,10 +309,11 @@ if __name__ == '__main__':
 
     cv2.imshow(Top_name, img)
     #---------------------------
+
     if not args.get("video", False):
-        camera = cv2.VideoCapture(0)
-    else:
-        camera = cv2.VideoCapture(args["video"])
+        camera = cv2.VideoCapture(0)  # 카메라에서 영상을 불러옴
+    else: # -video 플래그가 입력된 경우
+        camera = cv2.VideoCapture("C:\video.mp4") # 영상파일에서 영상을 불러옴
     #---------------------------
     # camera.set(3, W_View_size)
     # camera.set(4, H_View_size)
@@ -325,7 +326,9 @@ if __name__ == '__main__':
        serial_port.flush() # serial cls
     
     #---------------------------
-    (grabbed, frame) = camera.read() # 대충 화면에 글씨 씀
+    (next_frame, frame) = camera.read()
+
+    # 대충 화면에 정보 표시
     draw_str2(frame, (5, 15), 'X_Center x Y_Center =  Area' )
     draw_str2(frame, (5, H_View_size - 5), 'View: %.1d x %.1d.  Space: Fast <=> Video and Mask.'
                       % (W_View_size, H_View_size))
@@ -342,28 +345,27 @@ if __name__ == '__main__':
        t.start()
         
     # First -> Start Code Send
-    TX_data(serial_port, 250) #? Start Code : 250
-    TX_data(serial_port, 250)
-    TX_data(serial_port, 250)
+    TX_data(serial_port, 0) #? Start Code : 250
     
     old_time = clock()
-    gph = 1 #? ?
+
+    # 초기화 끝
     
     # -------- Main Loop Start --------
     while True:
 
         # grab the current frame
-        (grabbed, frame) = camera.read()
+        (next_frame, frame) = camera.read()
 
-        if args.get("video") and not grabbed:
+        if args.get("video") and not next_frame: # 비디오 파일이 끝났는가
             break
 
-        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)  # BGR => YUV
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)  # BGR => YUV
 
         mask = cv2.inRange(hsv, hsv_Lower, hsv_Upper)
-        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, (3,3))
+        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, (3,3)) # 마스크 이미지의 노이즈 제거
 
-        contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
+        contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) #윤곽선 검출
         center = None
 
 
@@ -378,22 +380,7 @@ if __name__ == '__main__':
             if Area > min_area[now_color]:
                 x4, y4, w4, h4 = cv2.boundingRect(cont)
                 cv2.rectangle(frame, (x4, y4), (x4 + w4, y4 + h4), (0, 255, 0), 2)
-                Read_RX = RX_data(serial_port)
-                if Read_RX == gph :
-                    gph=gph+1
-                if gph == 1: #? 기본
-                    TX_data(serial_port, 1)
-                elif gph == 2 :
-                    TX_data(serial_port, 2)
-                elif gph == 3 :
-                    TX_data(serial_port, 3)
-                elif gph ==4 :
-                    gph = 1
-                    #if x4 > 120 :
-                       # TX_data(serial_port, 1)
-                    #else :
-                        #TX_data(serial_port, 3)
-                     
+                Read_RX = RX_data(serial_port) # 직렬통신으로 수신한 숫자
                 #----------------------------------------
                 rows,cols = frame.shape[:2]
                 [vx,vy,x,y] = cv2.fitLine(cont, cv2.DIST_L2,0,0.01,0.01)
@@ -459,12 +446,14 @@ if __name__ == '__main__':
             #------------------------------------------
             mx2 = mx
             my2 = my
-            pixel = hsv[my2, mx2] # 마우스 커서가 올려진 hsv 이미지 픽셀의 색상
+            pixel = hsv[my2, mx2] # 마우스 커서가 올려진  픽셀의 hsv 색상
             set_H = pixel[0] # 색종류
             set_S = pixel[1] # 채도
             set_V = pixel[2] # 밝기
             pixel2 = frame[my2, mx2] # 마우스 커서가 올려진 bgr 이미지 픽셀의 색상
             
+
+            # 화면에 툴팁 정보를 마우스 커서 주변에 표시
             if my2 < (H_View_size / 2): # 위쪽 (멀리있음)
                 if mx2 < 50: # 0~50
                     x_p = -30
@@ -491,7 +480,6 @@ if __name__ == '__main__':
             #----------------------------------------------
 
         key = 0xFF & cv2.waitKey(1)
-        
         if key == 27:  # ESC  Key
             break
         elif key == ord(' '):  # spacebar Key
