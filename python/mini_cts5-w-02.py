@@ -32,6 +32,7 @@ hsv_Upper1 = 0
 #-----------  0:노란색, 1:빨강색, 3:파란색, 4: 000, 5:보라색, 6:DEBUG
 color_num = [   0,  1,  2,  3,  4,   5,   6]
 
+default_color = 6
 debug_color = (66, 21, 242)
 bandwidth = 32
     
@@ -46,7 +47,7 @@ v_min =     [   89, 95,104, 61,104, 126, debug_color[2]-bandwidth]
     
 min_area =  [  50, 50, 50, 10, 10, 40, 50]
 
-now_color = 0
+now_color = default_color
 serial_use = 1
 
 serial_port =  None
@@ -278,7 +279,7 @@ if __name__ == '__main__':
 
     BPS =  4800  # 4800,9600,14400, 19200,28800, 57600, 115200
     serial_use = 1
-    now_color = 0
+    now_color = default_color
     View_select = 1
     #-------------------------------------
     print(" ---> Camera View: " + str(W_View_size) + " x " + str(H_View_size) )
