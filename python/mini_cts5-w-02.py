@@ -48,6 +48,29 @@ v_min =     [   89, 95,104, 61,104, 126, debug_color[2]-bandwidth]
 min_area =  [  50, 50, 50, 10, 10, 40, 50]
 
 now_color = default_color
+
+# CUSTOM =================================================
+
+
+DEBUG_MODE = True
+STATUS = {
+    'debug' : -1,
+    'stop' : 0,
+    'line tracing' : 1 # line tracing
+}
+CURRENT_STATUS = 1
+COLOR_REF = {
+    'line' : { 'hsv' : (66, 21, 242), 'bandwidth' : 32, 'minArea' : 40 }
+}
+HIGHLIGHT = {
+    'color' : (0,0,255),
+    'thickness' : 2
+}
+
+
+# ============================================================
+
+
 serial_use = 1
 
 serial_port =  None
@@ -57,7 +80,6 @@ Read_RX =  0
 mx,my = 0,0
 
 threading_Time = 5/1000.
-
 
     
 #-----------------------------------------------
@@ -279,7 +301,7 @@ if __name__ == '__main__':
 
     BPS =  4800  # 4800,9600,14400, 19200,28800, 57600, 115200
     serial_use = 1
-    now_color = default_color
+    now_color = 0
     View_select = 1
     #-------------------------------------
     print(" ---> Camera View: " + str(W_View_size) + " x " + str(H_View_size) )
@@ -358,140 +380,179 @@ if __name__ == '__main__':
     # -------- Main Loop Start --------
     while True:
 
-        # grab the current frame
-        (next_frame, frame) = camera.read()
+        next_frame, frame = camera.read()
+        if args.get("video") and not next_frame: break
 
-        if args.get("video") and not next_frame: # 비디오 파일이 끝났는가
-            break
-
-        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)  # BGR => YUV
-
-        mask = cv2.inRange(hsv, hsv_Lower, hsv_Upper)
-        mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, (3,3), iterations=1) # 마스크 이미지의 노이즈 제거
-
-        contours = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2] #윤곽선 검출
-        center = None
-
-
-        if len(contours) > 0:
-            cont = max(contours, key=cv2.contourArea) #? 가장 큰 범위의 contour를 찾음
-            ((X, Y), radius) = cv2.minEnclosingCircle(cont) #? ^ 외접하는 원의 정보
-            cv2.circle(frame, (int(X), int(Y)), int(radius), (0,0,255),2) # 현재 로봇이 보는 시점
-            Area = cv2.contourArea(cont) / min_area[now_color]
-            if Area > 255: #? Saturation max 0xFF
-                Area = 255
-
-            if Area > min_area[now_color]:
-                x4, y4, w4, h4 = cv2.boundingRect(cont)
-                cv2.rectangle(frame, (x4, y4), (x4 + w4, y4 + h4), (0, 255, 0), 2)
-                Read_RX = RX_data(serial_port) # 직렬통신으로 수신한 숫자
-                #----------------------------------------
-                rows,cols = frame.shape[:2]
-                [vx,vy,x,y] = cv2.fitLine(cont, cv2.DIST_L2,0,0.01,0.01)
-                #print("rows = " + str(rows) + ", cols= " + str(cols) + ", vx= " + str(vx) + ", vy= " + str(vy) + ", x=" + str(x) + ", y= " + str(y))
- 
-                lefty = int((-x*vy/vx) + y)
-                righty = int(((cols-x)*vy/vx)+y)
-
-                try:
-                    cv2.line(frame,(cols-1,righty),(0,lefty),(0,0,255),2)
-                except:
-                    print("cv2.line error~ "  + str(righty) + ", " + str(lefty))
-                    pass
-                point1 = (cols-1,righty)
-                point2 = (0,lefty)
-                
-                Angle = 100 + int(GetAngleTwoPoints(point2, point1))
-                
-                #print(angle)
-                #----------------------------------------
-                
-                X_Size = int((255.0 / W_View_size) * w4)
-                Y_Size = int((255.0 / H_View_size) * h4)
-                X_255_point = int((255.0 / W_View_size) * X)
-                Y_255_point = int((255.0 / H_View_size) * Y)
-        else:
-
-            x = 0
-            y = 0
-            X_255_point = 0
-            Y_255_point = 0
-            X_Size = 0
-            Y_Size = 0
-            Area = 0
-            Angle = 0
-
-
-        #--------------------------------------
-        
-       # Read_RX = RX_data(serial_port)
-        if Read_RX != 0:
-            print("Read_RX = " + str(Read_RX))
-        
-        #TX_data(serial_port,255)
-        
-        #--------------------------------------    
-
-        Frame_time = (clock() - old_time) * 1000.
-        old_time = clock()
-
-           
-        if View_select == 0: # Fast operation 
-            #print(" " + str(W_View_size) + " x " + str(H_View_size) + " =  %.1f ms  Angle: %.2f" % (Frame_time , Angle))
-            #temp = Read_RX
-            pass
-            
-        elif View_select == 1: # Debug
-            draw_str2(frame, (3, 15), 'X: %.1d, Y: %.1d, Area: %.1d, Angle: %.2f ' % (X_255_point, Y_255_point, Area, Angle))
-            draw_str2(frame, (3, H_View_size - 5), 'View: %.1d x %.1d Time: %.1f ms  Space: Fast <=> Video and Mask.'
-                      % (W_View_size, H_View_size, Frame_time))
-
-
-            #------------------------------------------
-            mx2 = mx
-            my2 = my
-            pixel = hsv[my2, mx2] # 마우스 커서가 올려진  픽셀의 hsv 색상
-            set_H = pixel[0] # 색종류
-            set_S = pixel[1] # 채도
-            set_V = pixel[2] # 밝기
-            pixel2 = frame[my2, mx2] # 마우스 커서가 올려진 bgr 이미지 픽셀의 색상
-            
-
-            # 화면에 툴팁 정보를 마우스 커서 주변에 표시
-            if my2 < (H_View_size / 2): # 위쪽 (멀리있음)
-                if mx2 < 50: # 0~50
-                    x_p = -30
-                elif mx2 > (W_View_size - 50): # 50~뷰경계
-                    x_p = 60
-                else: # 뷰경계~끝
-                    x_p = 30
-
-                draw_str2(frame, (mx2 - x_p, my2 + 15), '-HSV-')
-                draw_str2(frame, (mx2 - x_p, my2 + 30), '%.1d' % (pixel[0]))
-                draw_str2(frame, (mx2 - x_p, my2 + 45), '%.1d' % (pixel[1]))
-                draw_str2(frame, (mx2 - x_p, my2 + 60), '%.1d' % (pixel[2]))
-            
-            else: # 아래쪽 (가까이있음) --> 천천히 직진
-                x_p = 30
-                draw_str2(frame, (mx2 - x_p, my2 - 60), '-HSV-')
-                draw_str2(frame, (mx2 - x_p, my2 - 45), '%.1d' % (pixel[0]))
-                draw_str2(frame, (mx2 - x_p, my2 - 30), '%.1d' % (pixel[1]))
-                draw_str2(frame, (mx2 - x_p, my2 - 15), '%.1d' % (pixel[2]))
-
-            cv2.imshow('mini CTS4 - Video', frame )
-            cv2.imshow('mini CTS4 - Mask', mask)
-
-            #----------------------------------------------
-
+        # TOGGLE DEBUG MODE
         key = 0xFF & cv2.waitKey(1)
         if key == 27:  # ESC  Key
             break
         elif key == ord(' '):  # spacebar Key
-            if View_select == 0:
-                View_select = 1
+            DEBUG_MODE = False if DEBUG_MODE else True
+        
+        # 현재 상황 파악
+
+
+        # 각 상황별 동작 설정
+        if CURRENT_STATUS == STATUS['debug']:
+            now_color = 6
+
+            hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)  # BGR => YUV
+            mask = cv2.inRange(hsv, hsv_Lower, hsv_Upper)
+            mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, (3,3), iterations=1) # 마스크 이미지의 노이즈 제거
             
+            contours = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2] #윤곽선 검출
+            center = None
+
+
+            if len(contours) > 0:
+                cont = max(contours, key=cv2.contourArea) #? 가장 큰 범위의 contour를 찾음
+                ((X, Y), radius) = cv2.minEnclosingCircle(cont) #? ^ 외접하는 원의 정보
+                cv2.circle(frame, (int(X), int(Y)), int(radius), (0,0,255),2) # 현재 로봇이 보는 시점
+                Area = cv2.contourArea(cont) / min_area[now_color]
+                if Area > 255: #? Saturation max 0xFF
+                    Area = 255
+
+                if Area > min_area[now_color]:
+                    x4, y4, w4, h4 = cv2.boundingRect(cont)
+                    cv2.rectangle(frame, (x4, y4), (x4 + w4, y4 + h4), (0, 255, 0), 2)
+                    Read_RX = RX_data(serial_port) # 직렬통신으로 수신한 숫자
+                    #----------------------------------------
+                    rows,cols = frame.shape[:2]
+                    [vx,vy,x,y] = cv2.fitLine(cont, cv2.DIST_L2,0,0.01,0.01)
+                    #print("rows = " + str(rows) + ", cols= " + str(cols) + ", vx= " + str(vx) + ", vy= " + str(vy) + ", x=" + str(x) + ", y= " + str(y))
+    
+                    lefty = int((-x*vy/vx) + y)
+                    righty = int(((cols-x)*vy/vx)+y)
+
+                    try:
+                        cv2.line(frame,(cols-1,righty),(0,lefty),(0,0,255),2)
+                    except:
+                        print("cv2.line error~ "  + str(righty) + ", " + str(lefty))
+                        pass
+                    point1 = (cols-1,righty)
+                    point2 = (0,lefty)
+                    
+                    Angle = 100 + int(GetAngleTwoPoints(point2, point1))
+                    
+                    #print(angle)
+                    #----------------------------------------
+                    
+                    X_Size = int((255.0 / W_View_size) * w4)
+                    Y_Size = int((255.0 / H_View_size) * h4)
+                    X_255_point = int((255.0 / W_View_size) * X)
+                    Y_255_point = int((255.0 / H_View_size) * Y)
             else:
-                View_select = 0
+
+                x = 0
+                y = 0
+                X_255_point = 0
+                Y_255_point = 0
+                X_Size = 0
+                Y_Size = 0
+                Area = 0
+                Angle = 0
+
+
+            #--------------------------------------
+            
+                draw_str2(frame, (3, 15), 'X: %.1d, Y: %.1d, Area: %.1d, Angle: %.2f ' % (X_255_point, Y_255_point, Area, Angle))
+                draw_str2(frame, (3, H_View_size - 5), 'View: %.1d x %.1d Time: %.1f ms  Space: Fast <=> Video and Mask.'
+                        % (W_View_size, H_View_size, Frame_time))
+
+
+                #------------------------------------------
+                mx2 = mx
+                my2 = my
+                pixel = hsv[my2, mx2] # 마우스 커서가 올려진  픽셀의 hsv 색상
+                set_H = pixel[0] # 색종류
+                set_S = pixel[1] # 채도
+                set_V = pixel[2] # 밝기
+                pixel2 = frame[my2, mx2] # 마우스 커서가 올려진 bgr 이미지 픽셀의 색상
+                
+
+                # 화면에 툴팁 정보를 마우스 커서 주변에 표시
+                if my2 < (H_View_size / 2): # 위쪽 (멀리있음)
+                    if mx2 < 50: # 0~50
+                        x_p = -30
+                    elif mx2 > (W_View_size - 50): # 50~뷰경계
+                        x_p = 60
+                    else: # 뷰경계~끝
+                        x_p = 30
+
+                    draw_str2(frame, (mx2 - x_p, my2 + 15), '-HSV-')
+                    draw_str2(frame, (mx2 - x_p, my2 + 30), '%.1d' % (pixel[0]))
+                    draw_str2(frame, (mx2 - x_p, my2 + 45), '%.1d' % (pixel[1]))
+                    draw_str2(frame, (mx2 - x_p, my2 + 60), '%.1d' % (pixel[2]))
+                
+                else: # 아래쪽 (가까이있음) --> 천천히 직진
+                    x_p = 30
+                    draw_str2(frame, (mx2 - x_p, my2 - 60), '-HSV-')
+                    draw_str2(frame, (mx2 - x_p, my2 - 45), '%.1d' % (pixel[0]))
+                    draw_str2(frame, (mx2 - x_p, my2 - 30), '%.1d' % (pixel[1]))
+                    draw_str2(frame, (mx2 - x_p, my2 - 15), '%.1d' % (pixel[2]))
+
+                cv2.imshow('mini CTS4 - Video', frame )
+                cv2.imshow('mini CTS4 - Mask', mask)
+
+                #----------------------------------------------
+
+                # Read_RX = RX_data(serial_port)
+                if Read_RX != 0:
+                    print("Read_RX = " + str(Read_RX))
+                
+                #TX_data(serial_port,255)
+                
+                #--------------------------------------    
+
+                Frame_time = (clock() - old_time) * 1000.
+                old_time = clock()
+
+        elif CURRENT_STATUS == STATUS['line tracing']:
+            # 세로 3분할 최하단 영역으로 라인 트레이싱
+            tr_frame = frame[H_View_size//3:H_View_size, :]
+            # 타켓의 색상 영역의 마스크 이미지 구하기
+            tr_mask = cv2.inRange(
+                tr_frame,
+                np.subtract(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth']),
+                np.add(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth']))
+            # 마스크의 노이즈 제거
+            tr_mask = cv2.morphologyEx(tr_mask, cv2.MORPH_OPEN, (3,3), iterations=2)
+            # 마스크 이미지로부터 윤곽선 검출
+            contours = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+            center = None
+            
+            # 최적화
+            if len(contours) == 0: continue # 윤곽선이 검출되지 않으면, 아래 작업을 하지 않음
+            
+            target_contour = max(contours, key=cv2.contourArea) # 가장 큰 윤곽선을 찾음
+            Area = cv2.contourArea(target_contour)
+            if Area < COLOR_REF['line']['minArea']: continue # 윤곽선의 면적이 기준치에 못 미치면 검출되지 않은 것으로 간주
+            
+            # 제대로 검출 된 경우.
+            bx,by,bw,bh = cv2.boundingRect(target_contour) # boundingbox x, y, w, h
+            cv2.rectangle(frame, (bx,by), (bx+bw, by+bh), HIGHLIGHT['color'], HIGHLIGHT['thickness'])
+
+            CURVE_SENSOR = {
+                'left' : 50,
+                'right' : tr_frame.shape[1] - 50
+            }
+            if bx < CURVE_SENSOR['left'] or bx+bw > CURVE_SENSOR['right']:
+                # 커브 모드
+                print('curve mode')
+
+            else: 
+                # 직진 모드
+                print('linear mode')
+                # x1,y1,x2,y2 = cv2.fitLine(target_contour, cv2.DIST_L2,0,0.01,0.01) # 직선을 표현하기 위해 필요한 두 점
+                # try:
+                #     cv2.line(frame,(cols-1,righty),(0,lefty),(0,0,255),2)
+                # except:
+                #     print("cv2.line error~ "  + str(righty) + ", " + str(lefty))
+                #     pass
+                
+            cv2.imshow('mini CTS4 - Video', tr_frame )
+            cv2.imshow('mini CTS4 - Mask', tr_mask)
 
 
     # cleanup the camera and close any open windows
