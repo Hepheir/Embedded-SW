@@ -4,7 +4,7 @@ echo "김동주, 이 곳에 잠들다..."
 
 while true ; do
     git fetch origin
-    reslog=$(git log HEAD..origin/master --oneline)
+    reslog=$(git status)
     if [ "${reslog}" != "" ] ; then
         killall python
 
