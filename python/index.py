@@ -19,8 +19,8 @@ STATUS = {
 # bandwidth : lower, upper hsv를 파악하는데 사용.
 COLOR_REF = {
     'line' : {
-        'hsv' : (34,99,144),
-        'bandwidth' : (64,64,64),
+        'hsv' : (201,153,172),
+        'bandwidth' : (102,82,166),
         'minArea' : 40
     },
     'yellow' : {
@@ -41,7 +41,7 @@ COLOR_REF = {
 }
 HIGHLIGHT = {
     'color' : (0,0,255),
-    'thickness' : 2
+    'thickness' : 5
 }
 VIEW_SIZE = { 'width' : 320, 'height' : 240 }
 BPS = 4800
@@ -49,7 +49,7 @@ BPS = 4800
 
 WINNAME = {
     'main' : 'main',
-    'mask' : 'masking'
+    'mask' : 'mask'
 }
 KEY = {
     'esc' : 27,
@@ -152,14 +152,12 @@ if __name__ == '__main__':
 
         # -------- Action :: Debug --------
         if current_status == STATUS['debug']:
-            frame_center = (VIEW_SIZE['width']//2, VIEW_SIZE['height']//2)
-
-            # -- 화면 중앙의 커서가 가리키는 HSV 색상 --
+            # -- 커서가 가리키는 HSV 색상 --
+            pointer_pos = (VIEW_SIZE['width']//2, VIEW_SIZE['height']*5//6)
             current_frame_hsv = cv2.cvtColor(current_frame, cv2.COLOR_BGR2HSV)
 
-            cursor_hsv = current_frame_hsv[frame_center]
-            print(cursor_hsv)
-            cv2.circle(current_frame, frame_center, HIGHLIGHT['thickness'], HIGHLIGHT['color'])
+            cursor_hsv = current_frame_hsv[pointer_pos]
+            cv2.circle(current_frame, pointer_pos, HIGHLIGHT['thickness'], HIGHLIGHT['color'])
 
             # -- key hold시, line색상으로 설정 --
             key = cv2.waitKey(1) & 0xFF
@@ -173,14 +171,18 @@ if __name__ == '__main__':
         elif current_status == STATUS['line tracing']:
             # TODO : 라인트레이싱 (급함, 우선순위 1)
             # ---- Region of Interest : 관심영역 지정 ----
-            roi_frame = current_frame[VIEW_SIZE['height']//3 : VIEW_SIZE['height'], :]
+            roi_frame = current_frame[VIEW_SIZE['height']*2//3 : VIEW_SIZE['height'], :]
             roi_frame_hsv = cv2.cvtColor(roi_frame, cv2.COLOR_BGR2HSV)
 
             # ---- Line 검출 ----
-            line_hsv_lower = np.add(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth'])
-            line_hsv_upper = np.subtract(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth'])
+            line_hsv_lower = np.subtract(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth'])
+            line_hsv_upper = np.add(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth'])
 
             line_mask = cv2.inRange(roi_frame_hsv, line_hsv_lower, line_hsv_upper)
+
+            kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3))
+            line_mask = cv2.morphologyEx(line_mask, cv2.MORPH_OPEN, kernel)
+
             cv2.imshow(WINNAME['mask'], line_mask)
             cv2.imshow(WINNAME['main'], current_frame)
         
