@@ -19,8 +19,8 @@ STATUS = {
 # bandwidth : lower, upper hsv를 파악하는데 사용.
 COLOR_REF = {
     'line' : {
-        'hsv' : (66,21,242),
-        'bandwidth' : (32,32,32),
+        'hsv' : (64,64,192),
+        'bandwidth' : (64,64,64),
         'minArea' : 40
     },
     'yellow' : {
@@ -80,6 +80,7 @@ def create_blank(width, height):
 # **************************************************
 # **************************************************
 # **************************************************
+# 84022014
 
 if __name__ == '__main__':
     # -------- User Setting --------
@@ -139,12 +140,13 @@ if __name__ == '__main__':
             # TODO : 라인트레이싱 (급함, 우선순위 1)
             # ---- Region of Interest : 관심영역 지정 ----
             roi_frame = current_frame[VIEW_SIZE['height']//3 : VIEW_SIZE['height'], :]
-            
+            roi_frame_hsv = cv2.cvtColor(roi_frame, cv2.COLOR_BGR2HSV)
+
             # ---- Line 검출 ----
             line_hsv_lower = np.add(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth'])
             line_hsv_upper = np.subtract(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth'])
 
-            line_mask = cv2.inRange(roi_frame, line_hsv_lower, line_hsv_upper)
+            line_mask = cv2.inRange(roi_frame_hsv, line_hsv_lower, line_hsv_upper)
             cv2.imshow(WINNAME['mask'], line_mask)
         
         cv2.imshow(WINNAME['main'], current_frame)
