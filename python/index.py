@@ -19,7 +19,7 @@ STATUS = {
 # bandwidth : lower, upper hsv를 파악하는데 사용.
 COLOR_REF = {
     'line' : {
-        'hsv' : (64,64,192),
+        'hsv' : (34,99,144),
         'bandwidth' : (64,64,64),
         'minArea' : 40
     },
@@ -124,7 +124,7 @@ if __name__ == '__main__':
     # -------- Main Loop Start --------
     while True:
         # -------- Toggle System pause --------
-        key = cv2.waitKey(1) # 0xFF 와 AND 연산
+        key = cv2.waitKey(1) & 0xFF # [0xFF &] op. need for raspbian
 
         if key is KEY['spacebar']:
             system_pause = not system_pause
