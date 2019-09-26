@@ -174,12 +174,13 @@ if __name__ == '__main__':
             roi_frame = current_frame[VIEW_SIZE['height']*2//3 : VIEW_SIZE['height'], :]
             roi_frame_hsv = cv2.cvtColor(roi_frame, cv2.COLOR_BGR2HSV)
 
+            gray_frame = cv2.cvtColor(current_frame, cv2.COLOR_BGR2GRAY)
             contours, hierarchy = None, None
             major = cv2.__version__.split('.')[0]
             if major == '3':
-                _, contours, hierarchy = cv2.findContours(current_frame.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+                _, contours, hierarchy = cv2.findContours(gray_frame.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             else:
-                contours, hierarchy = cv2.findContours(current_frame.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+                contours, hierarchy = cv2.findContours(gray_frame.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             
             cv2.drawContours(current_frame,contours,-1,HIGHLIGHT['color'],HIGHLIGHT['thickness'])
 
