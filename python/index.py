@@ -75,11 +75,6 @@ def create_blank(width, height):
     image = np.zeros((height, width, 3), dtype=np.uint8)
     return image
 #-----------------------------------------------
-def mouse_callback(event,x,y,flags,param):
-    global mouse
-    if event == cv2.EVENT_MOUSEMOVE:
-        mouse['x'] = x
-        mouse['y'] = y
 
 # **************************************************
 # **************************************************
@@ -116,23 +111,21 @@ if __name__ == '__main__':
     cv2.namedWindow(WINNAME['main'])
     cv2.namedWindow(WINNAME['mask'])
 
-    cv2.setMouseCallback(WINNAME['main'], mouse_callback)
-
     # -------- Debug Preset --------
     current_status = STATUS['line tracing']
 
     # -------- Main Loop Start --------
     while True:
-        # -------- Toggle System pause --------
+        # -------- Toggle System Mode --------
         key = cv2.waitKey(1) & 0xFF # [0xFF &] op. need for raspbian
 
         if key is KEY['spacebar']:
+            # -- system : pause --
             system_pause = not system_pause
-            # -- 현재 상태 출력 --
-            if system_pause: print('paused')
-            else: print('resumed')
+            print('paused') if system_pause else print('resumed')
 
         elif key is KEY['esc']:
+            # -- system : exit --
             break
 
         elif key is KEY['1']:
@@ -155,10 +148,21 @@ if __name__ == '__main__':
 
         # -------- Action :: Debug --------
         if current_status == STATUS['debug']:
+            frame_center = (VIEW_SIZE['width']//2, VIEW_SIZE['height']//2)
+
+            # -- 화면 중앙의 커서가 가리키는 HSV 색상 --
             current_frame_hsv = cv2.cvtColor(current_frame, cv2.COLOR_BGR2HSV)
-            cursor_pixel_hsv = current_frame_hsv[mouse['x'], mouse['y']]
-            print(cursor_pixel_hsv)
-            pass # TODO : 디버그 모드 (여유가 되면)
+
+            cursor_hsv = current_frame_hsv[frame_center]
+            print(cursor_hsv)
+            cv2.circle(current_frame, frame_center, HIGHLIGHT['thickness'], HIGHLIGHT['color'])
+
+            key = cv2.waitKey(1) & 0xFF
+            if key is KEY['spacebar']:
+                # -- spacebar 입력시, line색상으로 설정 --
+                COLOR_REF['line']['hsv'] = cursor_hsv
+
+            cv2.imshow(WINNAME['main'], current_frame)
 
         # -------- Action :: Line Tracing --------
         elif current_status == STATUS['line tracing']:
@@ -173,8 +177,8 @@ if __name__ == '__main__':
 
             line_mask = cv2.inRange(roi_frame_hsv, line_hsv_lower, line_hsv_upper)
             cv2.imshow(WINNAME['mask'], line_mask)
+            cv2.imshow(WINNAME['main'], current_frame)
         
-        cv2.imshow(WINNAME['main'], current_frame)
 
 
     # cleanup the camera and close any open windows
