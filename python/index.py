@@ -53,8 +53,12 @@ WINNAME = {
 }
 KEY = {
     'esc' : 27,
-    'spacebar' : ord(' ')
+    'spacebar' : ord(' '),
+    '0' : ord('0'),
+    '1' : ord('1')
 }
+
+mouse = { 'x' : 0, 'y' : 0 }
 
 # ============================================================
 
@@ -71,6 +75,11 @@ def create_blank(width, height):
     image = np.zeros((height, width, 3), dtype=np.uint8)
     return image
 #-----------------------------------------------
+def mouse_callback(event,x,y,flags,param):
+    global mouse
+    if event == cv2.EVENT_MOUSEMOVE:
+        mouse['x'] = x
+        mouse['y'] = y
 
 # **************************************************
 # **************************************************
@@ -107,6 +116,8 @@ if __name__ == '__main__':
     cv2.namedWindow(WINNAME['main'])
     cv2.namedWindow(WINNAME['mask'])
 
+    cv2.setMouseCallback(WINNAME['main'], mouse_callback)
+
     # -------- Debug Preset --------
     current_status = STATUS['line tracing']
 
@@ -114,10 +125,21 @@ if __name__ == '__main__':
     while True:
         # -------- Toggle System pause --------
         key = cv2.waitKey(1) # 0xFF 와 AND 연산
-        if key is KEY['esc']:
-            break
-        elif key is KEY['spacebar']:
+
+        if key is KEY['spacebar']:
             system_pause = not system_pause
+            # -- 현재 상태 출력 --
+            if system_pause: print('paused')
+            else: print('resumed')
+
+        elif key is KEY['esc']:
+            break
+
+        elif key is KEY['1']:
+            current_status = STATUS['line tracing']
+
+        elif key is KEY['0']:
+            current_status = STATUS['debug']
 
         if system_pause:
             continue
@@ -133,6 +155,9 @@ if __name__ == '__main__':
 
         # -------- Action :: Debug --------
         if current_status == STATUS['debug']:
+            current_frame_hsv = cv2.cvtColor(current_frame, cv2.COLOR_BGR2HSV)
+            cursor_pixel_hsv = current_frame_hsv[mouse['x'], mouse['y']]
+            print(cursor_pixel_hsv)
             pass # TODO : 디버그 모드 (여유가 되면)
 
         # -------- Action :: Line Tracing --------
