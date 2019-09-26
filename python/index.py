@@ -161,10 +161,11 @@ if __name__ == '__main__':
             print(cursor_hsv)
             cv2.circle(current_frame, frame_center, HIGHLIGHT['thickness'], HIGHLIGHT['color'])
 
+            # -- key hold시, line색상으로 설정 --
             key = cv2.waitKey(1) & 0xFF
-            if key is KEY['spacebar']:
-                # -- spacebar 입력시, line색상으로 설정 --
+            if key is KEY['0']:
                 COLOR_REF['line']['hsv'] = cursor_hsv
+                print('Set line color as : ', COLOR_REF['line']['hsv'])
 
             cv2.imshow(WINNAME['main'], current_frame)
 
