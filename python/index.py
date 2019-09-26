@@ -13,7 +13,7 @@ import math
 STATUS = {
     'debug' : -1,
     'stop' : 0,
-    'line tracing' : 1 # line tracing
+    'line tracing' : 1
 }
 
 # bandwidth : lower, upper hsv를 파악하는데 사용.
@@ -104,6 +104,7 @@ if __name__ == '__main__':
 
     # -------- Screen Setting --------
     cv2.namedWindow(WINNAME['main'])
+    cv2.namedWindow(WINNAME['mask'])
 
     # -------- Debug Preset --------
     current_status = STATUS['line tracing']
@@ -144,6 +145,7 @@ if __name__ == '__main__':
             line_hsv_upper = np.subtract(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth'])
 
             line_mask = cv2.inRange(roi_frame, line_hsv_lower, line_hsv_upper)
+            cv2.imshow(WINNAME['mask'], line_mask)
         
         cv2.imshow(WINNAME['main'], current_frame)
 
