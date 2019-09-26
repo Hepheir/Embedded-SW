@@ -172,7 +172,7 @@ if __name__ == '__main__':
             # TODO : 라인트레이싱 (급함, 우선순위 1)
             # ---- Region of Interest : 관심영역 지정 ----
             roi_frame = current_frame[VIEW_SIZE['height']*2//3 : VIEW_SIZE['height'], :]
-            roi_frame_hsv = cv2.cvtColor(roi_frame, cv2.COLOR_BGR2HSV)
+            roi_frame_hsv = cv2.cvtColor(roi_frame, cv2.COLOR_BGR2YUV)
 
             # ---- Line 검출 ----
             line_hsv_lower = np.subtract(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth'])
