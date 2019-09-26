@@ -1,22 +1,21 @@
 #!/bin/bash
 
 echo "김동주, 이 곳에 잠들다..."
-cd hepheir/Embedded-SW
 
-while true
-do
-    git fetch
-    HEADHASH=$(git rev-parse HEAD)
-    UPSTREAMHASH=$(git rev-parse master@{upstream})
-    if [ "$HEADHASH" != "$UPSTREAMHASH" ]
-    then
-        echo -e ${ERROR}Not up to date with origin. Aborting.${NOCOLOR}
+while true ; do
+    git fetch origin
+    reslog=$(git log HEAD..origin/master --oneline)
+    if [ "${reslog}" != "" ] ; then
         killall python
-        git fetch origin
-        echo "Launching Program"
+
+        echo "Updating..."
+        git merge origin/master
+
+        echo "Launching Program!"
         python python/index.py &
+
     else
-        echo -e ${FINISHED}Current branch is up to date with origin/master.${NOCOLOR}
+        echo "No changes"
         sleep 20
     fi
 done
