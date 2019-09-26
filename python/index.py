@@ -178,7 +178,9 @@ if __name__ == '__main__':
             line_hsv_lower = np.subtract(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth'])
             line_hsv_upper = np.add(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth'])
 
-            line_mask = cv2.inRange(roi_frame_hsv, line_hsv_lower, line_hsv_upper)
+            # line_mask = cv2.inRange(roi_frame_hsv, line_hsv_lower, line_hsv_upper)
+            gray = cv2.cvtColor(current_frame,cv2.COLOR_BGR2GRAY)
+            line_mask = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY)
 
             kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3))
             line_mask = cv2.morphologyEx(line_mask, cv2.MORPH_OPEN, kernel)
