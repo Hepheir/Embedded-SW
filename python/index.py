@@ -20,7 +20,7 @@ STATUS = {
 COLOR_REF = {
     'line' : {
         'hsv' : (201,153,172),
-        'bandwidth' : (102,82,166),
+        'bandwidth' : 20,
         'minArea' : 40
     },
     'yellow' : {
@@ -172,16 +172,14 @@ if __name__ == '__main__':
             # TODO : 라인트레이싱 (급함, 우선순위 1)
             # ---- Region of Interest : 관심영역 지정 ----
             roi_frame = current_frame[VIEW_SIZE['height']*2//3 : VIEW_SIZE['height'], :]
-            roi_frame_hsv = cv2.cvtColor(roi_frame.copy(), cv2.COLOR_BGR2HSV)
+            roi_frame_hsv = cv2.cvtColor(roi_frame, cv2.COLOR_BGR2HSV)
 
             # ---- Line 검출 ----
             line_hsv_lower = np.subtract(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth'])
             line_hsv_upper = np.add(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth'])
 
-            # line_mask = cv2.inRange(roi_frame_hsv, line_hsv_lower, line_hsv_upper)
-            gray = cv2.cvtColor(roi_frame,cv2.COLOR_BGR2GRAY)
-            line_mask = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY)
-
+            line_mask = cv2.inRange(roi_frame_hsv, line_hsv_lower, line_hsv_upper)
+            
             kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3))
             line_mask = cv2.morphologyEx(line_mask, cv2.MORPH_OPEN, kernel)
 
