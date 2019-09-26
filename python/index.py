@@ -174,16 +174,6 @@ if __name__ == '__main__':
             roi_frame = current_frame[VIEW_SIZE['height']*2//3 : VIEW_SIZE['height'], :]
             roi_frame_hsv = cv2.cvtColor(roi_frame, cv2.COLOR_BGR2HSV)
 
-            gray_frame = cv2.cvtColor(current_frame, cv2.COLOR_BGR2GRAY)
-            contours, hierarchy = None, None
-            major = cv2.__version__.split('.')[0]
-            if major == '3':
-                _, contours, hierarchy = cv2.findContours(gray_frame.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            else:
-                contours, hierarchy = cv2.findContours(gray_frame.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            
-            cv2.drawContours(current_frame,contours,-1,HIGHLIGHT['color'],HIGHLIGHT['thickness'])
-
             # ---- Line 검출 ----
             line_hsv_lower = np.subtract(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth'])
             line_hsv_upper = np.add(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth'])
@@ -192,6 +182,12 @@ if __name__ == '__main__':
 
             kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3))
             line_mask = cv2.morphologyEx(line_mask, cv2.MORPH_OPEN, kernel)
+
+
+            retval = cv2.findContours(line_mask.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            contours,hierarchy = retval[1:3] if cv2.__version__.split('.')[0] == '3' else retval
+            
+            cv2.drawContours(current_frame,contours,-1,HIGHLIGHT['color'],HIGHLIGHT['thickness'])
 
             cv2.imshow(WINNAME['mask'], line_mask)
             cv2.imshow(WINNAME['main'], current_frame)
