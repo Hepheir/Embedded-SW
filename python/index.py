@@ -41,7 +41,7 @@ COLOR_REF = {
 }
 HIGHLIGHT = {
     'color' : (0,0,255),
-    'thickness' : 5
+    'thickness' : 2
 }
 VIEW_SIZE = { 'width' : 320, 'height' : 240 }
 BPS = 4800
@@ -156,13 +156,13 @@ if __name__ == '__main__':
             pointer_pos = (VIEW_SIZE['width']//2, VIEW_SIZE['height']*5//6)
             current_frame_hsv = cv2.cvtColor(current_frame, cv2.COLOR_BGR2HSV)
 
-            cursor_hsv = current_frame_hsv[pointer_pos]
-            cv2.circle(current_frame, pointer_pos, HIGHLIGHT['thickness'], HIGHLIGHT['color'])
+            cv2.circle(current_frame, pointer_pos, 5, HIGHLIGHT['color'])
+            current_frame[pointer_pos] = HIGHLIGHT['color']
 
             # -- key hold시, line색상으로 설정 --
             key = cv2.waitKey(1) & 0xFF
             if key is KEY['0']:
-                COLOR_REF['line']['hsv'] = cursor_hsv
+                COLOR_REF['line']['hsv'] = current_frame_hsv[pointer_pos]
                 print('Set line color as : ', COLOR_REF['line']['hsv'])
 
             cv2.imshow(WINNAME['main'], current_frame)
