@@ -10,12 +10,6 @@ import math
 
 # CUSTOM =================================================
 
-class HSV():
-    def __init__(self,h,s,v):
-        self.h = h
-        self.s = s
-        self.v = v
-
 STATUS = {
     'debug' : -1,
     'stop' : 0,
@@ -25,23 +19,23 @@ STATUS = {
 # bandwidth : lower, upper hsv를 파악하는데 사용.
 COLOR_REF = {
     'line' : {
-        'hsv' : HSV(66,21,242),
-        'bandwidth' : HSV(32,32,32),
+        'hsv' : (66,21,242),
+        'bandwidth' : (32,32,32),
         'minArea' : 40
     },
     'yellow' : {
-        'hsv' : HSV(201,153,172),
-        'bandwidth' : HSV(102,82,166),
+        'hsv' : (201,153,172),
+        'bandwidth' : (102,82,166),
         'minArea' : 50
     },
     'red' : {
-        'hsv' : HSV(32,170,123),
-        'bandwidth' : HSV(66,60,56),
+        'hsv' : (32,170,123),
+        'bandwidth' : (66,60,56),
         'minArea' : 50
     },
     'blue' : {
-        'hsv' : HSV(85,80,108),
-        'bandwidth' : HSV(52,60,96),
+        'hsv' : (85,80,108),
+        'bandwidth' : (52,60,96),
         'minArea' : 10
     }
 }
@@ -49,7 +43,7 @@ HIGHLIGHT = {
     'color' : (0,0,255),
     'thickness' : 2
 }
-VIEW_SIZE = { 'width' : None, 'height' : None }
+VIEW_SIZE = { 'width' : 320, 'height' : 240 }
 BPS = 4800
 
 
@@ -92,8 +86,14 @@ if __name__ == '__main__':
     BPS =  4800  # 4800,9600,14400, 19200,28800, 57600, 115200
     
     # -------- Camera Load --------
-    camera = cv2.VideoCapture(0)
+    video = cv2.VideoCapture(0)
     time.sleep(0.5)
+
+    if not video.isOpened():
+        raise Exception("Could not open video device")
+    
+    video.set(cv2.CAP_PROP_FRAME_WIDTH,  VIEW_SIZE['width'])
+    video.set(cv2.CAP_PROP_FRAME_HEIGHT, VIEW_SIZE['height'])
 
     # -------- Serial Setting --------
     serial_use = False # DEBUG
@@ -103,9 +103,6 @@ if __name__ == '__main__':
        serial_port.flush() # serial cls
 
     # -------- Screen Setting --------
-    _,frame = camera.read()
-    VIEW_SIZE['height'], VIEW_SIZE['width'] = frame.shape[:2]
-
     cv2.namedWindow(WINNAME['main'])
 
     # -------- Debug Preset --------
@@ -124,7 +121,7 @@ if __name__ == '__main__':
             continue
 
         # -------- Grab frames --------
-        next_frame, current_frame = camera.read()
+        next_frame, current_frame = video.read()
         if not next_frame:
             break # no more frames to read : EOF
 
@@ -138,15 +135,22 @@ if __name__ == '__main__':
 
         # -------- Action :: Line Tracing --------
         elif current_status == STATUS['line tracing']:
-            print(VIEW_SIZE)
-            #roi = current_frame[] # Region of Interest : 관심영역
-            pass # TODO : 라인트레이싱 (급함, 우선순위 1)
+            # TODO : 라인트레이싱 (급함, 우선순위 1)
+            # ---- Region of Interest : 관심영역 지정 ----
+            roi_frame = current_frame[VIEW_SIZE['height']//3 : VIEW_SIZE['height'], :]
+            
+            # ---- Line 검출 ----
+            line_hsv_lower = np.add(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth'])
+            line_hsv_upper = np.subtract(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth'])
+
+            line_mask = cv2.inRange(roi_frame, line_hsv_lower, line_hsv_upper)
         
         cv2.imshow(WINNAME['main'], current_frame)
 
 
     # cleanup the camera and close any open windows
+    video.release()
+    cv2.destroyAllWindows()
+
     if serial_use:
        serial_port.close()
-    camera.release()
-    cv2.destroyAllWindows()
