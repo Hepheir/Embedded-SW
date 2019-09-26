@@ -177,9 +177,9 @@ if __name__ == '__main__':
             contours, hierarchy = None, None
             major = cv2.__version__.split('.')[0]
             if major == '3':
-                _, contours, hierarchy = cv2.findContours(current_frame.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                _, contours, hierarchy = cv2.findContours(current_frame.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             else:
-                contours, hierarchy = cv2.findContours(current_frame.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+                contours, hierarchy = cv2.findContours(current_frame.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             
             cv2.drawContours(current_frame,contours,-1,HIGHLIGHT['color'],HIGHLIGHT['thickness'])
 
