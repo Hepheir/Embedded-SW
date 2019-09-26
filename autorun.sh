@@ -3,13 +3,13 @@
 echo "김동주, 이 곳에 잠들다..."
 
 while true ; do
-    git fetch origin
-    reslog=$(git status)
+    git fetch origin/master
+    reslog=$(git log HEAD..origin/master --oneline)
     if [ "${reslog}" != "" ] ; then
         killall python
 
         echo "Updating..."
-        git merge origin/master
+        git pull
 
         echo "Launching Program!"
         python python/index.py &
