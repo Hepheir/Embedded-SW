@@ -122,7 +122,11 @@ if __name__ == '__main__':
         if key is KEY['spacebar']:
             # -- system : pause --
             system_pause = not system_pause
-            print('paused') if system_pause else print('resumed')
+
+            if system_pause:
+                print('paused')
+            else:
+                print('resumed')
 
         elif key is KEY['esc']:
             # -- system : exit --
