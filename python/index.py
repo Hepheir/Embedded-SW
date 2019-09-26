@@ -179,7 +179,7 @@ if __name__ == '__main__':
             line_hsv_upper = np.add(COLOR_REF['line']['hsv'], COLOR_REF['line']['bandwidth'])
 
             # line_mask = cv2.inRange(roi_frame_hsv, line_hsv_lower, line_hsv_upper)
-            gray = cv2.cvtColor(current_frame,cv2.COLOR_BGR2GRAY)
+            gray = cv2.cvtColor(roi_frame,cv2.COLOR_BGR2GRAY)
             line_mask = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY)
 
             kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3))
@@ -189,7 +189,7 @@ if __name__ == '__main__':
             retval = cv2.findContours(line_mask.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             contours,hierarchy = retval[1:3] if cv2.__version__.split('.')[0] == '3' else retval
             
-            cv2.drawContours(current_frame,contours,-1,HIGHLIGHT['color'],HIGHLIGHT['thickness'])
+            cv2.drawContours(roi_frame,contours,-1,HIGHLIGHT['color'],HIGHLIGHT['thickness'])
 
             cv2.imshow(WINNAME['mask'], line_mask)
             cv2.imshow(WINNAME['main'], current_frame)
