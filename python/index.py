@@ -30,13 +30,13 @@ COLOR_REF = {
         'minArea' : 40
     },
     'white' : {
-        'hsv_lower' : HSV_Parser(0,10,70),
+        'hsv_lower' : HSV_Parser(0,10,80),
         'hsv_upper' : HSV_Parser(360,100,100),
         'minArea' : 40
     },
     'yellow' : {
-        'hsv_lower' : HSV_Parser(50,10,70),
-        'hsv_upper' : HSV_Parser(70,100,100),
+        'hsv_lower' : HSV_Parser(30,40,70),
+        'hsv_upper' : HSV_Parser(50,100,100),
         'minArea' : 50
     },
     'red' : {
@@ -68,8 +68,6 @@ KEY = {
     '0' : ord('0'),
     '1' : ord('1')
 }
-
-PYTHON3 = False
 
 # ============================================================
 
@@ -124,13 +122,12 @@ if __name__ == '__main__':
 
     # -------- Debug Preset --------
     current_status = STATUS['line tracing']
-    COLOR_WHEEL = cv2.imread('color_wheel2.jpg')
+    PALLETE = cv2.imread('./color_wheel2.jpg')
 
     # -------- Main Loop Start --------
     while True:
         # -------- Toggle System Mode --------
-        key = cv2.waitKey(1)
-        if not PYTHON3: key = key & 0xFF # [0xFF &] op. need for raspbian
+        key = cv2.waitKey(1) & 0xFF # '& 0xFF' For python 2.7.10
 
         if key is KEY['spacebar']:
             # -- system : pause --
@@ -173,8 +170,7 @@ if __name__ == '__main__':
             current_frame[pointer_pos] = HIGHLIGHT['color']
 
             # -- key hold시, line색상으로 설정 --
-            key = cv2.waitKey(1)
-            if not PYTHON3: key = key & 0xFF # [0xFF &] op. need for raspbian
+            key = cv2.waitKey(1) & 0xFF # '& 0xFF' For python 2.7.10
 
             if key is KEY['0']:
                 COLOR_REF['line']['hsv'] = current_frame_hsv[pointer_pos]
@@ -185,26 +181,18 @@ if __name__ == '__main__':
         # -------- Action :: Line Tracing --------
         elif current_status == STATUS['line tracing']:
             # TODO : 라인트레이싱 (급함, 우선순위 1)
+            line_color = COLOR_REF['yellow']
+
             # ---- Region of Interest : 관심영역 지정 ----
-            roi_frame = current_frame[VIEW_SIZE['height']*2//3 : VIEW_SIZE['height'], :]
+            # roi_frame = current_frame[VIEW_SIZE['height']*2//3 : VIEW_SIZE['height'], :]
+            roi_frame = current_frame
             roi_frame_hsv = cv2.cvtColor(roi_frame, cv2.COLOR_BGR2HSV)
 
-            cw = COLOR_WHEEL.copy()
-            cw_hsv = cv2.cvtColor(cw.copy(), cv2.COLOR_BGR2HSV)
-
             # ---- Line 검출 ----
-            c_ref = COLOR_REF['white']
-
-            line_mask = cv2.inRange(roi_frame_hsv, c_ref['hsv_lower'], c_ref['hsv_upper'])
-            cw_mask = cv2.inRange(cw_hsv, c_ref['hsv_lower'], c_ref['hsv_upper'])
-            cont = cv2.findContours(cw_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)[-2]
-            a = COLOR_WHEEL.copy()
-            cv2.drawContours(a,cont,-1,HIGHLIGHT['color'],HIGHLIGHT['thickness'])
-            cv2.imshow('test', a)
+            line_mask = cv2.inRange(roi_frame_hsv, line_color['hsv_lower'], line_color['hsv_upper'])
 
             kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3))
             line_mask = cv2.morphologyEx(line_mask, cv2.MORPH_OPEN, kernel)
-
 
             retval = cv2.findContours(line_mask.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             contours,hierarchy = retval[1:3] if cv2.__version__.split('.')[0] == '3' else retval
