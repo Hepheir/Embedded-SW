@@ -30,23 +30,33 @@ COLOR_REF = {
         'minArea' : 40
     },
     'white' : {
-        'hsv_lower' : HSV_Parser(0,10,80),
-        'hsv_upper' : HSV_Parser(360,100,100),
+        'hsv_lower' : HSV_Parser(0,0,68),
+        'hsv_upper' : HSV_Parser(360,15,100),
         'minArea' : 40
     },
     'yellow' : {
-        'hsv_lower' : HSV_Parser(30,40,70),
+        'hsv_lower' : HSV_Parser(30,40,40),
         'hsv_upper' : HSV_Parser(50,100,100),
         'minArea' : 50
     },
     'red' : {
-        'hsv_lower' : HSV_Parser(340,70,80),
-        'hsv_upper' : HSV_Parser(10,100,100),
+        'hsv_lower' : HSV_Parser(0,40,40),
+        'hsv_upper' : HSV_Parser(8,100,100),
+        'minArea' : 50,
+        'next' : 'red+'
+    }, 'red+' : {
+        'hsv_lower' : HSV_Parser(245,30,40),
+        'hsv_upper' : HSV_Parser(360,100,100),
         'minArea' : 50
+    },
+    'blue' : {
+        'hsv_lower' : HSV_Parser(124,40,40),
+        'hsv_upper' : HSV_Parser(186,100,100),
+        'minArea' : 10
     },
     'black' : {
         'hsv_lower' : HSV_Parser(0,0,0),
-        'hsv_upper' : HSV_Parser(360,100,15),
+        'hsv_upper' : HSV_Parser(360,80,27),
         'minArea' : 10
     }
 }
@@ -66,7 +76,11 @@ KEY = {
     'esc' : 27,
     'spacebar' : ord(' '),
     '0' : ord('0'),
-    '1' : ord('1')
+    '1' : ord('1'),
+    '2' : ord('2'),
+    '3' : ord('3'),
+    '4' : ord('4'),
+    '5' : ord('5')
 }
 
 # ============================================================
@@ -84,6 +98,19 @@ def create_blank(width, height):
     image = np.zeros((height, width, 3), dtype=np.uint8)
     return image
 #-----------------------------------------------
+def color_detection(image, color_reference):
+    lower = color_reference['hsv_lower']
+    upper = color_reference['hsv_upper']
+
+    mask = cv2.inRange(image, lower, upper)
+
+    if 'next' in color_reference:
+        next_ref = COLOR_REF[color_reference['next']]
+        mask_2 = cv2.inRange(image, next_ref['hsv_lower'], next_ref['hsv_upper'])
+        mask = cv2.add(mask, mask_2)
+    
+    return mask
+    
 
 # **************************************************
 # **************************************************
@@ -121,8 +148,50 @@ if __name__ == '__main__':
     cv2.namedWindow(WINNAME['mask'])
 
     # -------- Debug Preset --------
+    DEBUG_H_MAX = 360
+    DEBUG_SV_MAX = 100
+    DEBUG_COLOR = 'blue'
+
+    def changeRef(colorname, keyname, hsv_select, value):
+        h,s,v = COLOR_REF[colorname][keyname]
+        new_hsv = None
+        if hsv_select is 'h':
+            new_hsv = (value * 255 // DEBUG_H_MAX, s, v)
+        elif hsv_select is 's':
+            new_hsv = (h, value * 255 // DEBUG_SV_MAX, v)
+        elif hsv_select is 'v':
+            new_hsv = (h, s, value * 255 // DEBUG_SV_MAX)
+        
+        COLOR_REF[colorname][keyname] = new_hsv
+
+        if 'next' in COLOR_REF[colorname]:
+            nextcolorname = COLOR_REF[colorname]['next']
+            changeRef(nextcolorname, keyname, hsv_select, value)
+
+    def onDebugTrackbar1_Change(x):
+        changeRef(DEBUG_COLOR, 'hsv_lower', 'h', x)
+    def onDebugTrackbar2_Change(x):
+        changeRef(DEBUG_COLOR, 'hsv_upper', 'h', x)
+    def onDebugTrackbar3_Change(x):
+        changeRef(DEBUG_COLOR, 'hsv_lower', 's', x)
+    def onDebugTrackbar4_Change(x):
+        changeRef(DEBUG_COLOR, 'hsv_upper', 's', x)
+    def onDebugTrackbar5_Change(x):
+        changeRef(DEBUG_COLOR, 'hsv_lower', 'v', x)
+    def onDebugTrackbar6_Change(x):
+        changeRef(DEBUG_COLOR, 'hsv_upper', 'v', x)
+
+    cv2.createTrackbar('DEBUG 1 HL', WINNAME['main'],0,DEBUG_H_MAX, onDebugTrackbar1_Change)
+    cv2.createTrackbar('DEBUG 2 HU', WINNAME['main'],0,DEBUG_H_MAX, onDebugTrackbar2_Change)
+    cv2.createTrackbar('DEBUG 3 VL', WINNAME['main'],0,DEBUG_SV_MAX,onDebugTrackbar3_Change)
+    cv2.createTrackbar('DEBUG 4 VU', WINNAME['main'],0,DEBUG_SV_MAX,onDebugTrackbar4_Change)
+    cv2.createTrackbar('DEBUG 5 SL', WINNAME['main'],0,DEBUG_SV_MAX,onDebugTrackbar5_Change)
+    cv2.createTrackbar('DEBUG 6 SU', WINNAME['main'],0,DEBUG_SV_MAX,onDebugTrackbar6_Change)
+
     current_status = STATUS['line tracing']
-    PALLETE = cv2.imread('./color_wheel2.jpg')
+
+    debug_colors = ['red', 'blue', 'yellow', 'white', 'black']
+    debug_count = 0
 
     # -------- Main Loop Start --------
     while True:
@@ -144,6 +213,11 @@ if __name__ == '__main__':
 
         elif key is KEY['1']:
             current_status = STATUS['line tracing']
+
+        elif key is KEY['2']:
+            debug_count = (debug_count + 1) % len(debug_colors)
+            DEBUG_COLOR = debug_colors[debug_count]
+            print('set debug color as : ', DEBUG_COLOR)
 
         elif key is KEY['0']:
             current_status = STATUS['debug']
@@ -181,7 +255,7 @@ if __name__ == '__main__':
         # -------- Action :: Line Tracing --------
         elif current_status == STATUS['line tracing']:
             # TODO : 라인트레이싱 (급함, 우선순위 1)
-            line_color = COLOR_REF['yellow']
+            line_color = COLOR_REF[DEBUG_COLOR]
 
             # ---- Region of Interest : 관심영역 지정 ----
             # roi_frame = current_frame[VIEW_SIZE['height']*2//3 : VIEW_SIZE['height'], :]
@@ -189,7 +263,7 @@ if __name__ == '__main__':
             roi_frame_hsv = cv2.cvtColor(roi_frame, cv2.COLOR_BGR2HSV)
 
             # ---- Line 검출 ----
-            line_mask = cv2.inRange(roi_frame_hsv, line_color['hsv_lower'], line_color['hsv_upper'])
+            line_mask = color_detection(roi_frame_hsv, line_color)
 
             kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3))
             line_mask = cv2.morphologyEx(line_mask, cv2.MORPH_OPEN, kernel)
