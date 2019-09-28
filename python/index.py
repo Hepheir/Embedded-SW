@@ -162,8 +162,6 @@ if __name__ == '__main__':
     debug_count = 0
     debug_color_adjust = 0
 
-    debug_adjusted = False
-
     SHOW_TRACKBAR = True
 
     if SHOW_TRACKBAR:
@@ -191,9 +189,7 @@ if __name__ == '__main__':
 
         def onDebugTrackbar_Change(x):
             global debug_color_adjust
-            global debug_adjusted
             debug_color_adjust = x
-            debug_adjusted = False
 
         cv2.createTrackbar('DEBUG', WINNAME['main'],0x00,0xFF, onDebugTrackbar_Change)
 
@@ -257,12 +253,12 @@ if __name__ == '__main__':
 
                 # -- key hold시, line색상으로 설정 --
                 key = cv2.waitKey(1) & 0xFF # '& 0xFF' For python 2.7.10
-
                 if key is KEY['0']:
                     COLOR_REF['line']['hsv'] = current_frame_hsv[pointer_pos]
                     print('Set line color as : ', COLOR_REF['line']['hsv'])
             
             def hue_adjust():
+                print('adjusting... ', end='')
                 for col in range(VIEW_SIZE['width']):
                     for row in range(VIEW_SIZE['height']):
                         pixel = current_frame[row,col]
@@ -270,12 +266,16 @@ if __name__ == '__main__':
                         if pixel[2] >= 256:
                             pixel[2] -= 256
                         current_frame[row,col] = pixel
-                debug_adjusted = True
+                print('Done')
 
-            if not debug_adjusted:
+            # -- key hold시, 조정된 이미지 출력 --
+            key = cv2.waitKey(1) & 0xFF # '& 0xFF' For python 2.7.10
+            if key is KEY['0']:
                 hue_adjust()
-                putText(current_frame, (0,0), 'DEBUG MODE')
-                cv2.imshow(WINNAME['main'], current_frame)
+                cv2.imshow('Adjusted', current_frame)
+                
+            putText(current_frame, (0,0), 'DEBUG MODE')
+            cv2.imshow(WINNAME['main'], current_frame)
 
         # -------- Action :: Line Tracing --------
         elif current_status == STATUS['line tracing']:
