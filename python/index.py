@@ -329,10 +329,10 @@ while True:
         frame_top_text('LINE TRACING : (%s)'%(current_color.upper()))
         
         # TODO : 라인트레이싱 (급함, 우선순위 1)
-        roi_box = ( # 관심영역 (x1,y1, x2,y2)
-            0,FRAME_HEIGHT*2//3,
-            FRAME_WIDTH,FRAME_HEIGHT
-        )
+        # 관심 영역
+        roi_x1,roi_y1 = (0, FRAME_HEIGHT*2//3)
+        roi_x2,roi_y2 = (FRAME_WIDTH,FRAME_HEIGHT)
+
         line_color_ref = COLOR_REF[current_color] # 라인 색상
         line_min_area = 50
 
@@ -340,10 +340,10 @@ while True:
         hl_line_color = (0xFF,0x00,0xFF) # 경로 표기 색상
 
         # ---- Region of Interest : 관심영역 지정 ----
-        roi_frame = current_frame[roi_box[1]:roi_box[3],roi_box[0]:roi_box[2]]
+        roi_frame = current_frame[roi_y1:roi_y2,roi_x1:roi_x2]
         roi_frame_hsv = cv2.cvtColor(roi_frame, cv2.COLOR_BGR2HSV)
 
-        cv2.rectangle(current_frame, (roi_box[0],roi_box[1]), (roi_box[2],roi_box[3]),hl_roi_box_color,thickness=1)
+        cv2.rectangle(current_frame, (roi_x1,roi_y1), (roi_x2,roi_y2),hl_roi_box_color,thickness=1)
         
         # ---- Line 검출 ----
         line_mask = color_detection(roi_frame_hsv, line_color_ref)
@@ -361,9 +361,12 @@ while True:
             max_area = cv2.contourArea(max_cont)
 
         if max_area > line_min_area:
-            x1,y1,x2,y2 = cv2.fitLine(max_cont, cv2.DIST_L2,0,0.01,0.01)
-            d = (x2-x1)/(y2-y1)
-            cv2.line(current_frame, (x1,y1),(x2,y2), hl_line_color, 1)
+            dx,dy,x0,y0 = cv2.fitLine(max_cont, cv2.DIST_L2,0,0.01,0.01)
+            # (y-y0)dy == (x-x0)dx
+            x_top = (roi_y1-y0)*dy/dx + x0
+            x_bot = (roi_y2-y0)*dy/dx + x0
+            
+            cv2.line(current_frame, (x_top,roi_y1),(x_bot,roi_y2), hl_line_color, 1)
             cv2.drawContours(line_mask,[max_cont],-1,128,-1)
 
         cv2.imshow(WINNAME['mask'], line_mask)
