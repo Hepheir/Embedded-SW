@@ -270,6 +270,7 @@ if __name__ == '__main__':
                         if pixel[2] >= 256:
                             pixel[2] -= 256
                         current_frame[row,col] = pixel
+                debug_adjusted = True
 
             if not debug_adjusted:
                 hue_adjust()
