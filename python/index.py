@@ -148,50 +148,33 @@ if __name__ == '__main__':
     cv2.namedWindow(WINNAME['mask'])
 
     # -------- Debug Preset --------
+    SHOW_TRACKBAR = False
+
     DEBUG_H_MAX = 360
     DEBUG_SV_MAX = 100
     DEBUG_COLOR = 'blue'
 
-    def changeRef(colorname, keyname, hsv_select, value):
-        h,s,v = COLOR_REF[colorname][keyname]
-        new_hsv = None
-        if hsv_select is 'h':
-            new_hsv = (value * 255 // DEBUG_H_MAX, s, v)
-        elif hsv_select is 's':
-            new_hsv = (h, value * 255 // DEBUG_SV_MAX, v)
-        elif hsv_select is 'v':
-            new_hsv = (h, s, value * 255 // DEBUG_SV_MAX)
-        
-        COLOR_REF[colorname][keyname] = new_hsv
-
-        if 'next' in COLOR_REF[colorname]:
-            nextcolorname = COLOR_REF[colorname]['next']
-            changeRef(nextcolorname, keyname, hsv_select, value)
-
-    def onDebugTrackbar1_Change(x):
-        changeRef(DEBUG_COLOR, 'hsv_lower', 'h', x)
-    def onDebugTrackbar2_Change(x):
-        changeRef(DEBUG_COLOR, 'hsv_upper', 'h', x)
-    def onDebugTrackbar3_Change(x):
-        changeRef(DEBUG_COLOR, 'hsv_lower', 's', x)
-    def onDebugTrackbar4_Change(x):
-        changeRef(DEBUG_COLOR, 'hsv_upper', 's', x)
-    def onDebugTrackbar5_Change(x):
-        changeRef(DEBUG_COLOR, 'hsv_lower', 'v', x)
-    def onDebugTrackbar6_Change(x):
-        changeRef(DEBUG_COLOR, 'hsv_upper', 'v', x)
-
-    cv2.createTrackbar('DEBUG 1 HL', WINNAME['main'],0,DEBUG_H_MAX, onDebugTrackbar1_Change)
-    cv2.createTrackbar('DEBUG 2 HU', WINNAME['main'],0,DEBUG_H_MAX, onDebugTrackbar2_Change)
-    cv2.createTrackbar('DEBUG 3 VL', WINNAME['main'],0,DEBUG_SV_MAX,onDebugTrackbar3_Change)
-    cv2.createTrackbar('DEBUG 4 VU', WINNAME['main'],0,DEBUG_SV_MAX,onDebugTrackbar4_Change)
-    cv2.createTrackbar('DEBUG 5 SL', WINNAME['main'],0,DEBUG_SV_MAX,onDebugTrackbar5_Change)
-    cv2.createTrackbar('DEBUG 6 SU', WINNAME['main'],0,DEBUG_SV_MAX,onDebugTrackbar6_Change)
-
-    current_status = STATUS['line tracing']
-
     debug_colors = ['red', 'blue', 'yellow', 'white', 'black']
     debug_count = 0
+
+    if SHOW_TRACKBAR:
+        def changeRef(colorname, keyname, hsv_select, value):
+            h,s,v = COLOR_REF[colorname][keyname]
+            new_hsv = None
+            if hsv_select is 'h':
+                new_hsv = (value * 255 // DEBUG_H_MAX, s, v)
+            elif hsv_select is 's':
+                new_hsv = (h, value * 255 // DEBUG_SV_MAX, v)
+            elif hsv_select is 'v':
+                new_hsv = (h, s, value * 255 // DEBUG_SV_MAX)
+            
+            COLOR_REF[colorname][keyname] = new_hsv
+
+            if 'next' in COLOR_REF[colorname]:
+                nextcolorname = COLOR_REF[colorname]['next']
+                changeRef(nextcolorname, keyname, hsv_select, value)
+
+    current_status = STATUS['line tracing']
 
     # -------- Main Loop Start --------
     while True:
