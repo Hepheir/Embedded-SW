@@ -258,7 +258,7 @@ if __name__ == '__main__':
                     print('Set line color as : ', COLOR_REF['line']['hsv'])
             
             def hue_adjust():
-                print('adjusting... ', end='')
+                print('adjusting... ')
                 for col in range(VIEW_SIZE['width']):
                     for row in range(VIEW_SIZE['height']):
                         pixel = current_frame[row,col]
