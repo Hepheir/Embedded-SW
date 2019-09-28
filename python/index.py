@@ -332,6 +332,7 @@ while True:
         # 관심 영역
         roi_x1,roi_y1 = (0, FRAME_HEIGHT*2//3)
         roi_x2,roi_y2 = (FRAME_WIDTH,FRAME_HEIGHT)
+        roi_height = roi_y2 - roi_y1
 
         line_color_ref = COLOR_REF[current_color] # 라인 색상
         line_min_area = 20
@@ -364,13 +365,13 @@ while True:
             dx,dy,x0,y0 = cv2.fitLine(max_cont, cv2.DIST_L2,0,0.01,0.01)
             # (y-y0)dy == (x-x0)dx
             x_top = int(-y0*dy/dx + x0)
-            x_bot = int(((roi_y2-roi_y1)-y0)*dy/dx + x0)
+            x_bot = int((roi_height-y0)*dy/dx + x0)
             
-            cv2.circle(current_frame, (int(x0),int(y0)), 5, hl_line_color, thickness=2)
+            cv2.circle(current_frame, (int(x0),int(y0+roi_y1)), 5, hl_line_color, thickness=2)
             cv2.line(current_frame, (x_top,roi_y1),(x_bot,roi_y2), hl_line_color, 1)
             cv2.drawContours(line_mask,[max_cont],-1,128,-1)
 
-        frame_bottom_text('MAX AREA : %d'%(max_area))
+        frame_bottom_text('MAX AREA : %d [(%d,%d),(%d,%d)]'%(max_area,x_top,roi_y1,x_bot,roi_y2))
         cv2.imshow(WINNAME['mask'], line_mask)
 
     # --------- Show Robot's Vision --------
