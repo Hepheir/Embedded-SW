@@ -110,7 +110,10 @@ def color_detection(image, color_reference):
         mask = cv2.add(mask, mask_2)
     
     return mask
-    
+#-----------------------------------------------
+def putText(image, pos, text):
+    x,y = pos
+    cv2.putText(image, text, (x+16, y+16), cv2.FONT_HERSHEY_PLAIN, 1, (0xFF,0xFF,0xFF), thickness = 1, lineType=cv2.LINE_AA)
 
 # **************************************************
 # **************************************************
@@ -148,17 +151,22 @@ if __name__ == '__main__':
     cv2.namedWindow(WINNAME['mask'])
 
     # -------- Debug Preset --------
-    SHOW_TRACKBAR = False
-
-    DEBUG_H_MAX = 360
-    DEBUG_SV_MAX = 100
     DEBUG_COLOR = 'blue'
 
     debug_colors = ['red', 'blue', 'yellow', 'white', 'black']
     debug_count = 0
+    debug_color_adjust = 0
+
+    SHOW_TRACKBAR = True
 
     if SHOW_TRACKBAR:
+        
+        DEBUG_H_MAX = 360
+        DEBUG_SV_MAX = 100
+
         def changeRef(colorname, keyname, hsv_select, value):
+            global COLOR_REF
+            global DEBUG_H_MAX, DEBUG_SV_MAX
             h,s,v = COLOR_REF[colorname][keyname]
             new_hsv = None
             if hsv_select is 'h':
@@ -173,6 +181,12 @@ if __name__ == '__main__':
             if 'next' in COLOR_REF[colorname]:
                 nextcolorname = COLOR_REF[colorname]['next']
                 changeRef(nextcolorname, keyname, hsv_select, value)
+
+        def onDebugTrackbar_Change(x):
+            global debug_color_adjust
+            debug_color_adjust = x
+
+        cv2.createTrackbar('DEBUG', WINNAME['main'],0x00,0xFF, onDebugTrackbar_Change)
 
     current_status = STATUS['line tracing']
 
@@ -195,6 +209,7 @@ if __name__ == '__main__':
             break
 
         elif key is KEY['1']:
+            print('line tracing mode')
             current_status = STATUS['line tracing']
 
         elif key is KEY['2']:
@@ -203,6 +218,7 @@ if __name__ == '__main__':
             print('set debug color as : ', DEBUG_COLOR)
 
         elif key is KEY['0']:
+            print('debug mode')
             current_status = STATUS['debug']
 
         if system_pause:
@@ -213,31 +229,51 @@ if __name__ == '__main__':
         if not next_frame:
             break # no more frames to read : EOF
 
+        # -- Camera filter --
+        FILTER_H = 20
+
         # -------- Check Context --------
         # TODO : 현재 상황 파악 하는 부분
         # current_status = ?
 
         # -------- Action :: Debug --------
         if current_status == STATUS['debug']:
-            # -- 커서가 가리키는 HSV 색상 --
-            pointer_pos = (VIEW_SIZE['width']//2, VIEW_SIZE['height']*5//6)
-            current_frame_hsv = cv2.cvtColor(current_frame, cv2.COLOR_BGR2HSV)
+            putText(current_frame, (0,0), 'DEBUG MODE')
 
-            cv2.circle(current_frame, pointer_pos, 5, HIGHLIGHT['color'])
-            current_frame[pointer_pos] = HIGHLIGHT['color']
+            def color_picker():
+                # -- 커서가 가리키는 HSV 색상 --
+                pointer_pos = (VIEW_SIZE['width']//2, VIEW_SIZE['height']*5//6)
+                current_frame_hsv = cv2.cvtColor(current_frame, cv2.COLOR_BGR2HSV)
 
-            # -- key hold시, line색상으로 설정 --
-            key = cv2.waitKey(1) & 0xFF # '& 0xFF' For python 2.7.10
+                cv2.circle(current_frame, pointer_pos, 5, HIGHLIGHT['color'])
+                current_frame[pointer_pos] = HIGHLIGHT['color']
 
-            if key is KEY['0']:
-                COLOR_REF['line']['hsv'] = current_frame_hsv[pointer_pos]
-                print('Set line color as : ', COLOR_REF['line']['hsv'])
+                # -- key hold시, line색상으로 설정 --
+                key = cv2.waitKey(1) & 0xFF # '& 0xFF' For python 2.7.10
 
+                if key is KEY['0']:
+                    COLOR_REF['line']['hsv'] = current_frame_hsv[pointer_pos]
+                    print('Set line color as : ', COLOR_REF['line']['hsv'])
+
+                cv2.imshow(WINNAME['main'], current_frame)
+            
+            def hue_adjust():
+                for col in range(VIEW_SIZE['width']):
+                    for row in range(VIEW_SIZE['height']):
+                        pixel = current_frame[row,col]
+                        pixel[2] += debug_color_adjust
+                        if pixel[2] >= 256:
+                            pixel[2] -= 256
+                        current_frame[row,col] = pixel
+
+            hue_adjust()
             cv2.imshow(WINNAME['main'], current_frame)
 
         # -------- Action :: Line Tracing --------
         elif current_status == STATUS['line tracing']:
             # TODO : 라인트레이싱 (급함, 우선순위 1)
+            putText(current_frame, (0,0), 'LINE_TR MODE')
+
             line_color = COLOR_REF[DEBUG_COLOR]
 
             # ---- Region of Interest : 관심영역 지정 ----
