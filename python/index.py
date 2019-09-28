@@ -12,6 +12,7 @@ import math
 
 
 def HSV_Parser(h_deg, s_per, v_per):
+    # degree, percent --> 0~255 value
     h = h_deg * 255 // 360
     s = s_per * 255 // 100
     v = v_per * 255 // 100
@@ -20,9 +21,25 @@ def HSV_Parser(h_deg, s_per, v_per):
 # -------- Global Constants --------
 
 STATUS = {
-    'debug' : -1,
-    'stop' : 0,
-    'line tracing' : 1
+    # -- 시스템 제어 --
+    'shutdown' : 27, # ESC
+    'paused' : ord(' '), # Space Bar
+    # -- 디버그 및 조정 --
+    'color_picker' : ord('p'),
+    'color_calibration' : ord('a'),
+    'set_current_color': ord('s'),
+    # -- 통상 모드 --
+    'auto' : ord('0'),
+    # -- 개별 모드 --
+    'line_tracing' : ord('1'), # 라인트레이싱
+    'line_tracing:opening' : ord('2'), # 길뚫
+    'line_tracing:recall' : ord('3'), # 라인으로 복귀
+    'door:push' : ord('4'), # 문
+    'door:shutter' : ord('5'), # 셔터
+    'deliver' : ord('6'), # 파란박스
+    'bridge' : ord('7'), # 다리
+    'limbo' : ord('8'), # 림보
+    'waiting' : ord('9') # 대기
 }
 
 # bandwidth : lower, upper hsv를 파악하는데 사용.
@@ -67,7 +84,12 @@ HIGHLIGHT = {
     'color' : (0,0,255),
     'thickness' : 2
 }
-VIEW_SIZE = { 'width' : 320, 'height' : 240 }
+CURSOR = {
+    'color' : (0x00,0x00,0xFF),
+    'radius' : 5,
+    'thickness' : 2
+}
+
 BPS = 4800
 
 
@@ -75,36 +97,13 @@ WINNAME = {
     'main' : 'main',
     'mask' : 'mask'
 }
-KEY = {
-    'esc' : 27,
-    'spacebar' : ord(' '),
-    '0' : ord('0'),
-    '1' : ord('1'),
-    '2' : ord('2'),
-    '3' : ord('3'),
-    '4' : ord('4'),
-    '5' : ord('5')
-}
 
 # -------- Global Variables --------
 
-current_color = 'blue'
+current_color = 'yellow'
+current_status = STATUS['auto']
 
 # ============================================================
-
-serial_use = False
-serial_port =  None
-
-system_pause = False
-
-#-----------------------------------------------
-def nothing(x):
-    pass
-#-----------------------------------------------
-def create_blank(width, height):
-    image = np.zeros((height, width, 3), dtype=np.uint8)
-    return image
-#-----------------------------------------------
 def color_detection(image, color_reference):
     lower = color_reference['hsv_lower']
     upper = color_reference['hsv_upper']
@@ -118,9 +117,6 @@ def color_detection(image, color_reference):
     
     return mask
 #-----------------------------------------------
-def putText(image, pos, text):
-    x,y = pos
-    cv2.putText(image, text, (x+16, y+16), cv2.FONT_HERSHEY_PLAIN, 1, (0xFF,0xFF,0xFF), thickness = 1, lineType=cv2.LINE_AA)
 
 # **************************************************
 # **************************************************
@@ -133,183 +129,226 @@ def putText(image, pos, text):
 # 84022014
 
 if __name__ == '__main__':
-    # -------- User Setting --------
-    BPS =  4800  # 4800,9600,14400, 19200,28800, 57600, 115200
+    pass
+
+# -------- User Setting --------
+BPS =  4800  # 4800,9600,14400, 19200,28800, 57600, 115200
+
+# -------- Camera Load --------
+video = cv2.VideoCapture(0)
+time.sleep(0.5)
+
+if not video.isOpened():
+    raise Exception("Could not open video device")
+
+video.set(cv2.CAP_PROP_FRAME_WIDTH,  320)
+video.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
+
+print('Camera loaded.')
+# -------- Serial Setting --------
+serial_use = False
+serial_port =  None
+
+if serial_use: #? Serial 통신 활성화 시, 미리 버퍼를 클리어
+    serial_port = serial.Serial('/dev/ttyAMA0', BPS, timeout=0.001)
+    serial_port.flush() # serial cls
+
+print('Serial setting done.')
+# -------- Screen Setting --------
+FRAME_HEIGHT, FRAME_WIDTH = video.read()[1].shape[:2]
+FRAME_CENTER = (FRAME_WIDTH//2, FRAME_HEIGHT//2)
+
+SCREEN_PADDING = 32
+SCREEN_HEIGHT, SCREEN_WIDTH = (FRAME_HEIGHT + 2*SCREEN_PADDING, FRAME_WIDTH)
+SCREEN_CENTER = (SCREEN_WIDTH//2, SCREEN_HEIGHT//2)
+
+SCREEN_FRAME_AREA = (
+    # HEIGHT
+    SCREEN_PADDING,
+    FRAME_HEIGHT+SCREEN_PADDING,
+    # WIDTH
+    0,
+    FRAME_WIDTH
+)
+
+SCREEN_BLACK = np.zeros((SCREEN_HEIGHT,SCREEN_WIDTH,3), dtype=np.uint8)
+
+main_frame = None
+
+def frame_top_text(text):
+    global main_frame
+    cv2.putText(main_frame, text, (4, 16), cv2.FONT_HERSHEY_PLAIN, 1, (0xFF,0xFF,0xFF), thickness = 1)
+
+def frame_bottom_text(text):
+    global main_frame, SCREEN_HEIGHT, SCREEN_PADDING
+    cv2.putText(main_frame, text, (4, SCREEN_HEIGHT-SCREEN_PADDING+16), cv2.FONT_HERSHEY_PLAIN, 1, (0xFF,0xFF,0xFF), thickness = 1)
+
+cv2.namedWindow(WINNAME['main'])
+cv2.namedWindow(WINNAME['mask'])
+
+print('Screen setting done : %dx%d' % (FRAME_WIDTH,FRAME_HEIGHT))
+# -------- Debug Preset --------
+
+SHOW_TRACKBAR = False
+
+if SHOW_TRACKBAR:
     
-    # -------- Camera Load --------
-    video = cv2.VideoCapture(0)
-    time.sleep(0.5)
+    DEBUG_H_MAX = 360
+    DEBUG_SV_MAX = 100
 
-    if not video.isOpened():
-        raise Exception("Could not open video device")
-    
-    video.set(cv2.CAP_PROP_FRAME_WIDTH,  VIEW_SIZE['width'])
-    video.set(cv2.CAP_PROP_FRAME_HEIGHT, VIEW_SIZE['height'])
-
-    # -------- Serial Setting --------
-    serial_use = False # DEBUG
-
-    if serial_use: #? Serial 통신 활성화 시, 미리 버퍼를 클리어
-       serial_port = serial.Serial('/dev/ttyAMA0', BPS, timeout=0.001)
-       serial_port.flush() # serial cls
-
-    # -------- Screen Setting --------
-    cv2.namedWindow(WINNAME['main'])
-    cv2.namedWindow(WINNAME['mask'])
-
-    # -------- Debug Preset --------
-    debug_colors = ['red', 'blue', 'yellow', 'white', 'black']
-    debug_count = 0
-    debug_color_adjust = 0
-
-    SHOW_TRACKBAR = True
-
-    if SHOW_TRACKBAR:
+    def changeRef(colorname, keyname, hsv_select, value):
+        global COLOR_REF
+        global DEBUG_H_MAX, DEBUG_SV_MAX
+        h,s,v = COLOR_REF[colorname][keyname]
+        new_hsv = None
+        if hsv_select is 'h':
+            new_hsv = (value * 255 // DEBUG_H_MAX, s, v)
+        elif hsv_select is 's':
+            new_hsv = (h, value * 255 // DEBUG_SV_MAX, v)
+        elif hsv_select is 'v':
+            new_hsv = (h, s, value * 255 // DEBUG_SV_MAX)
         
-        DEBUG_H_MAX = 360
-        DEBUG_SV_MAX = 100
+        COLOR_REF[colorname][keyname] = new_hsv
 
-        def changeRef(colorname, keyname, hsv_select, value):
-            global COLOR_REF
-            global DEBUG_H_MAX, DEBUG_SV_MAX
-            h,s,v = COLOR_REF[colorname][keyname]
-            new_hsv = None
-            if hsv_select is 'h':
-                new_hsv = (value * 255 // DEBUG_H_MAX, s, v)
-            elif hsv_select is 's':
-                new_hsv = (h, value * 255 // DEBUG_SV_MAX, v)
-            elif hsv_select is 'v':
-                new_hsv = (h, s, value * 255 // DEBUG_SV_MAX)
-            
-            COLOR_REF[colorname][keyname] = new_hsv
+        if 'next' in COLOR_REF[colorname]:
+            nextcolorname = COLOR_REF[colorname]['next']
+            changeRef(nextcolorname, keyname, hsv_select, value)
 
-            if 'next' in COLOR_REF[colorname]:
-                nextcolorname = COLOR_REF[colorname]['next']
-                changeRef(nextcolorname, keyname, hsv_select, value)
 
-        def onDebugTrackbar_Change(x):
-            global debug_color_adjust
-            debug_color_adjust = x
+    cv2.createTrackbar('DEBUG', WINNAME['main'],0x00,0xFF, onDebugTrackbar_Change)
 
-        cv2.createTrackbar('DEBUG', WINNAME['main'],0x00,0xFF, onDebugTrackbar_Change)
+current_status = STATUS['line_tracing']
 
-    current_status = STATUS['line tracing']
+# -------- Main Loop Start --------
+print('Start main loop!')
+while True:
+    # -------- Check Context --------
+    # TODO : 현재 상황을 자동으로 파악 하는 부분
+    # 임시로 키보드로 부터 직접 상황을 입력받음
+    key = cv2.waitKey(1) & 0xFF # 상수 STATUS 참고.
+    current_status = key if key is not 255 else current_status
 
-    # -------- Main Loop Start --------
-    while True:
-        # -------- Toggle System Mode --------
+    # -------- Act: SYSTEM CONFIGURE --------
+    # SHUTDOWN
+    if current_status == STATUS['shutdown']:
+        print('shutdown')
+        break
+
+    # PAUSE
+    elif current_status == STATUS['paused']:
+        frame_bottom_text('PAUSED')
+        cv2.imshow(WINNAME['main'], main_frame)
+        print('paused')
+        continue
+
+    # -------- Grab frames --------
+    next_frame, current_frame = video.read()
+    if not next_frame:
+        break # no more frames to read : EOF
+
+    main_frame = SCREEN_BLACK.copy()
+
+    # -------- Act: DEBUG and CALIBRATION --------
+    # SET CURRENT COLOR
+    if current_status == STATUS['set_current_color']:
+        frame_top_text('SET CURRENT COLOR')
+
+        SELECTABLES = [
+            'red',
+            'blue',
+            'yellow',
+            'white',
+            'black'
+        ]
+        _index = SELECTABLES.index(current_color) + 1
+
+        if not _index < len(SELECTABLES):
+            _index -= len(SELECTABLES)
+
+        current_color = SELECTABLES[_index]
+
+
+
+    # COLOR PICKER
+    elif current_status == STATUS['color_picker']:
+        frame_top_text('COLOR PICKER')
+
+        # -- 커서가 가리키는 HSV 색상 --
+        cv2.circle(current_frame, VIEW_CENTER, CURSOR['radius'], CURSOR['color'], CURSOR['thickness'])
+
+
+        current_frame_hsv = cv2.cvtColor(current_frame, cv2.COLOR_BGR2HSV)
+
+        current_frame[pointer_pos] = HIGHLIGHT['color']
+
+        # -- key hold시, line색상으로 설정 --
         key = cv2.waitKey(1) & 0xFF # '& 0xFF' For python 2.7.10
+        if key is KEY['0']:
+            COLOR_REF['line']['hsv'] = current_frame_hsv[pointer_pos]
+            print('Set line color as : ', COLOR_REF['line']['hsv'])
 
-        if key is KEY['spacebar']:
-            # -- system : pause --
-            system_pause = not system_pause
 
-            if system_pause:
-                print('paused')
-            else:
-                print('resumed')
+        putText(current_frame, (0,0), 'DEBUG MODE')
+        putText(current_frame, (8,16), 'DEBUG MODE')
+        cv2.imshow(WINNAME['main'], current_frame)
 
-        elif key is KEY['esc']:
-            # -- system : exit --
-            break
-
-        elif key is KEY['1']:
-            print('line tracing mode')
-            current_status = STATUS['line tracing']
-
-        elif key is KEY['2']:
-            debug_count = (debug_count + 1) % len(debug_colors)
-            current_color = debug_colors[debug_count]
-            print('set debug color as : ', current_color)
-
-        elif key is KEY['0']:
-            print('debug mode')
-            current_status = STATUS['debug']
-
-        if system_pause:
-            continue
-
-        # -------- Grab frames --------
-        next_frame, current_frame = video.read()
-        if not next_frame:
-            break # no more frames to read : EOF
-
-        # -- Camera filter --
-        FILTER_H = 20
-
-        # -------- Check Context --------
-        # TODO : 현재 상황 파악 하는 부분
-        # current_status = ?
-
-        # -------- Action :: Debug --------
-        if current_status == STATUS['debug']:
-            def color_picker():
-                # -- 커서가 가리키는 HSV 색상 --
-                pointer_pos = (VIEW_SIZE['width']//2, VIEW_SIZE['height']*5//6)
-                current_frame_hsv = cv2.cvtColor(current_frame, cv2.COLOR_BGR2HSV)
-
-                cv2.circle(current_frame, pointer_pos, 5, HIGHLIGHT['color'])
-                current_frame[pointer_pos] = HIGHLIGHT['color']
-
-                # -- key hold시, line색상으로 설정 --
-                key = cv2.waitKey(1) & 0xFF # '& 0xFF' For python 2.7.10
-                if key is KEY['0']:
-                    COLOR_REF['line']['hsv'] = current_frame_hsv[pointer_pos]
-                    print('Set line color as : ', COLOR_REF['line']['hsv'])
-            
-            def hue_adjust():
-                print('adjusting... ')
-                for col in range(VIEW_SIZE['width']):
-                    for row in range(VIEW_SIZE['height']):
-                        pixel = current_frame[row,col]
-                        pixel[2] += debug_color_adjust
-                        if pixel[2] >= 256:
-                            pixel[2] -= 256
-                        current_frame[row,col] = pixel
-                print('Done')
-
-            # -- key hold시, 조정된 이미지 출력 --
-            key = cv2.waitKey(1) & 0xFF # '& 0xFF' For python 2.7.10
-            if key is KEY['0']:
-                hue_adjust()
-                cv2.imshow('Adjusted', current_frame)
-                
-            putText(current_frame, (0,0), 'DEBUG MODE')
-            cv2.imshow(WINNAME['main'], current_frame)
-
-        # -------- Action :: Line Tracing --------
-        elif current_status == STATUS['line tracing']:
-            # TODO : 라인트레이싱 (급함, 우선순위 1)
-
-            line_color = COLOR_REF[current_color]
-
-            # ---- Region of Interest : 관심영역 지정 ----
-            # roi_frame = current_frame[VIEW_SIZE['height']*2//3 : VIEW_SIZE['height'], :]
-            roi_frame = current_frame
-            roi_frame_hsv = cv2.cvtColor(roi_frame, cv2.COLOR_BGR2HSV)
-
-            # ---- Line 검출 ----
-            line_mask = color_detection(roi_frame_hsv, line_color)
-
-            kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3))
-            line_mask = cv2.morphologyEx(line_mask, cv2.MORPH_OPEN, kernel)
-
-            retval = cv2.findContours(line_mask.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            contours,hierarchy = retval[1:3] if cv2.__version__.split('.')[0] == '3' else retval
-            
-            cv2.drawContours(roi_frame,contours,-1,HIGHLIGHT['color'],HIGHLIGHT['thickness'])
-
-            cv2.imshow(WINNAME['mask'], line_mask)
-
-            putText(current_frame, (0,0), 'LINE_TR MODE')
-            putText(current_frame, (0,20), current_color.upper())
-            cv2.imshow(WINNAME['main'], current_frame)
+        def color_picker():
+            pass
         
+        def hue_adjust():
+            print('adjusting... ')
+            _COLOR = 0 # B:0, G:1, R:2
+            for col in range(VIEW_SIZE['width']):
+                for row in range(VIEW_SIZE['height']):
+                    pixel = current_frame[row,col]
+                    pixel[_COLOR] += debug_color_adjust
+                    if pixel[_COLOR] >= 256:
+                        pixel[_COLOR] -= 256
+                    current_frame[row,col] = pixel
+            print('Done')
 
+        # -- key hold시, 조정된 이미지 출력 --
+        key = cv2.waitKey(1) & 0xFF # '& 0xFF' For python 2.7.10
+        if key is KEY['0']:
+            hue_adjust()
+            cv2.imshow('Adjusted', current_frame)
+            
+        putText(current_frame, (0,0), 'DEBUG MODE')
+        cv2.imshow(WINNAME['main'], current_frame)
 
-    # cleanup the camera and close any open windows
-    video.release()
-    cv2.destroyAllWindows()
+    # -------- Act: ORDINARY MODE --------
+    # LINE TRACING
+    elif current_status == STATUS['line_tracing']:
+        frame_top_text('LINE TRACING : (%s)'%(current_color.upper()))
+        
+        # TODO : 라인트레이싱 (급함, 우선순위 1)
+        line_color = COLOR_REF[current_color]
 
-    if serial_use:
-       serial_port.close()
+        # ---- Region of Interest : 관심영역 지정 ----
+        # roi_frame = current_frame[VIEW_SIZE['height']*2//3 : VIEW_SIZE['height'], :]
+        roi_frame = current_frame
+        roi_frame_hsv = cv2.cvtColor(roi_frame, cv2.COLOR_BGR2HSV)
+
+        # ---- Line 검출 ----
+        line_mask = color_detection(roi_frame_hsv, line_color)
+
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3))
+        line_mask = cv2.morphologyEx(line_mask, cv2.MORPH_OPEN, kernel)
+
+        retval = cv2.findContours(line_mask.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        contours,hierarchy = retval[1:3] if cv2.__version__.split('.')[0] == '3' else retval
+        
+        cv2.drawContours(roi_frame,contours,-1,HIGHLIGHT['color'],HIGHLIGHT['thickness'])
+
+        cv2.imshow(WINNAME['mask'], line_mask)
+
+    # --------- Show Robot's Vision --------
+    main_frame[SCREEN_FRAME_AREA[0]:SCREEN_FRAME_AREA[1],SCREEN_FRAME_AREA[2]:SCREEN_FRAME_AREA[3]] = current_frame
+    cv2.imshow(WINNAME['main'], main_frame)
+
+# cleanup the camera and close any open windows
+video.release()
+cv2.destroyAllWindows()
+
+if serial_use:
+    serial_port.close()
