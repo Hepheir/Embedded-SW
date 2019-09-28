@@ -10,17 +10,20 @@ import math
 
 # CUSTOM =================================================
 
-STATUS = {
-    'debug' : -1,
-    'stop' : 0,
-    'line tracing' : 1
-}
 
 def HSV_Parser(h_deg, s_per, v_per):
     h = h_deg * 255 // 360
     s = s_per * 255 // 100
     v = v_per * 255 // 100
     return h,s,v
+
+# -------- Global Constants --------
+
+STATUS = {
+    'debug' : -1,
+    'stop' : 0,
+    'line tracing' : 1
+}
 
 # bandwidth : lower, upper hsv를 파악하는데 사용.
 COLOR_REF = {
@@ -82,6 +85,10 @@ KEY = {
     '4' : ord('4'),
     '5' : ord('5')
 }
+
+# -------- Global Variables --------
+
+current_color = 'blue'
 
 # ============================================================
 
@@ -151,8 +158,6 @@ if __name__ == '__main__':
     cv2.namedWindow(WINNAME['mask'])
 
     # -------- Debug Preset --------
-    DEBUG_COLOR = 'blue'
-
     debug_colors = ['red', 'blue', 'yellow', 'white', 'black']
     debug_count = 0
     debug_color_adjust = 0
@@ -214,8 +219,8 @@ if __name__ == '__main__':
 
         elif key is KEY['2']:
             debug_count = (debug_count + 1) % len(debug_colors)
-            DEBUG_COLOR = debug_colors[debug_count]
-            print('set debug color as : ', DEBUG_COLOR)
+            current_color = debug_colors[debug_count]
+            print('set debug color as : ', current_color)
 
         elif key is KEY['0']:
             print('debug mode')
@@ -238,8 +243,6 @@ if __name__ == '__main__':
 
         # -------- Action :: Debug --------
         if current_status == STATUS['debug']:
-            putText(current_frame, (0,0), 'DEBUG MODE')
-
             def color_picker():
                 # -- 커서가 가리키는 HSV 색상 --
                 pointer_pos = (VIEW_SIZE['width']//2, VIEW_SIZE['height']*5//6)
@@ -254,8 +257,6 @@ if __name__ == '__main__':
                 if key is KEY['0']:
                     COLOR_REF['line']['hsv'] = current_frame_hsv[pointer_pos]
                     print('Set line color as : ', COLOR_REF['line']['hsv'])
-
-                cv2.imshow(WINNAME['main'], current_frame)
             
             def hue_adjust():
                 for col in range(VIEW_SIZE['width']):
@@ -267,14 +268,15 @@ if __name__ == '__main__':
                         current_frame[row,col] = pixel
 
             hue_adjust()
+
+            putText(current_frame, (0,0), 'DEBUG MODE')
             cv2.imshow(WINNAME['main'], current_frame)
 
         # -------- Action :: Line Tracing --------
         elif current_status == STATUS['line tracing']:
             # TODO : 라인트레이싱 (급함, 우선순위 1)
-            putText(current_frame, (0,0), 'LINE_TR MODE')
 
-            line_color = COLOR_REF[DEBUG_COLOR]
+            line_color = COLOR_REF[current_color]
 
             # ---- Region of Interest : 관심영역 지정 ----
             # roi_frame = current_frame[VIEW_SIZE['height']*2//3 : VIEW_SIZE['height'], :]
@@ -293,6 +295,9 @@ if __name__ == '__main__':
             cv2.drawContours(roi_frame,contours,-1,HIGHLIGHT['color'],HIGHLIGHT['thickness'])
 
             cv2.imshow(WINNAME['mask'], line_mask)
+
+            putText(current_frame, (0,0), 'LINE_TR MODE')
+            putText(current_frame, (0,20), current_color.upper())
             cv2.imshow(WINNAME['main'], current_frame)
         
 
