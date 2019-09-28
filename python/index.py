@@ -364,8 +364,8 @@ while True:
         if max_area > line_min_area:
             dx,dy,x0,y0 = cv2.fitLine(max_cont, cv2.DIST_L2,0,0.01,0.01)
             # (y-y0)dy == (x-x0)dx
-            x_top = int(-y0*dy/dx + x0)
-            x_bot = int((roi_height-y0)*dy/dx + x0)
+            x_top = int(-y0*dx/dy + x0)
+            x_bot = int((roi_height-y0)*dx/dy + x0)
             
             cv2.circle(current_frame, (int(x0),int(y0+roi_y1)), 5, hl_line_color, thickness=2)
             cv2.line(current_frame, (x_top,roi_y1),(x_bot,roi_y2), hl_line_color, 1)
