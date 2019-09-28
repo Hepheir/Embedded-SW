@@ -162,6 +162,8 @@ if __name__ == '__main__':
     debug_count = 0
     debug_color_adjust = 0
 
+    debug_adjusted = False
+
     SHOW_TRACKBAR = True
 
     if SHOW_TRACKBAR:
@@ -189,7 +191,9 @@ if __name__ == '__main__':
 
         def onDebugTrackbar_Change(x):
             global debug_color_adjust
+            global debug_adjusted
             debug_color_adjust = x
+            debug_adjusted = False
 
         cv2.createTrackbar('DEBUG', WINNAME['main'],0x00,0xFF, onDebugTrackbar_Change)
 
@@ -267,10 +271,10 @@ if __name__ == '__main__':
                             pixel[2] -= 256
                         current_frame[row,col] = pixel
 
-            hue_adjust()
-
-            putText(current_frame, (0,0), 'DEBUG MODE')
-            cv2.imshow(WINNAME['main'], current_frame)
+            if not debug_adjusted:
+                hue_adjust()
+                putText(current_frame, (0,0), 'DEBUG MODE')
+                cv2.imshow(WINNAME['main'], current_frame)
 
         # -------- Action :: Line Tracing --------
         elif current_status == STATUS['line tracing']:
