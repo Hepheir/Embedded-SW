@@ -55,7 +55,7 @@ COLOR_REF = {
         'minArea' : 40
     },
     'yellow' : {
-        'hsv_lower' : HSV_Parser(30,40,40),
+        'hsv_lower' : HSV_Parser(30,60,45),
         'hsv_upper' : HSV_Parser(50,100,100),
         'minArea' : 50
     },
@@ -102,6 +102,7 @@ WINNAME = {
 
 current_color = 'yellow'
 current_status = STATUS['auto']
+onStatusChange = False
 
 # ============================================================
 def color_detection(image, color_reference):
@@ -226,7 +227,11 @@ while True:
     # TODO : 현재 상황을 자동으로 파악 하는 부분
     # 임시로 키보드로 부터 직접 상황을 입력받음
     key = cv2.waitKey(1) & 0xFF # 상수 STATUS 참고.
-    current_status = key if key is not 255 else current_status
+    if key is not 255:
+        current_status = key
+        onStatusChange = True
+    else:
+        onStatusChange = False
 
     # -------- Act: SYSTEM CONFIGURE --------
     # SHUTDOWN
@@ -260,14 +265,16 @@ while True:
             'white',
             'black'
         ]
-        _index = SELECTABLES.index(current_color) + 1
 
-        if not _index < len(SELECTABLES):
-            _index -= len(SELECTABLES)
+        if onStatusChange:
+            _index = SELECTABLES.index(current_color) + 1
 
-        current_color = SELECTABLES[_index]
+            if not _index < len(SELECTABLES):
+                _index -= len(SELECTABLES)
 
+            current_color = SELECTABLES[_index]
 
+        frame_bottom_text('CURRENT COLOR : %s'%(current_color))
 
     # COLOR PICKER
     elif current_status == STATUS['color_picker']:
@@ -322,23 +329,42 @@ while True:
         frame_top_text('LINE TRACING : (%s)'%(current_color.upper()))
         
         # TODO : 라인트레이싱 (급함, 우선순위 1)
-        line_color = COLOR_REF[current_color]
+        roi_box = ( # 관심영역 (x1,y1, x2,y2)
+            0,FRAME_HEIGHT*2//3,
+            FRAME_WIDTH,FRAME_HEIGHT
+        )
+        line_color_ref = COLOR_REF[current_color] # 라인 색상
+        line_min_area = 50
+
+        hl_roi_box_color = (0x00,0xFF,0x00) # 관심영역 표기 색상
+        hl_line_color = (0xFF,0x00,0xFF) # 경로 표기 색상
 
         # ---- Region of Interest : 관심영역 지정 ----
-        # roi_frame = current_frame[VIEW_SIZE['height']*2//3 : VIEW_SIZE['height'], :]
-        roi_frame = current_frame
+        roi_frame = current_frame[roi_box[1]:roi_box[3],roi_box[0]:roi_box[2]]
         roi_frame_hsv = cv2.cvtColor(roi_frame, cv2.COLOR_BGR2HSV)
 
-        # ---- Line 검출 ----
-        line_mask = color_detection(roi_frame_hsv, line_color)
-
-        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3,3))
-        line_mask = cv2.morphologyEx(line_mask, cv2.MORPH_OPEN, kernel)
-
-        retval = cv2.findContours(line_mask.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        contours,hierarchy = retval[1:3] if cv2.__version__.split('.')[0] == '3' else retval
+        cv2.rectangle(current_frame, (roi_box[0],roi_box[1]), (roi_box[2],roi_box[3]),hl_roi_box_color,thickness=1)
         
-        cv2.drawContours(roi_frame,contours,-1,HIGHLIGHT['color'],HIGHLIGHT['thickness'])
+        # ---- Line 검출 ----
+        line_mask = color_detection(roi_frame_hsv, line_color_ref)
+        
+        # 모폴로지 연산을 이용하여 노이즈 제거
+        _kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5,5))
+        line_mask = cv2.morphologyEx(line_mask, cv2.MORPH_OPEN, _kernel)
+
+        # 윤곽선 검출
+        contours,hierarchy = cv2.findContours(line_mask.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[-2:]
+        
+        max_cont, max_area = None, 0
+        if len(contours) > 0:
+            max_cont = max(contours, key=cv2.contourArea)
+            max_area = cv2.contourArea(max_cont)
+
+        if max_area > line_min_area:
+            x1,y1,x2,y2 = cv2.fitLine(max_cont, cv2.DIST_L2,0,0.01,0.01)
+            d = (x2-x1)/(y2-y1)
+            cv2.line(current_frame, (x1,y1),(x2,y2), hl_line_color, 1)
+            cv2.drawContours(line_mask,[max_cont],-1,128,-1)
 
         cv2.imshow(WINNAME['mask'], line_mask)
 
