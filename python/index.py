@@ -334,7 +334,7 @@ while True:
         roi_x2,roi_y2 = (FRAME_WIDTH,FRAME_HEIGHT)
 
         line_color_ref = COLOR_REF[current_color] # 라인 색상
-        line_min_area = 50
+        line_min_area = 20
 
         hl_roi_box_color = (0x00,0xFF,0x00) # 관심영역 표기 색상
         hl_line_color = (0xFF,0x00,0xFF) # 경로 표기 색상
@@ -369,6 +369,7 @@ while True:
             cv2.line(current_frame, (x_top,roi_y1),(x_bot,roi_y2), hl_line_color, 1)
             cv2.drawContours(line_mask,[max_cont],-1,128,-1)
 
+        frame_bottom_text('MAX AREA : %d'%(max_area))
         cv2.imshow(WINNAME['mask'], line_mask)
 
     # --------- Show Robot's Vision --------
