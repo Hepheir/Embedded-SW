@@ -356,19 +356,26 @@ while True:
         # 윤곽선 검출
         contours,hierarchy = cv2.findContours(line_mask.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)[-2:]
         
+        # 가장 큰 윤곽선을 찾고, 윤곽선의 면적이 충분히 큰지 검사
         max_cont, max_area = None, 0
         if len(contours) > 0:
             max_cont = max(contours, key=cv2.contourArea)
             max_area = cv2.contourArea(max_cont)
 
         if max_area > line_min_area:
+            # fitLine() 함수를 이용하여 직선을 검출하고 화면에 출력
             dx,dy,x0,y0 = cv2.fitLine(max_cont, cv2.DIST_L2,0,0.01,0.01)
-            # (y-y0)dy == (x-x0)dx
-            x_top = int(-y0*dx/dy + x0)
-            x_bot = int((roi_height-y0)*dx/dy + x0)
             
-            cv2.circle(current_frame, (int(x0),int(y0+roi_y1)), 5, hl_line_color, thickness=2)
-            cv2.line(current_frame, (x_top,roi_y1),(x_bot,roi_y2), hl_line_color, 1)
+            if dy != 0:
+                # (y-y0)/dy == (x-x0)/dx
+                x_top = int(-y0*dx/dy + x0)
+                x_bot = int((roi_height-y0)*dx/dy + x0)
+                
+                cv2.circle(current_frame, (x0,y0+roi_y1), 5, hl_line_color, thickness=2)
+                cv2.line(current_frame, (x_top,roi_y1),(x_bot,roi_y2), hl_line_color, 1)
+            else:
+                print('Could not calculate line. : divide by zero')
+            
             cv2.drawContours(line_mask,[max_cont],-1,128,-1)
 
         frame_bottom_text('MAX AREA : %d [(%d,%d),(%d,%d)]'%(max_area,x_top,roi_y1,x_bot,roi_y2))
