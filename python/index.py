@@ -12,6 +12,7 @@ if __name__ == '__main__':
     BPS = 4800
     serial_use = False
     serial_port = None
+    print('Ver. 0.1')
 
     if serial_use:
         serial_port = serial.Serial('/dev/ttyAMA0', BPS, timeout=0.001)
