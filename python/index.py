@@ -34,6 +34,12 @@ if __name__ == '__main__':
         if not grab:
             break
         cv2.imshow('CAM', frame)
+
+        yuv = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
+        yuv[:,:,0] = cv2.equalizeHist(yuv[:,:,0])
+        bgr = cv2.cvtColor(yuv, cv2.COLOR_YUV2BGR)
+
+        cv2.imshow('EqCAM', bgr)
         cv2.waitKey(1)
         
         
