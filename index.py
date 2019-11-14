@@ -2,7 +2,7 @@
 
 import numpy as np
 import cv2
-import serial
+# import serial
 
 import time
 import math
@@ -30,9 +30,10 @@ if __name__ == '__main__':
     
     print('Start mainloop.')
     while True:
-        frame = video.read()[1]
-        if not frame:
+        grab, frame = video.read()
+        if not grab:
             break
         cv2.imshow('CAM', frame)
+        cv2.waitKey(1)
         
         
