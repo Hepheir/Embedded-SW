@@ -31,18 +31,23 @@ if __name__ == '__main__':
     
     print('Start mainloop.')
     while True:
+        frame = None
+
         grab, now = video.read()
-        if not grab:
-            break
+        if not grab: break
         else:
             frame = cv2.resize(now, RESOLUTION)
             cv2.imshow('CAM', frame)
 
+        
         yuv = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
-        yuv[:,:,0] = cv2.equalizeHist(yuv[:,:,0])
-        bgr = cv2.cvtColor(yuv, cv2.COLOR_YUV2BGR)
+        cv2.imshow('yuv', yuv)
 
-        cv2.imshow('EqCAM', bgr)
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        cv2.imshow('nor hsv', cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR))
+        hsv[:,:,1] = 255*np.ones(RESOLUTION[-1:0])
+        cv2.imshow('adj hsv', cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR))
+
         cv2.waitKey(1)
         
         
