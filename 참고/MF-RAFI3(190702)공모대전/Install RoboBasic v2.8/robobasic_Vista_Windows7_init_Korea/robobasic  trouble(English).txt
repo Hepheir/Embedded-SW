@@ -1,0 +1,63 @@
+Windows Vista & Windows 7 is installed in the Robo-Basic or if they will not run because the other libraries did not register in the registry.
+
+The difference between the 32bit and 64bit Windows OS, accordingly it will have to let you run the patch file.
+
+If you have 32bit OS installed 
+"Robobasic_32bit_OS_init (windows vista, 7). Bat" should be used. 
+
+If you have 64bit OS installed 
+"Robobasic_64bit_OS_init (windows vista, 7). Bat" should be used. 
+
+Must run as administrator, if successful run in the current directory, 
+or if failured the root (C: /) directory, you need to move in the root(c:/)
+normally, run as an administrator to copy in the root (C: /) directory is good way.
+
+and Windows Explorer -> right-click "Run as administrator" through this way by them.
+
+Run the batch file on its command line interface for each routine, you will see the success message 
+If all success of each step is a normal run RoboBasic 
+
+If you are a failured, you must be registered in the individual Registry in the command prompt.
+
+Start -> Programs -> Accessories -> Command Prompt Put your mouse right button click 'Run as administrator' 
+see the menu. ->Selection -> click the 'Command Prompt' To Run.
+
+below by typing the following.
+
+If 32bit OS 
+
+regsvr32 / u c: \ windows \ system32 \ mscomm32.ocx 
+regsvr32 / u c: \ windows \ system32 \ COMCT332.ocx 
+regsvr32 / u c: \ windows \ system32 \ MSCOMCTL.ocx 
+regsvr32 / u c: \ windows \ system32 \ MSCOMCTL.ocx 
+regsvr32 / u c: \ windows \ system32 \ MSINET.ocx 
+regsvr32 / u c: \ windows \ system32 \ COMDLG32.ocx 
+regsvr32 / u c: \ windows \ system32 \ cmcs21.ocx 
+
+
+regsvr32 c: \ windows \ system32 \ mscomm32.ocx 
+regsvr32 c: \ windows \ system32 \ COMCT332.ocx 
+regsvr32 c: \ windows \ system32 \ MSCOMCTL.ocx 
+regsvr32 c: \ windows \ system32 \ MSCOMCTL.ocx 
+regsvr32 c: \ windows \ system32 \ COMDLG32.ocx 
+regsvr32 c: \ windows \ system32 \ MSINET.ocx 
+regsvr32 c: \ windows \ system32 \ cmcs21.ocx 
+
+------------------------------------------- 
+If 64bit OS 
+
+regsvr32 / u c: \ windows \ syswow64 \ mscomm32.ocx 
+regsvr32 / u c: \ windows \ syswow64 \ COMCT332.ocx 
+regsvr32 / u c: \ windows \ syswow64 \ MSCOMCTL.ocx 
+regsvr32 / u c: \ windows \ syswow64 \ MSCOMCTL.ocx 
+regsvr32 / u c: \ windows \ syswow64 \ MSINET.ocx 
+regsvr32 / u c: \ windows \ syswow64 \ COMDLG32.ocx 
+regsvr32 / u c: \ windows \ syswow64 \ cmcs21.ocx 
+
+regsvr32 c: \ windows \ syswow64 \ mscomm32.ocx 
+regsvr32 c: \ windows \ syswow64 \ COMCT332.ocx 
+regsvr32 c: \ windows \ syswow64 \ MSCOMCTL.ocx 
+regsvr32 c: \ windows \ syswow64 \ MSCOMCTL.ocx 
+regsvr32 c: \ windows \ syswow64 \ COMDLG32.ocx 
+regsvr32 c: \ windows \ syswow64 \ MSINET.ocx 
+regsvr32 c: \ windows \ syswow64 \ cmcs21.ocx

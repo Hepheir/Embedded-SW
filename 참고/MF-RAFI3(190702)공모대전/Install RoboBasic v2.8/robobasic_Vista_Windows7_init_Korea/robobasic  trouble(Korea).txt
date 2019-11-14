@@ -1,0 +1,69 @@
+윈도우 비스타 및 윈도우7 에서 로보베이직이 설치는 되었으나 실행이 정상적이지 않을 경우는
+각종 라이브러리가 레지스트리에 등록이 않되어 생기는 문제입니다.
+
+Windows OS별 32bit용과 64bit용으로 구별 되며, 이에 따른 패치파일을 실행 시키셔야 합니다.
+
+32bit OS가 설치된경우에는 
+"robobasic_32bit_OS_init(windows vista,7).bat" 을 사용하셔야 합니다.
+
+64bit OS가 설치된경우에는 
+"robobasic_64bit_OS_init(windows vista,7).bat" 을 사용하셔야 합니다.
+
+여기서 꼭 관리자 권한으로 실행을 하셔야 하며, 현재 디렉토리에서 실행 성공하는 경우도 있지만 
+파일을 루트(C:/) 디렉토리로 카피를 하여 실행 시키셔야 되는 경우도 있습니다.
+일반적으로는 루트(C:/) 디렉토리로 카피를 하여 관리자권한으로 실행 하는것이 좋습니다.
+
+윈도우 탐색기에서 오른쪽 마우스 버튼을 눌러 "관리자권한으로 실행" 이라는 메뉴가 보입니다.
+이를 통하여 실행 하십시요
+위 배치파일을 실행시키시면 각 루틴마다 성공여부 메세지가 뜸니다.
+각 단계별 모두 성공이라면 정상적인 로보베이직 실행이 될겁니다.
+
+
+
+만약 실패가 되는 경우가 있다면, 명령프롬프트에서 개별 레지스트리 등록을 
+하셔야 합니다.
+
+시작-> 프로그램-> 보조프로그램 -> 명령프롬프트에 
+마우스 올려놓고 오른쪽 버튼 누르면 '관리자권한으로 실행' 
+이라는 메뉴가 보입니다. 
+그 늠을 선택, 클릭하고 '명령프롬프트' 를 실행하세요..
+
+아래와 같이 한라인씩 타이핑 하여 실행하면 됩니다.
+
+32bit OS인 경우 
+
+regsvr32 /u c:\windows\system32\mscomm32.ocx 
+regsvr32 /u c:\windows\system32\COMCT332.ocx 
+regsvr32 /u c:\windows\system32\MSCOMCTL.ocx 
+regsvr32 /u c:\windows\system32\MSCOMCTL.ocx 
+regsvr32 /u c:\windows\system32\MSINET.ocx 
+regsvr32 /u c:\windows\system32\COMDLG32.ocx 
+regsvr32 /u c:\windows\system32\cmcs21.ocx
+
+
+regsvr32 c:\windows\system32\mscomm32.ocx 
+regsvr32 c:\windows\system32\COMCT332.ocx 
+regsvr32 c:\windows\system32\MSCOMCTL.ocx 
+regsvr32 c:\windows\system32\MSCOMCTL.ocx 
+regsvr32 c:\windows\system32\COMDLG32.ocx
+regsvr32 c:\windows\system32\MSINET.ocx
+regsvr32 c:\windows\system32\cmcs21.ocx
+
+-------------------------------------------
+64bit OS인 경우 
+
+regsvr32 /u c:\windows\syswow64\mscomm32.ocx 
+regsvr32 /u c:\windows\syswow64\COMCT332.ocx 
+regsvr32 /u c:\windows\syswow64\MSCOMCTL.ocx 
+regsvr32 /u c:\windows\syswow64\MSCOMCTL.ocx 
+regsvr32 /u c:\windows\syswow64\MSINET.ocx 
+regsvr32 /u c:\windows\syswow64\COMDLG32.ocx 
+regsvr32 /u c:\windows\syswow64\cmcs21.ocx
+
+regsvr32 c:\windows\syswow64\mscomm32.ocx 
+regsvr32 c:\windows\syswow64\COMCT332.ocx 
+regsvr32 c:\windows\syswow64\MSCOMCTL.ocx 
+regsvr32 c:\windows\syswow64\MSCOMCTL.ocx 
+regsvr32 c:\windows\syswow64\COMDLG32.ocx
+regsvr32 c:\windows\syswow64\MSINET.ocx
+regsvr32 c:\windows\syswow64\cmcs21.ocx
