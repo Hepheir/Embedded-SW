@@ -82,7 +82,14 @@ if __name__ == '__main__':
 
         key = cv2.waitKey(1)
         if (key == ord(' ')):
-            color += 1
+            cv2.destroyAllWindows()
+            break
+        
+        elif (key == ord('a')):
+            color -= 1
+            print('color', color)
+        elif (key == ord('s')):
+            print('color', color)
 
         # _, hsv_h_l1 = cv2.threshold(hsv[:,:,0], 32, 255, cv2.THRESH_BINARY_INV)
         # _, hsv_s_h3 = cv2.threshold(hsv[:,:,1], 128, 255, cv2.THRESH_BINARY)
