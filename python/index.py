@@ -61,6 +61,7 @@ if __name__ == '__main__':
         red     = cv2.bitwise_and(hsv_h_l1, hsv_s_h3)
 
         cv2.imshow('yellow', yellow)
+        cv2.imshow('hsv_h_l1', hsv_h_l1)
         cv2.imshow('red', red)
 
 
