@@ -49,9 +49,15 @@ if __name__ == '__main__':
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
         key = cv2.waitKey(1)
+        # 0 64 128 192 255
+        LV0, LV1, LV2, LV3, LV4 = (0, 64, 128, 192, 255)
 
-        _, mask = cv2.threshold(hsv[:,:,1], 176, 255, cv2.THRESH_BINARY)
-        cv2.imshow('t', mask)
+        _, hsv_s = cv2.threshold(hsv[:,:,1], LV3, 255, cv2.THRESH_BINARY)
+        _, yuv_v = cv2.threshold(yuv[:,:,2], LV1, 255, cv2.THRESH_BINARY_INV)
+
+        yellow = cv2.bitwise_and(hsv_s, yuv_v)
+
+        cv2.imshow('yellow', yellow)
         cv2.imshow('s', hsv[:,:,1])
 
 
