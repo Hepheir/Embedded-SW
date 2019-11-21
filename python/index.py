@@ -50,7 +50,7 @@ if __name__ == '__main__':
 
         key = cv2.waitKey(1)
 
-        _, mask = cv2.threshold(hsv[:,:,1], 160, 255, cv2.THRESH_BINARY)
+        _, mask = cv2.threshold(hsv[:,:,1], 176, 255, cv2.THRESH_BINARY)
         cv2.imshow('t', mask)
         cv2.imshow('s', hsv[:,:,1])
 
