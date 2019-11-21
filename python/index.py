@@ -53,8 +53,8 @@ if __name__ == '__main__':
         v = yuv[:,:,2]
 
         cv2.imshow('Y', y)
-        cv2.imshow('U', y)
-        cv2.imshow('V', y)
+        cv2.imshow('U', u)
+        cv2.imshow('V', v)
 
         cv2.waitKey(1)
         
