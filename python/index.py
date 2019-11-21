@@ -44,20 +44,19 @@ if __name__ == '__main__':
         else:
             frame = cv2.resize(now, RESOLUTION)
             cv2.imshow('CAM', frame)
-
-        # 
+        
         yuv = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-        cv2.imshow('yuv_Y', yuv[:,:,0])
-        cv2.imshow('yuv_U', yuv[:,:,1])
-        cv2.imshow('yuv_V', yuv[:,:,2])
+        key = cv2.waitKey(1)
 
-        cv2.imshow('hsv_H', hsv[:,:,0])
-        cv2.imshow('hsv_S', hsv[:,:,1])
-        cv2.imshow('hsv_V', hsv[:,:,2])
+        _, mask = cv2.threshold(hsv[:,:,1], 160, 255, cv2.THRESH_BINARY)
+        cv2.imshow('t', mask)
+        cv2.imshow('s', hsv[:,:,1])
 
-        cv2.waitKey(1)
+
+
+
         
 # ******************************************************************
 # ******************************************************************
