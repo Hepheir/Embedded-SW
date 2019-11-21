@@ -55,7 +55,7 @@ if __name__ == '__main__':
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
  
         mask = COLOR.getMask(hsv, color)
-        cv2.imshow('mask', mask)
+        cv2.imshow('MASK', mask)
 
         key = cv2.waitKey(1)
         if (key == ord(' ')):

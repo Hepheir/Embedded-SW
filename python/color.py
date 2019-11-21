@@ -65,4 +65,4 @@ def debugMode(video, resolution):
 
 
         cv2.imshow('CAM', frame)
-        cv2.imshow(winname, mask)
+        cv2.imshow('MASK', mask)
