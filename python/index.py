@@ -48,17 +48,14 @@ if __name__ == '__main__':
         # Read a new frame
         grab, now = video.read()
         if not grab: break
-        else:
-            frame = cv2.resize(now, RESOLUTION)
-            cv2.imshow('CAM', frame)
+        else: frame = cv2.resize(now, RESOLUTION)
         
-        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
  
-        mask = COLOR.getMask(hsv, color)
+        mask = COLOR.getMask(frame, color)
         cv2.imshow('MASK', mask)
 
         key = cv2.waitKey(1)
-        if (key == ord(' ')):
+        if (key == ord('\'')):
             cv2.destroyAllWindows()
             break
         
@@ -71,6 +68,8 @@ if __name__ == '__main__':
 
         elif (key == ord('d')):
             COLOR.debugMode(video, RESOLUTION)
+
+        cv2.imshow('CAM', COLOR.autoSet(frame))
         
 # ******************************************************************
 # ******************************************************************
