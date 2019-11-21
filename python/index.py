@@ -89,6 +89,7 @@ if __name__ == '__main__':
             color -= 1
             print('color', color)
         elif (key == ord('s')):
+            color += 1
             print('color', color)
 
         # _, hsv_h_l1 = cv2.threshold(hsv[:,:,0], 32, 255, cv2.THRESH_BINARY_INV)
