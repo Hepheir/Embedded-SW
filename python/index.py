@@ -9,7 +9,8 @@ import math
 
 if __name__ == '__main__':
     BPS = 4800
-    RESOLUTION = (160, 120) # (120, 90) # 
+    resolution = 50
+    RESOLUTION = (4*resolution, 3*resolution) # (120, 90) # 
     serial_use = False
     serial_port = None
 
