@@ -9,7 +9,7 @@ import math
 
 if __name__ == '__main__':
     BPS = 4800
-    RESOLUTION = (320, 240) # (120, 90) # 
+    RESOLUTION = (160, 120) # (120, 90) # 
     serial_use = False
     serial_port = None
 
@@ -48,13 +48,13 @@ if __name__ == '__main__':
         yuv = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-        y = yuv[:,:,0]
-        u = yuv[:,:,1]
-        v = yuv[:,:,2]
+        cv2.imshow('yuv_Y', yuv[:,:,0])
+        cv2.imshow('yuv_U', yuv[:,:,1])
+        cv2.imshow('yuv_V', yuv[:,:,2])
 
-        cv2.imshow('Y', y)
-        cv2.imshow('U', u)
-        cv2.imshow('V', v)
+        cv2.imshow('hsv_H', hsv[:,:,0])
+        cv2.imshow('hsv_S', hsv[:,:,1])
+        cv2.imshow('hsv_V', hsv[:,:,2])
 
         cv2.waitKey(1)
         
