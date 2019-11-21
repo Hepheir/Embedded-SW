@@ -56,7 +56,7 @@ if __name__ == '__main__':
         _, yuv_v_l1 = cv2.threshold(yuv[:,:,2], 32, 255, cv2.THRESH_BINARY_INV)
 
         yellow  = cv2.bitwise_and(hsv_s_h3, yuv_v_l1)
-        red     = cv2.bitwise_and(hsv_h_l1, hsv_s_h3)
+        red     = cv2.bitwise_xor(yellow, cv2.bitwise_and(hsv_h_l1, hsv_s_h3))
 
         cv2.imshow('yellow', yellow)
         cv2.imshow('hsv_h_l1', hsv_h_l1)
