@@ -9,12 +9,9 @@ import math
 
 #-----------  0:노란색, 1:빨강색, 3:파란색
 
-import order
+# import order
 import color
 import frame as fr
-    
-min_area =  [  50, 50, 50, 10, 10]
-
 
 if __name__ == '__main__':
     BPS = 4800
@@ -44,25 +41,22 @@ if __name__ == '__main__':
 # ******************************************************************
 # ******************************************************************
     print('Start mainloop.')
+    c = 1
     while True:
-        frame = fr.getFrame(video, resolution=RESOLUTION, imshow=False)
+        frame = fr.getFrame(video, resolution=RESOLUTION, imshow=True)
         if frame is None:
             break
 
         key = cv2.waitKey(1)
         if key == 27: # ESC
             break
+        elif key == ord(' '):
+            c = c + 1
+            print('change color (%s)' % color.toString(c))
 
-        cut = fr.printCursor(frame, radius=4, color=(0,255,255))
-        
-        cut_hsv = cv2.cvtColor(cut, cv2.COLOR_BGR2HSV)
-        h,s,v = color.pickColor(cut_hsv)
-        cref = color.pixColorRef([h,s,v])
-        print("%4d %4d %4d %10s"%(h,s,v, color.toString(cref)))
-        
-        cv2.imshow('CUT', cv2.resize(cut,(RESOLUTION[1],RESOLUTION[1])))
-        cv2.imshow('FRAME', frame)
-        cv2.imshow('MASK', color.colorMask(frame, color.YELLOW, useFilter=False))
+        frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        mask = color.colorMask(frame_hsv, c)
+        cv2.imshow('MASK', mask)
 
 cv2.destroyAllWindows()
 print('Exit program')

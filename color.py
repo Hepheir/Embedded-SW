@@ -25,13 +25,7 @@ def nothing(x):
 
 def pickColor(frame):
     channels = cv2.split(frame)
-    means = np.array([int(ch.mean()) for ch in channels])
-
-    variance = np.array([int(ch.var()) for ch in channels])
-    # print('variance: %10.4f %10.4f %10.4f'%(variance[0],variance[1],variance[2]),end='')
-    print(variance.mean())
-
-    return means
+    return np.array([int(ch.mean()) for ch in channels])
 
 def pixColorRef(hsv_pixel):
     h,s,v = hsv_pixel
@@ -51,14 +45,15 @@ def pixColorRef(hsv_pixel):
 
 def colorRange(colorRef):
     # lowerb, upperb of HSV
+    TH1 = 100
     if   colorRef is BLACK:     return [(  0,  0,  0), (255, 80, 80)]
     elif colorRef is GRAY:      return [(  0,  0, 80), (255, 80,192)]
     elif colorRef is WHITE:     return [(  0,  0,192), (255, 80,255)]
 
-    elif colorRef is YELLOW:    return [( 20,120,  0), ( 35,255,255)]
-    elif colorRef is GREEN:     return [( 50,120,  0), ( 80,255,255)]
-    elif colorRef is BLUE:      return [(100,120,  0), (120,255,255)]
-    elif colorRef is RED:       return [(170,120,  0), (180,255,255)]
+    elif colorRef is YELLOW:    return [( 20,TH1,  0), ( 35,255,255)]
+    elif colorRef is GREEN:     return [( 50,TH1,  0), ( 80,255,255)]
+    elif colorRef is BLUE:      return [(100,TH1,  0), (120,255,255)]
+    elif colorRef is RED:       return [(170,TH1,  0), (180,255,255)]
     else:                       return None
 
 def toString(colorRef):
@@ -74,6 +69,10 @@ def toString(colorRef):
 
 def colorMask(frame, colorRef, useFilter=True):
     lowerb, upperb = colorRange(colorRef)
+
+    if useFilter:
+        frame = cv2.GaussianBlur(frame, (5,5), 1)
+
     mask = cv2.inRange(frame, lowerb, upperb)
 
     if useFilter:
