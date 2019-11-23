@@ -3,6 +3,28 @@
 import numpy as np
 import cv2
 
+UNDEF = 0
+BLACK = 1
+WHITE = 2
+GRAY = 3
+RED = 4
+GREEN = 5
+BLUE = 6
+YELLOW = 7
+
+def toString(color):
+    if   color is UNDEF:   return 'undefined'
+    elif color is BLACK:   return 'black'
+    elif color is WHITE:   return 'white'
+    elif color is RED:     return 'red'
+    elif color is GREEN:   return 'green'
+    elif color is BLUE:    return 'blue'
+    elif color is YELLOW:  return 'yellow'
+    else:                  return None
+
+# ******************************************************************
+# ******************************************************************
+# ******************************************************************
 
 # HSV
 YELLOW_ub = [  32, 255, 255 ]
@@ -29,7 +51,28 @@ hsv_lb = np.array([YELLOW_lb, RED_lb, BLUE_lb])
 def nothing(x):
     pass
 
-def getMask(src, color):
+
+def pickColor(frame):
+    channels = cv2.split(frame)
+    return [int(ch.mean()) for ch in channels]
+
+def colorRef(hsv_pixel):
+    h,s,v = hsv_pixel
+    # 무채색
+    if s < 128:
+        if      v <  64:    return BLACK
+        elif    v < 192:    return GRAY
+        else:               return WHITE
+    # 채색
+    else:
+        if       20 < h <  30:  return YELLOW
+        elif    170 < h < 180:  return RED
+        elif    110 < h < 120:  return BLUE
+    # 그 외
+    return UNDEF
+
+
+def getMask(src, color=REF['YELLOW'], color_space='hsv'):
     global hsv_ub, hsv_lb
     hsv = cv2.cvtColor(src, cv2.COLOR_BGR2HSV)
 
@@ -80,8 +123,21 @@ def debugMode(video, resolution):
         cv2.namedWindow(winname)
 
 
-def autoSet(frame):
-    global hsv_ub, hsv_lb, REF
+
+
+
+def huePick(frame, rectColor):
+
+    r = 6
+    x1,y1 = (cx-r, cy-r)
+    x2,y2 = (cx+r, cy+r)
+
+    cv2.rectangle(frame, (x1,y1), (x2,y2), rectColor, 1)
+    cut_hsv = cv2.cvtColor(frame[x1:x2,y1:y2], cv2.COLOR_BGR2HSV)
+    h = int(cut_hsv[:,:,0].mean())
+    return h
+
+def colorSetAuto(frame):
     fh,fw = frame.shape[:2]
     cy, cx = (fh//2, fw//2)
     

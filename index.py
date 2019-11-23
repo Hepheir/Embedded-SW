@@ -9,9 +9,11 @@ import math
 
 #-----------  0:노란색, 1:빨강색, 3:파란색
 
-import color as COLOR
+import color
+import frame as fr
     
 min_area =  [  50, 50, 50, 10, 10]
+
 
 if __name__ == '__main__':
     BPS = 4800
@@ -40,36 +42,40 @@ if __name__ == '__main__':
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
-    color = 0
     print('Start mainloop.')
     while True:
-        frame = None
+        frame = fr.getFrame(video,resolution=RESOLUTION,imshow=False)
+        if frame is None: break
+
+        cut = fr.printCursor(frame,radius=4,color=(0,255,255))
         
-        # Read a new frame
-        grab, now = video.read()
-        if not grab: break
-        else: frame = cv2.resize(now, RESOLUTION)
+        cut_hsv = cv2.cvtColor(cut, cv2.COLOR_BGR2HSV)
+        h,s,v = color.pickColor(cut_hsv)
+        cref = color.colorRef([h,s,v])
+        print("%4d %4d %4d %10s"%(h,s,v, color.toString(cref)))
         
- 
-        mask = COLOR.getMask(frame, color)
-        cv2.imshow('MASK', mask)
+        cv2.imshow('CUT', cut)
+        cv2.imshow('FRAME', frame)
+
+
+        # mask = eye.getMask(frame)
 
         key = cv2.waitKey(1)
-        if (key == ord('\'')):
-            cv2.destroyAllWindows()
-            break
+        # if (key == ord('\'')):
+        #     cv2.destroyAllWindows()
+        #     break
         
-        elif (key == ord('a')):
-            color -= 1
-            print('color', color)
-        elif (key == ord('s')):
-            color += 1
-            print('color', color)
+        # elif (key == ord('a')):
+        #     color -= 1
+        #     print('color', color)
+        # elif (key == ord('s')):
+        #     color += 1
+        #     print('color', color)
 
-        elif (key == ord('d')):
-            COLOR.debugMode(video, RESOLUTION)
+        # elif (key == ord('d')):
+        #     COLOR.debugMode(video, RESOLUTION)
 
-        cv2.imshow('CAM', COLOR.autoSet(frame))
+        # cv2.imshow('CAM', COLOR.autoSet(frame))
         
 # ******************************************************************
 # ******************************************************************
