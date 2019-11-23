@@ -66,7 +66,7 @@ def colorRef(hsv_pixel):
     # 채색
     else:
         if       20 < h <  35:  return YELLOW
-        elif     60 < h <  80:  return GREEN
+        elif     50 < h <  80:  return GREEN
         elif    100 < h < 120:  return BLUE
         elif    170 < h < 180:  return RED
     # 그 외
