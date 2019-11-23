@@ -9,6 +9,7 @@ import math
 
 #-----------  0:노란색, 1:빨강색, 3:파란색
 
+import order
 import color
 import frame as fr
     
@@ -44,7 +45,7 @@ if __name__ == '__main__':
 # ******************************************************************
     print('Start mainloop.')
     while True:
-        frame = fr.getFrame(video,resolution=RESOLUTION,imshow=False)
+        frame = fr.getFrame(video, resolution=RESOLUTION, imshow=False)
         if frame is None:
             break
 
@@ -52,16 +53,18 @@ if __name__ == '__main__':
         if key == 27: # ESC
             break
 
-        cut = fr.printCursor(frame,radius=4,color=(0,255,255))
+        cut = fr.printCursor(frame, radius=4, color=(0,255,255))
         
         cut_hsv = cv2.cvtColor(cut, cv2.COLOR_BGR2HSV)
         h,s,v = color.pickColor(cut_hsv)
-        cref = color.colorRef([h,s,v])
+        cref = color.pixColorRef([h,s,v])
         print("%4d %4d %4d %10s"%(h,s,v, color.toString(cref)))
         
-        cv2.imshow('CUT', cut)
+        cv2.imshow('CUT', cv2.resize(cut,(RESOLUTION[1],RESOLUTION[1])))
         cv2.imshow('FRAME', frame)
+        cv2.imshow('MASK', color.colorMask(frame, color.YELLOW, useFilter=False))
 
+cv2.destroyAllWindows()
 print('Exit program')
 # ******************************************************************
 # ******************************************************************

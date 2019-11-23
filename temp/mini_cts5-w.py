@@ -321,7 +321,7 @@ if __name__ == '__main__':
     #---------------------------
     
     #if serial_use <> 0:
-    #    serial_port = serial.Serial('/dev/ttyAMA0', BPS, timeout=0.001)
+    #    serial_port = serial.Serial('/dev/ttyAMA0', BPS, timeout=0.001) # sudo chmod 666 /dev/ttyAMA0
     #    serial_port.flush() # serial cls
     
     #---------------------------

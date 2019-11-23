@@ -25,17 +25,23 @@ def nothing(x):
 
 def pickColor(frame):
     channels = cv2.split(frame)
-    return [int(ch.mean()) for ch in channels]
+    means = np.array([int(ch.mean()) for ch in channels])
 
-def colorRef(hsv_pixel):
+    variance = np.array([int(ch.var()) for ch in channels])
+    print('variance: %10.4f %10.4f %10.4f'%(variance[0],variance[1],variance[2]),end='')
+    print(' (%10.4f)'%(variance.mean()),end='\t')
+
+    return means
+
+def pixColorRef(hsv_pixel):
     h,s,v = hsv_pixel
     # 무채색
-    if s < 64:
-        if            v <  64:  return BLACK
+    if s < 80:
+        if            v <  80:  return BLACK
         elif          v < 192:  return GRAY
         elif    192 < v:        return WHITE
     # 채색
-    elif 128 < s:
+    elif 100 < s:
         if       20 < h <  35:  return YELLOW
         elif     50 < h <  80:  return GREEN
         elif    100 < h < 120:  return BLUE
@@ -43,16 +49,37 @@ def colorRef(hsv_pixel):
     # 그 외
     return UNDEF
 
-def toString(color):
-    if   color is UNDEF:   return 'undefined'
-    elif color is BLACK:   return 'black'
-    elif color is GRAY:    return 'gray'
-    elif color is WHITE:   return 'white'
-    elif color is RED:     return 'red'
-    elif color is GREEN:   return 'green'
-    elif color is BLUE:    return 'blue'
-    elif color is YELLOW:  return 'yellow'
-    else:                  return None
+def colorRange(colorRef):
+    # lowerb, upperb of HSV
+    if   colorRef is BLACK:     return [(  0,  0,  0), (255, 80, 80)]
+    elif colorRef is GRAY:      return [(  0,  0, 80), (255, 80,192)]
+    elif colorRef is WHITE:     return [(  0,  0,192), (255, 80,255)]
+
+    elif colorRef is YELLOW:    return [( 20,120,  0), ( 35,255,255)]
+    elif colorRef is GREEN:     return [( 50,120,  0), ( 80,255,255)]
+    elif colorRef is BLUE:      return [(100,120,  0), (120,255,255)]
+    elif colorRef is RED:       return [(170,120,  0), (180,255,255)]
+    else:                       return None
+
+def toString(colorRef):
+    if   colorRef is UNDEF:     return 'undefined'
+    elif colorRef is BLACK:     return 'black'
+    elif colorRef is GRAY:      return 'gray'
+    elif colorRef is WHITE:     return 'white'
+    elif colorRef is RED:       return 'red'
+    elif colorRef is GREEN:     return 'green'
+    elif colorRef is BLUE:      return 'blue'
+    elif colorRef is YELLOW:    return 'yellow'
+    else:                       return None
+
+def colorMask(frame, colorRef, useFilter=True):
+    lowerb, upperb = colorRange(colorRef)
+    mask = cv2.inRange(frame, lowerb, upperb)
+
+    if useFilter:
+        mask = cv2.erode(mask, (3,3), iterations=2)
+        mask = cv2.dilate(mask, (3,3), iterations=2)
+    return mask
 
 
 # def getMask(src, color=REF['YELLOW'], color_space='hsv'):
