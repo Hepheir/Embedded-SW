@@ -28,8 +28,8 @@ def pickColor(frame):
     means = np.array([int(ch.mean()) for ch in channels])
 
     variance = np.array([int(ch.var()) for ch in channels])
-    print('variance: %10.4f %10.4f %10.4f'%(variance[0],variance[1],variance[2]),end='')
-    print(' (%10.4f)'%(variance.mean()),end='\t')
+    # print('variance: %10.4f %10.4f %10.4f'%(variance[0],variance[1],variance[2]),end='')
+    print(variance.mean())
 
     return means
 
