@@ -45,7 +45,12 @@ if __name__ == '__main__':
     print('Start mainloop.')
     while True:
         frame = fr.getFrame(video,resolution=RESOLUTION,imshow=False)
-        if frame is None: break
+        if frame is None:
+            break
+
+        key = cv2.waitKey(1)
+        if key == 27: # ESC
+            break
 
         cut = fr.printCursor(frame,radius=4,color=(0,255,255))
         
@@ -57,26 +62,7 @@ if __name__ == '__main__':
         cv2.imshow('CUT', cut)
         cv2.imshow('FRAME', frame)
 
-
-        # mask = eye.getMask(frame)
-
-        key = cv2.waitKey(1)
-        # if (key == ord('\'')):
-        #     cv2.destroyAllWindows()
-        #     break
-        
-        # elif (key == ord('a')):
-        #     color -= 1
-        #     print('color', color)
-        # elif (key == ord('s')):
-        #     color += 1
-        #     print('color', color)
-
-        # elif (key == ord('d')):
-        #     COLOR.debugMode(video, RESOLUTION)
-
-        # cv2.imshow('CAM', COLOR.autoSet(frame))
-        
+print('Exit program')
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
