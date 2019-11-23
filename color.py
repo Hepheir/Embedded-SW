@@ -15,6 +15,7 @@ YELLOW = 7
 def toString(color):
     if   color is UNDEF:   return 'undefined'
     elif color is BLACK:   return 'black'
+    elif color is GRAY:    return 'gray'
     elif color is WHITE:   return 'white'
     elif color is RED:     return 'red'
     elif color is GREEN:   return 'green'
@@ -51,7 +52,6 @@ hsv_lb = np.array([YELLOW_lb, RED_lb, BLUE_lb])
 def nothing(x):
     pass
 
-
 def pickColor(frame):
     channels = cv2.split(frame)
     return [int(ch.mean()) for ch in channels]
@@ -60,14 +60,14 @@ def colorRef(hsv_pixel):
     h,s,v = hsv_pixel
     # 무채색
     if s < 128:
-        if      v <  64:    return BLACK
-        elif    v < 192:    return GRAY
-        else:               return WHITE
+        if            v <  64:  return BLACK
+        elif          v < 192:  return GRAY
+        elif    192 < v:        return WHITE
     # 채색
     else:
-        if       20 < h <  30:  return YELLOW
+        if       20 < h <  35:  return YELLOW
         elif    170 < h < 180:  return RED
-        elif    110 < h < 120:  return BLUE
+        elif    100 < h < 120:  return BLUE
     # 그 외
     return UNDEF
 
