@@ -31,14 +31,6 @@ if __name__ == '__main__':
     else:
         print('Serial \tdisabled.')
 
-    # Load camera
-    video = cv2.VideoCapture(0)
-    if video.isOpened():
-        video.set(cv2.CAP_PROP_FRAME_WIDTH,  RESOLUTION[0])
-        video.set(cv2.CAP_PROP_FRAME_HEIGHT, RESOLUTION[1])
-        print('Camera \tloaded.')
-    else:
-        raise Exception("Could not open video device")
     
 # ******************************************************************
 # ******************************************************************
