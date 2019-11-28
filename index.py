@@ -40,10 +40,10 @@ if __name__ == '__main__':
                 cv2.destroyWindow(color.trackBar_winname)
 
         if debugMode:
-            hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-            color.trackBar_update(hsv)
+            colorSpace = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
+            color.trackBar_update(colorSpace)
 
-        mask = color.colorMask(frame, color.DETECTABLE_COLORS[cNum])
+        mask = color.colorMask(frame, color.DETECTABLE_COLORS[cNum], useFilter=False)
         cv2.imshow('MASK', mask)
 
         # boundingBoxes = []

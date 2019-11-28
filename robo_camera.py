@@ -2,7 +2,7 @@ import cv2
 
 Video = None
 
-RESOLUTION = (200, 150)
+RESOLUTION = (320, 240)
 CENTER = (100, 75)
 # -----------------------------------------------
 def init():

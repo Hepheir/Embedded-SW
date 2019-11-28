@@ -15,13 +15,12 @@ YELLOW = 7
 
 DETECTABLE_COLORS = [ BLACK, WHITE, GRAY, RED, GREEN, BLUE, YELLOW ]
 
+MIN, MAX = 0, 255
+
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
 
-
-
-# ******************************************************************
 def nothing(x):
     pass
 #-----------------------------------------------
@@ -54,12 +53,12 @@ def toRGB(colorRef):
     # --> 선 그리기에 사용하자.
     if   colorRef is BLACK:     return ( 42, 42, 42) # (0, 0, 0) 으로 해두니 검출 여부조차 알 수 없음...
     elif colorRef is GRAY:      return (128,128,128)
-    elif colorRef is WHITE:     return (255,255,255)
-    elif colorRef is RED:       return (  0,  0,255)
-    elif colorRef is GREEN:     return (  0,255,  0)
-    elif colorRef is BLUE:      return (255,  0,  0)
-    elif colorRef is YELLOW:    return (  0,255,255)
-    else:                       return (  0,  0,255) # Default is RED
+    elif colorRef is WHITE:     return (MAX,MAX,MAX)
+    elif colorRef is RED:       return (MIN,MIN,MAX)
+    elif colorRef is GREEN:     return (MIN,MAX,MIN)
+    elif colorRef is BLUE:      return (MAX,MIN,MIN)
+    elif colorRef is YELLOW:    return (MIN,MAX,MAX)
+    else:                       return (MIN,MIN,MAX) # Default is RED
 #-----------------------------------------------
 def pickColor(frame):
     # 입력된 이미지에 있는 모든 픽셀 값들의 평균을 반환.
@@ -87,22 +86,41 @@ def pixColorRefHSV(hsv_pixel):
 def colorRangeHSV(colorRef):
     # colorRef에 해당하는 색상을 탐지하기 위한 HSV의 범위를 반환.
     #   [ ( lowerb ), ( upperb ) ] of HSV
-    TH1 = 100
-    if   colorRef is BLACK:     return [(  0,  0,  0), (255, 80, 80)]
-    elif colorRef is GRAY:      return [(  0,  0, 80), (255, 80,192)]
-    elif colorRef is WHITE:     return [(  0,  0,192), (255, 80,255)]
+    ____________BYPASS____________ =   [(MIN,MIN,MIN), (MAX,MAX,MAX)] # 이 컬러공간에서는 검출하는데 큰 영향이 없을 경우.
+    ___________NO_COLOR___________ =   [(MIN,MIN,MIN), (MAX, 92,MAX)] # 이 컬러공간에서는 무채색만 분리하는 경우.
+    __________COLOR_PASS__________ =   [(MIN, 72,MIN), (MAX,MAX,MAX)] # 이 컬러공간에서는 채색만 분리하는 경우.
 
-    elif colorRef is YELLOW:    return [( 20,TH1,  0), ( 35,255,255)]
-    elif colorRef is GREEN:     return [( 50,TH1,  0), ( 80,255,255)]
-    elif colorRef is BLUE:      return [(100,TH1,  0), (120,255,255)]
-    # elif colorRef is RED:       return [(170,TH1,  0), (180,255,255)] # UNSTABLE, use YUV not HSV.
-    else:                       return None
+                                       
+    if   colorRef is BLACK:     return ___________NO_COLOR___________
+    elif colorRef is GRAY:      return [(MIN,MIN, 72), (MAX, 81,211)]
+    elif colorRef is WHITE:     return ___________NO_COLOR___________
+
+    elif colorRef is YELLOW:    return [( 20, 40,MIN), ( 35,MAX,MAX)]
+    elif colorRef is GREEN:     return __________COLOR_PASS__________ # [( 40, 40,MIN), (100,MAX,MAX)]
+    elif colorRef is BLUE:      return __________COLOR_PASS__________ # [(100, 40,MIN), (120,MAX,MAX)]
+    elif colorRef is RED:       return __________COLOR_PASS__________ # [(170,TH1,MIN), (180,MAX,MAX)] # UNSTABLE, use YUV not HSV.
+    
+    else:                       return ____________BYPASS____________
 #-----------------------------------------------
 def colorRangeYUV(colorRef):
     # colorRef에 해당하는 색상을 탐지하기 위한 YUV의 범위를 반환.
-    if   colorRef is RED:       return [(  0,107,158), (255,127,214)]
-    else:                       return None
-#-----------------------------------------------
+    ____________BYPASS____________ =   [(MIN,MIN,MIN), (MAX,MAX,MAX)] # 이 컬러공간에서는 검출하는데 큰 영향이 없을 경우.
+
+    if   colorRef is BLACK:     return [(MIN,MIN,MIN), ( 64,MAX,MAX)]
+    elif colorRef is GRAY:      return [( 64,MIN,MIN), (200,MAX,MAX)]
+    elif colorRef is WHITE:     return [(200,MIN,MIN), (MAX,MAX,MAX)]
+
+    elif colorRef is YELLOW:    return ____________BYPASS____________
+    elif colorRef is GREEN:     return [( 32,MIN,MIN), (200,128,128)]
+    elif colorRef is BLUE:      return [( 32,128,MIN), (200,MAX,128)]
+    elif colorRef is RED:       return [( 32,MIN,128), (200,148,MAX)]
+
+    else:                       return ____________BYPASS____________
+
+# ******************************************************************
+# ******************************************************************
+# ******************************************************************
+
 def colorMask(frame, colorRef, useFilter=True):
     # BGR 이미지로부터 colorRef에 해당하는 색을 검출하여 마스크이미지를 반환.
     if type(colorRef) is type(''):
@@ -117,14 +135,13 @@ def colorMask(frame, colorRef, useFilter=True):
     if useFilter:
         frame = cv2.GaussianBlur(frame, (5,5), 1)
     # ----
-    if colorRef is RED:
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
-        lowerb, upperb = colorRangeYUV(colorRef)
-    else:
-        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        lowerb, upperb = colorRangeHSV(colorRef)
+    hsv_lowb, hsv_uppb = colorRangeHSV(colorRef)
+    yuv_lowb, yuv_uppb = colorRangeYUV(colorRef)
     
-    mask = cv2.inRange(frame, lowerb, upperb)
+    hsv_mask = cv2.inRange(cv2.cvtColor(frame,cv2.COLOR_BGR2HSV), hsv_lowb, hsv_uppb)
+    yuv_mask = cv2.inRange(cv2.cvtColor(frame,cv2.COLOR_BGR2YUV), yuv_lowb, yuv_uppb) 
+
+    mask = cv2.bitwise_and(hsv_mask, yuv_mask)
     # ----
     if useFilter:
         mask = cv2.erode(mask, (3,3), iterations=2)
@@ -132,18 +149,21 @@ def colorMask(frame, colorRef, useFilter=True):
 
     # 그냥 넣어본 기능 (마스크에 색 입히기)
     canvas = np.zeros(frame.shape, dtype=np.uint8)
-    color = toRGB(colorRef)
-    canvas[:,:] = color
+    canvas[:,:] = toRGB(colorRef)
     mask = cv2.bitwise_and(canvas, canvas, mask=mask)
 
     return mask
-#-----------------------------------------------
+
+# ******************************************************************
+# ******************************************************************
+# ******************************************************************
+
 trackBar_winname = None
 trackBar_varnames = [
     'max_0', 'min_0',
     'max_1', 'min_1',
     'max_2', 'min_2']
-
+#--------
 def trackBar_init(winname='trackBars'):
     global trackBar_winname
     global trackBar_varnames
@@ -152,8 +172,8 @@ def trackBar_init(winname='trackBars'):
     cv2.namedWindow(trackBar_winname)
 
     for name in trackBar_varnames:
-        cv2.createTrackbar(name, trackBar_winname, 0, 255, nothing)
-
+        cv2.createTrackbar(name, trackBar_winname, MIN, MAX, nothing)
+#--------
 def trackBar_update(frame):
     global trackBar_winname
     global trackBar_varnames
