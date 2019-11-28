@@ -36,9 +36,12 @@ if __name__ == '__main__':
             debugMode = not debugMode
             if debugMode:
                 color.trackBar_init()
+            else:
+                cv2.destroyWindow(color.trackBar_winname)
 
         if debugMode:
-            color.trackBar_update(frame)
+            hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+            color.trackBar_update(hsv)
 
         mask = color.colorMask(frame, color.DETECTABLE_COLORS[cNum])
         cv2.imshow('MASK', mask)
