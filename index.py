@@ -26,11 +26,13 @@ if __name__ == '__main__':
         canvas = 42 * np.ones(frame.shape, dtype=np.uint8)
 
         mask = color.colorMask(frame, color.GREEN)
+        areas = [cv2.contourArea(cont) for cont in cv2.findContours(mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)[-2]]
+
+        if len(areas) > 0 and max(areas) > 50:
+            serial.TX_data(10)
         
         cv2.imshow('MASK', mask)
 
-        if mask.any():
-            serial.TX_data(10)
 
         # for c in color.DETECTABLE_COLORS:
         #     mask = color.colorMask(frame, c, useFilter=True)
