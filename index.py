@@ -32,17 +32,19 @@ if __name__ == '__main__':
         for c in color.DETECTABLE_COLORS:
             mask = color.colorMask(frame, c, useFilter=True)
 
+            pix = 1/len(color.DETECTABLE_COLORS) * np.array(color.toRGB(c))
+
             pallete = np.zeros(frame.shape, dtype=np.uint8)
-            pallete[:,:] = 1/len(color.DETECTABLE_COLORS) * np.array(color.toRGB(c))
-            pallete = cv2.add(pallete, pallete, mask=mask)
+            pallete[:,:] = pix
+            pallete = cv2.bitwise_and(pallete, pallete, mask=mask)
             canvas = cv2.add(canvas, pallete)
 
-            contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
-            for cont in contours:
-                if cv2.contourArea(cont) < 50:
-                    continue
-                x,y,w,h = cv2.boundingRect(cont)
-                cv2.rectangle(canvas, (x,y), (x+w, y+h), color.toRGB(c), 2)
+            # contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+            # for cont in contours:
+            #     if cv2.contourArea(cont) < 30:
+            #         continue
+            #     x,y,w,h = cv2.boundingRect(cont)
+            #     cv2.rectangle(canvas, (x,y), (x+w, y+h), color.toRGB(c), 2)
         
         cv2.imshow('Objects', canvas)
 
