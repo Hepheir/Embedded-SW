@@ -82,12 +82,12 @@ def colorMask(frame, colorRef, useFilter=True):
     if type(colorRef) is type(''):
         colorRef = toRef(colorRef)
 
-    hsv_lowerb, hsv_upperb = colorRangeHSV(colorRef)
+    lowerb, upperb = colorRangeHSV(colorRef)
 
     if useFilter:
         frame = cv2.GaussianBlur(frame, (5,5), 1)
 
-    hsv_mask = cv2.inRange(frame, hsv_lowerb, hsv_upperb)
+    mask = cv2.inRange(frame, lowerb, upperb)
 
     if useFilter:
         mask = cv2.erode(mask, (3,3), iterations=2)
