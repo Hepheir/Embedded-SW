@@ -3,6 +3,7 @@
 import numpy as np
 import cv2
 
+# 색상 상수
 UNDEF = 0
 BLACK = 1
 WHITE = 2
@@ -12,6 +13,8 @@ GREEN = 5
 BLUE = 6
 YELLOW = 7
 
+DETECTABLE_COLORS = [ BLACK, WHITE, GRAY, RED, GREEN, BLUE, YELLOW ]
+
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
@@ -19,44 +22,11 @@ YELLOW = 7
 
 
 # ******************************************************************
-
 def nothing(x):
     pass
-
-def pickColor(frame):
-    channels = cv2.split(frame)
-    return np.array([int(ch.mean()) for ch in channels])
-
-def pixColorRef(hsv_pixel):
-    h,s,v = hsv_pixel
-    # 무채색
-    if s < 80:
-        if            v <  80:  return BLACK
-        elif          v < 192:  return GRAY
-        elif    192 < v:        return WHITE
-    # 채색
-    elif 100 < s:
-        if       20 < h <  35:  return YELLOW
-        elif     50 < h <  80:  return GREEN
-        elif    100 < h < 120:  return BLUE
-        elif    170 < h < 180:  return RED
-    # 그 외
-    return UNDEF
-
-def colorRangeHSV(colorRef):
-    # lowerb, upperb of HSV
-    TH1 = 100
-    if   colorRef is BLACK:     return [(  0,  0,  0), (255, 80, 80)]
-    elif colorRef is GRAY:      return [(  0,  0, 80), (255, 80,192)]
-    elif colorRef is WHITE:     return [(  0,  0,192), (255, 80,255)]
-
-    elif colorRef is YELLOW:    return [( 20,TH1,  0), ( 35,255,255)]
-    elif colorRef is GREEN:     return [( 50,TH1,  0), ( 80,255,255)]
-    elif colorRef is BLUE:      return [(100,TH1,  0), (120,255,255)]
-    elif colorRef is RED:       return [(170,TH1,  0), (180,255,255)]
-    else:                       return None
-
+#-----------------------------------------------
 def toString(colorRef):
+    # 상수로 주어진 색상 정보를 문자열로 변경하여 반환.
     if   colorRef is UNDEF:     return 'undefined'
     elif colorRef is BLACK:     return 'black'
     elif colorRef is GRAY:      return 'gray'
@@ -66,146 +36,131 @@ def toString(colorRef):
     elif colorRef is BLUE:      return 'blue'
     elif colorRef is YELLOW:    return 'yellow'
     else:                       return None
-
+#-----------------------------------------------
 def toRef(string):
-    if   string is 'undefined': return UNDEF
-    elif string is 'black':     return BLACK
-    elif string is 'gray':      return GRAY
-    elif string is 'white':     return WHITE
-    elif string is 'red':       return RED
-    elif string is 'green':     return GREEN
-    elif string is 'blue':      return BLUE
-    elif string is 'yellow':    return YELLOW
+    # 문자열로 주어진 색상 정보를 상수로 변경하여 반환.
+    if   string == 'undefined': return UNDEF
+    elif string == 'black':     return BLACK
+    elif string == 'gray':      return GRAY
+    elif string == 'white':     return WHITE
+    elif string == 'red':       return RED
+    elif string == 'green':     return GREEN
+    elif string == 'blue':      return BLUE
+    elif string == 'yellow':    return YELLOW
     else:                       return None
+#-----------------------------------------------
+def toRGB(colorRef):
+    # 잡탕 유틸리티 함수 : colorRef에 해당하는 색을 BGR로 반환.
+    # --> 선 그리기에 사용하자.
+    if   colorRef is BLACK:     return (  0,  0,  0)
+    elif colorRef is GRAY:      return (128,128,128)
+    elif colorRef is WHITE:     return (255,255,255)
+    elif colorRef is RED:       return (  0,  0,255)
+    elif colorRef is GREEN:     return (  0,255,  0)
+    elif colorRef is BLUE:      return (255,  0,  0)
+    elif colorRef is YELLOW:    return (  0,255,255)
+    else:                       return (  0,  0,255) # Default is RED
+#-----------------------------------------------
+def pickColor(frame):
+    # 입력된 이미지에 있는 모든 픽셀 값들의 평균을 반환.
+    # (예: RGB의 경우 R평균, G평균, B평균을 각각 따로 계산하여 반환)
+    channels = cv2.split(frame)
+    return np.array([int(ch.mean()) for ch in channels])
+#-----------------------------------------------
+def pixColorRefHSV(hsv_pixel):
+    # HSV형식으로 입력된 한 픽셀의 색상을 반환.
+    h,s,v = hsv_pixel
+    # - 무채색
+    if s < 80:
+        if            v <  80:  return BLACK
+        elif          v < 192:  return GRAY
+        elif    192 < v:        return WHITE
+    # - 채색
+    elif 100 < s:
+        if       20 < h <  35:  return YELLOW
+        elif     50 < h <  80:  return GREEN
+        elif    100 < h < 120:  return BLUE
+        elif    170 < h < 180:  return RED
+    # - 그 외
+    return UNDEF
+#-----------------------------------------------
+def colorRangeHSV(colorRef):
+    # colorRef에 해당하는 색상을 탐지하기 위한 HSV의 범위를 반환.
+    #   [ ( lowerb ), ( upperb ) ] of HSV
+    TH1 = 100
+    if   colorRef is BLACK:     return [(  0,  0,  0), (255, 80, 80)]
+    elif colorRef is GRAY:      return [(  0,  0, 80), (255, 80,192)]
+    elif colorRef is WHITE:     return [(  0,  0,192), (255, 80,255)]
 
+    elif colorRef is YELLOW:    return [( 20,TH1,  0), ( 35,255,255)]
+    elif colorRef is GREEN:     return [( 50,TH1,  0), ( 80,255,255)]
+    elif colorRef is BLUE:      return [(100,TH1,  0), (120,255,255)]
+    # elif colorRef is RED:       return [(170,TH1,  0), (180,255,255)] # UNSTABLE, use YUV not HSV.
+    else:                       return None
+#-----------------------------------------------
+def colorRangeYUV(colorRef):
+    # colorRef에 해당하는 색상을 탐지하기 위한 YUV의 범위를 반환.
+    if   colorRef is RED:       return [(  0,107,158), (255,127,214)]
+    else:                       return None
+#-----------------------------------------------
 def colorMask(frame, colorRef, useFilter=True):
+    # BGR 이미지로부터 colorRef에 해당하는 색을 검출하여 마스크이미지를 반환.
     if type(colorRef) is type(''):
         colorRef = toRef(colorRef)
+    
+    if not colorRef in DETECTABLE_COLORS:
+        print('Undetectable color', colorRef)
+        return np.zeros(frame.shape)
 
-    lowerb, upperb = colorRangeHSV(colorRef)
+    lowerb, upperb = None, None
 
     if useFilter:
         frame = cv2.GaussianBlur(frame, (5,5), 1)
-
+    # ----
+    if colorRef is RED:
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
+        lowerb, upperb = colorRangeYUV(colorRef)
+    else:
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        lowerb, upperb = colorRangeHSV(colorRef)
+    
     mask = cv2.inRange(frame, lowerb, upperb)
-
+    # ----
     if useFilter:
         mask = cv2.erode(mask, (3,3), iterations=2)
         mask = cv2.dilate(mask, (3,3), iterations=2)
+
     return mask
+#-----------------------------------------------
+trackBar_winname = None
+trackBar_varnames = [
+    'max_0', 'min_0',
+    'max_1', 'min_1',
+    'max_2', 'min_2']
+
+def trackBar_init(winname='trackBars'):
+    global trackBar_winname
+    global trackBar_varnames
+
+    trackBar_winname = winname
+    cv2.namedWindow(trackBar_winname)
+
+    for name in trackBar_varnames:
+        cv2.createTrackbar(name, trackBar_winname, 0, 255, nothing)
+
+def trackBar_update(frame):
+    global trackBar_winname
+    global trackBar_varnames
+
+    values = [cv2.getTrackbarPos(name, trackBar_winname) for name in trackBar_varnames]
+    max0, min0, max1, min1, max2, min2 = values
+
+    lowerb = (min0, min1, min2)
+    upperb = (max0, max1, max2)
+
+    mask = cv2.inRange(frame, lowerb, upperb)
+    cv2.imshow(trackBar_winname, mask)
+#-----------------------------------------------
+                
 
 
-
-
-
-# def getMask(src, color=REF['YELLOW'], color_space='hsv'):
-#     global hsv_ub, hsv_lb
-#     hsv = cv2.cvtColor(src, cv2.COLOR_BGR2HSV)
-
-#     mask = cv2.inRange(hsv, hsv_lb[color], hsv_ub[color])
-#     mask = cv2.erode(mask, (3,3), iterations=1)
-#     mask = cv2.dilate(mask, (3,3), iterations=1)
-#     return mask
-
-
-# def debugMode(video, resolution):
-#     frame = None
-#     upperb = None
-#     lowerb = None
-
-#     winname = 'DEBUG'
-#     cv2.namedWindow(winname)
-#     cv2.createTrackbar('H_ub', winname, hsv_ub[0,0], 255, nothing)
-#     cv2.createTrackbar('H_lb', winname, hsv_lb[0,0], 255, nothing)
-
-#     cv2.createTrackbar('S_ub', winname, hsv_ub[0,1], 255, nothing)
-#     cv2.createTrackbar('S_lb', winname, hsv_lb[0,1], 255, nothing)
-
-#     cv2.createTrackbar('V_ub', winname, hsv_ub[0,2], 255, nothing)
-#     cv2.createTrackbar('V_lb', winname, hsv_lb[0,2], 255, nothing)
-
-#     while True:
-#         key = cv2.waitKey(1)
-#         if (key == ord(' ')):
-#             break
-
-#         grab, now = video.read()
-#         if not grab: break
-#         else:
-#             frame = cv2.resize(now, resolution)
-#             cv2.imshow('CAM', frame)
-
-#         upperb = np.array([cv2.getTrackbarPos('H_ub', winname), cv2.getTrackbarPos('S_ub', winname), cv2.getTrackbarPos('V_ub', winname)])
-#         lowerb = np.array([cv2.getTrackbarPos('H_lb', winname), cv2.getTrackbarPos('S_lb', winname), cv2.getTrackbarPos('V_lb', winname)])
-            
-#         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-#         mask = cv2.inRange(hsv, lowerb, upperb)
-#         mask = cv2.erode(mask, (3,3), iterations=2)
-#         mask = cv2.dilate(mask, (3,3), iterations=2)
-
-
-#         cv2.imshow('CAM', frame)
-#         cv2.imshow('MASK', mask)
-#         cv2.namedWindow(winname)
-
-
-
-
-
-# def huePick(frame, rectColor):
-
-#     r = 6
-#     x1,y1 = (cx-r, cy-r)
-#     x2,y2 = (cx+r, cy+r)
-
-#     cv2.rectangle(frame, (x1,y1), (x2,y2), rectColor, 1)
-#     cut_hsv = cv2.cvtColor(frame[x1:x2,y1:y2], cv2.COLOR_BGR2HSV)
-#     h = int(cut_hsv[:,:,0].mean())
-#     return h
-
-# def colorSetAuto(frame):
-#     fh,fw = frame.shape[:2]
-#     cy, cx = (fh//2, fw//2)
-    
-#     r = 6 # 사각형 반지름 : (가로-1)/2
-#     gap = 3*r # 사각형 간격
-#     rects = [
-#         {
-#             'ref' : REF['YELLOW'],
-#             'box_color' : (0, 255, 255), # BGR
-#             'p1' : (cx-(3*r+1)-gap, cy-r),
-#             'p2' : (cx-(r)    -gap, cy+r)
-#         },
-#         {
-#             'ref' : REF['BLUE'],
-#             'box_color' : (255, 0, 0), # BGR
-#             'p1' : (cx-r, cy-r),
-#             'p2' : (cx+r, cy+r)
-#         },
-#         {
-#             'ref' : REF['RED'],
-#             'box_color' : (0, 0, 255), # BGR
-#             'p1' : (cx+(r)    +gap, cy-r),
-#             'p2' : (cx+(3*r+1)+gap, cy+r)
-#         }]
-
-#     update_mode = cv2.waitKey(1) is ord(' ')
-
-#     for rect in rects:
-#         if update_mode:
-#             x1,y1 = rect['p1']
-#             x2,y2 = rect['p2']
-#             ref = rect['ref']
-
-#             cut_h = cv2.cvtColor(frame[x1:x2,y1:y2], cv2.COLOR_BGR2HSV)[:,:,0]
-#             new_color = int(cut_h.mean())
-
-#             hsv_ub[ref,0] = new_color + 8
-#             hsv_lb[ref,0] = new_color - 8
-
-#             print('new color set', rect['ref'], new_color)
-
-#         cv2.rectangle(frame, rect['p1'], rect['p2'], rect['box_color'], 2)
-
-#     return frame
-    

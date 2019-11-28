@@ -9,20 +9,19 @@ import math
 import robo_serial as serial
 import robo_camera as cam
 import robo_color as color
-import frame as fr
-
-
-# Serial = serial.init()
-Video = cam.init()
 
 if __name__ == '__main__':
-    # Load camera
-    
+    # Serial = serial.init()
+    Video = cam.init()
+
+    current_color = color.BLACK
+
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
     print('Start mainloop.')
-    c = 1
+
+    color.trackBar_init(winname='YUV Test')
     while True:
         frame = cam.getFrame(imshow=True)
 
@@ -30,16 +29,14 @@ if __name__ == '__main__':
         if key == 27: # ESC
             break
         elif key == ord(' '):
-            c = c + 1
-            print('change color (%s)' % color.toString(c))
+            current_color +=  1
+            print('change color (%s)' % color.toString(current_color))
 
-        frame_hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        mask = color.colorMask(frame_hsv, c)
-        cv2.imshow('MASK', mask)
-
+        yuv = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
+        color.trackBar_update(yuv)
+# ******************************************************************
+# ******************************************************************
+# ******************************************************************
 cv2.destroyAllWindows()
 print('Exit program')
-# ******************************************************************
-# ******************************************************************
-# ******************************************************************
     
