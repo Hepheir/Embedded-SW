@@ -52,7 +52,7 @@ def toRef(string):
 def toRGB(colorRef):
     # 잡탕 유틸리티 함수 : colorRef에 해당하는 색을 BGR로 반환.
     # --> 선 그리기에 사용하자.
-    if   colorRef is BLACK:     return (  0,  0,  0)
+    if   colorRef is BLACK:     return ( 42, 42, 42) # (0, 0, 0) 으로 해두니 검출 여부조차 알 수 없음...
     elif colorRef is GRAY:      return (128,128,128)
     elif colorRef is WHITE:     return (255,255,255)
     elif colorRef is RED:       return (  0,  0,255)
@@ -129,6 +129,12 @@ def colorMask(frame, colorRef, useFilter=True):
     if useFilter:
         mask = cv2.erode(mask, (3,3), iterations=2)
         mask = cv2.dilate(mask, (3,3), iterations=2)
+
+    # 그냥 넣어본 기능 (마스크에 색 입히기)
+    canvas = np.zeros(frame.shape, dtype=np.uint8)
+    color = toRGB(colorRef)
+    canvas[:,:] = color
+    mask = cv2.bitwise_and(canvas, canvas, mask=mask)
 
     return mask
 #-----------------------------------------------
