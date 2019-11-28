@@ -1,9 +1,21 @@
-import serial
+# -*- coding: utf-8 -*-
 
-SERIAL_ENABLE = False
+SERIAL_ENABLE = True
 
 BPS =  4800  # 4800,9600,14400, 19200,28800, 57600, 115200
 SERIAL_PORT = None
+
+#-----------------------------------------------
+
+try:
+    import serial
+except:
+    print('Could not find module <serial>')
+    SERIAL_ENABLE = False
+
+#-----------------------------------------------
+
+
 
 attempts = 0
 
@@ -25,6 +37,7 @@ def RX_data(serial):
         attempts = attempts  + 1
         print("Serial Not Open ",attempts)
     return 0
+
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
@@ -32,5 +45,3 @@ def RX_data(serial):
 if SERIAL_ENABLE:
     SERIAL_PORT = serial.Serial('/dev/ttyAMA0', BPS, timeout=0.001) # sudo chmod 666 /dev/ttyAMA0
     SERIAL_PORT.flush() # serial cls
-    
-    TX_data(SERIAL_PORT, 250)
