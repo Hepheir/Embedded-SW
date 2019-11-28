@@ -3,9 +3,6 @@
 import numpy as np
 import cv2
 
-import time
-import math
-
 import robo_serial as serial
 import robo_camera as cam
 import robo_color as color
@@ -14,10 +11,8 @@ import robo_color as color
 # ******************************************************************
 # ******************************************************************
 if __name__ == '__main__':
-    # Serial = serial.init()
-    Video = cam.init()
-    cNum = 0 # current color : index of color.DETECTABLE_COLORS
-    debugMode = False
+    Serial = serial.init()
+    Video  = cam.init()
 
     print('Start mainloop.')
 # ******************************************************************
@@ -29,6 +24,8 @@ if __name__ == '__main__':
             break
 
         canvas = 42 * np.ones(frame.shape, dtype=np.uint8)
+
+
         for c in color.DETECTABLE_COLORS:
             mask = color.colorMask(frame, c, useFilter=True)
 
@@ -39,6 +36,9 @@ if __name__ == '__main__':
             pallete = cv2.bitwise_and(pallete, pallete, mask=mask)
             canvas = cv2.add(canvas, pallete)
 
+            if c is color.GREEN and mask.any():
+                serial.TX_data(10)
+
             # contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
             # for cont in contours:
             #     if cv2.contourArea(cont) < 30:
@@ -47,12 +47,6 @@ if __name__ == '__main__':
             #     cv2.rectangle(canvas, (x,y), (x+w, y+h), color.toRGB(c), 2)
         
         cv2.imshow('Objects', canvas)
-
-        # # 그냥 넣어본 기능 (마스크에 색 입히기)
-        # if printColor:
-        #     canvas = np.zeros(frame.shape, dtype=np.uint8)
-        #     canvas[:,:] = toRGB(colorRef)
-        #     mask = cv2.bitwise_and(canvas, canvas, mask=mask)
             
 # ******************************************************************
 # ******************************************************************

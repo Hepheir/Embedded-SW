@@ -133,7 +133,7 @@ def colorMask(frame, colorRef, useFilter=True, printColor=False):
     lowerb, upperb = None, None
 
     if useFilter:
-        frame = cv2.GaussianBlur(frame, (5,5), 1)
+        frame = cv2.GaussianBlur(frame, (3,3), 1)
     # ----
     hsv_lowb, hsv_uppb = colorRangeHSV(colorRef)
     yuv_lowb, yuv_uppb = colorRangeYUV(colorRef)
@@ -144,11 +144,11 @@ def colorMask(frame, colorRef, useFilter=True, printColor=False):
     mask = cv2.bitwise_and(hsv_mask, yuv_mask)
     # ----
     if useFilter:
-        mask = cv2.erode(mask, (3,3), iterations=3)
-        mask = cv2.dilate(mask, (3,3), iterations=3)
+        mask = cv2.erode(mask, (3,3), iterations=2)
+        mask = cv2.dilate(mask, (3,3), iterations=2)
 
     return mask
-
+    
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
@@ -182,6 +182,3 @@ def trackBar_update(frame):
     mask = cv2.inRange(frame, lowerb, upperb)
     cv2.imshow(trackBar_winname, mask)
 #-----------------------------------------------
-                
-
-

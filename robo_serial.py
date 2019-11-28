@@ -14,7 +14,8 @@ except:
 def init(bps=4800):
     global Serial
     if not SERIAL_USABLE:
-        raise Exception('Could not find module <serial>')
+        print('[!] Could not find module <serial>')
+        return None
 
     print('Serial initialized.')
     Serial = serial.Serial('/dev/ttyAMA0', bps, timeout=0.001) # sudo chmod 777 /dev/ttyAMA0
