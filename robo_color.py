@@ -67,7 +67,21 @@ def toString(colorRef):
     elif colorRef is YELLOW:    return 'yellow'
     else:                       return None
 
+def toRef(string):
+    if   string is 'undefined': return UNDEF
+    elif string is 'black':     return BLACK
+    elif string is 'gray':      return GRAY
+    elif string is 'white':     return WHITE
+    elif string is 'red':       return RED
+    elif string is 'green':     return GREEN
+    elif string is 'blue':      return BLUE
+    elif string is 'yellow':    return YELLOW
+    else:                       return None
+
 def colorMask(frame, colorRef, useFilter=True):
+    if type(colorRef) is type(''):
+        colorRef = toRef(colorRef)
+
     hsv_lowerb, hsv_upperb = colorRangeHSV(colorRef)
 
     if useFilter:
