@@ -17,6 +17,7 @@ if __name__ == '__main__':
     # Serial = serial.init()
     Video = cam.init()
     cNum = 0 # current color : index of color.DETECTABLE_COLORS
+    debugMode = False
 
     print('Start mainloop.')
 # ******************************************************************
@@ -31,6 +32,13 @@ if __name__ == '__main__':
             if cNum == len(color.DETECTABLE_COLORS):
                 cNum = 0
             print('change color (%s)' % color.toString(color.DETECTABLE_COLORS[cNum]))
+        elif key == ord('d'):
+            debugMode = not debugMode
+            if debugMode:
+                color.trackBar_init()
+
+        if debugMode:
+            color.trackBar_update(frame)
 
         mask = color.colorMask(frame, color.DETECTABLE_COLORS[cNum])
         cv2.imshow('MASK', mask)
