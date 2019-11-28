@@ -2,8 +2,10 @@ import cv2
 
 Video = None
 
-RESOLUTION = (320, 240)
-CENTER = (100, 75)
+RESOLUTION = (200, 150)
+
+CENTER = (RESOLUTION[0]//2, RESOLUTION[1]//2)
+
 # -----------------------------------------------
 def init():
     global Video

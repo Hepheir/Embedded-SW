@@ -3,7 +3,7 @@
 Serial = None # initialize with serial_init()
 
 SERIAL_USABLE = True
-attempts = 0
+failStack = 0
 
 #-----------------------------------------------
 try:
@@ -23,16 +23,29 @@ def init(bps=4800):
     return Serial
 #-----------------------------------------------
 def TX_data(byte):  # one_byte= 0~255
+    global failStack
     if not SERIAL_USABLE:
+        failStack += 1
+        print('[T] Serial is not available', failStack)
         return None
+        
+    failStack = 0
 
+    print('[T] Serial <%d> was sent.' % byte)
     Serial.write(chr(int(byte)))
 #-----------------------------------------------
 def RX_data():
+    global failStack
     if not SERIAL_USABLE:
+        failStack += 1
+        print('[R] Serial is not available', failStack)
         return None
+
+    failStack = 0
 
     if Serial.inWaiting() <= 0:
         return None
     
-    return Serial.read(1)
+    byte = Serial.read(1)
+    print('[R] Serial <%d> was received.' % byte)
+    return byte

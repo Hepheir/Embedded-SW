@@ -25,19 +25,25 @@ if __name__ == '__main__':
 
         canvas = 42 * np.ones(frame.shape, dtype=np.uint8)
 
+        mask = color.colorMask(frame, color.GREEN)
+        
+        cv2.imshow('MASK', mask)
 
-        for c in color.DETECTABLE_COLORS:
-            mask = color.colorMask(frame, c, useFilter=True)
+        if mask.any():
+            serial.TX_data(10)
 
-            pix = 1/len(color.DETECTABLE_COLORS) * np.array(color.toRGB(c))
+        # for c in color.DETECTABLE_COLORS:
+        #     mask = color.colorMask(frame, c, useFilter=True)
 
-            pallete = np.zeros(frame.shape, dtype=np.uint8)
-            pallete[:,:] = pix
-            pallete = cv2.bitwise_and(pallete, pallete, mask=mask)
-            canvas = cv2.add(canvas, pallete)
+        #     pix = 1/len(color.DETECTABLE_COLORS) * np.array(color.toRGB(c))
 
-            if c is color.GREEN and mask.any():
-                serial.TX_data(10)
+        #     pallete = np.zeros(frame.shape, dtype=np.uint8)
+        #     pallete[:,:] = pix
+        #     pallete = cv2.bitwise_and(pallete, pallete, mask=mask)
+        #     canvas = cv2.add(canvas, pallete)
+
+        #     if c is color.GREEN and mask.any():
+        #         serial.TX_data(10)
 
             # contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
             # for cont in contours:
@@ -46,7 +52,7 @@ if __name__ == '__main__':
             #     x,y,w,h = cv2.boundingRect(cont)
             #     cv2.rectangle(canvas, (x,y), (x+w, y+h), color.toRGB(c), 2)
         
-        cv2.imshow('Objects', canvas)
+        # cv2.imshow('Objects', canvas)
             
 # ******************************************************************
 # ******************************************************************
