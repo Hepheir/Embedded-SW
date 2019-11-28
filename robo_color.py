@@ -43,7 +43,7 @@ def pixColorRef(hsv_pixel):
     # 그 외
     return UNDEF
 
-def colorRange(colorRef):
+def colorRangeHSV(colorRef):
     # lowerb, upperb of HSV
     TH1 = 100
     if   colorRef is BLACK:     return [(  0,  0,  0), (255, 80, 80)]
@@ -68,17 +68,20 @@ def toString(colorRef):
     else:                       return None
 
 def colorMask(frame, colorRef, useFilter=True):
-    lowerb, upperb = colorRange(colorRef)
+    hsv_lowerb, hsv_upperb = colorRangeHSV(colorRef)
 
     if useFilter:
         frame = cv2.GaussianBlur(frame, (5,5), 1)
 
-    mask = cv2.inRange(frame, lowerb, upperb)
+    hsv_mask = cv2.inRange(frame, hsv_lowerb, hsv_upperb)
 
     if useFilter:
         mask = cv2.erode(mask, (3,3), iterations=2)
         mask = cv2.dilate(mask, (3,3), iterations=2)
     return mask
+
+
+
 
 
 # def getMask(src, color=REF['YELLOW'], color_space='hsv'):
