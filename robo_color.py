@@ -121,7 +121,7 @@ def colorRangeYUV(colorRef):
 # ******************************************************************
 # ******************************************************************
 
-def colorMask(frame, colorRef, useFilter=True):
+def colorMask(frame, colorRef, useFilter=True, printColor=False):
     # BGR 이미지로부터 colorRef에 해당하는 색을 검출하여 마스크이미지를 반환.
     if type(colorRef) is type(''):
         colorRef = toRef(colorRef)
@@ -144,13 +144,8 @@ def colorMask(frame, colorRef, useFilter=True):
     mask = cv2.bitwise_and(hsv_mask, yuv_mask)
     # ----
     if useFilter:
-        mask = cv2.erode(mask, (3,3), iterations=2)
-        mask = cv2.dilate(mask, (3,3), iterations=2)
-
-    # 그냥 넣어본 기능 (마스크에 색 입히기)
-    canvas = np.zeros(frame.shape, dtype=np.uint8)
-    canvas[:,:] = toRGB(colorRef)
-    mask = cv2.bitwise_and(canvas, canvas, mask=mask)
+        mask = cv2.erode(mask, (3,3), iterations=3)
+        mask = cv2.dilate(mask, (3,3), iterations=3)
 
     return mask
 

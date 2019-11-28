@@ -27,32 +27,31 @@ if __name__ == '__main__':
         key = cv2.waitKey(1)
         if key == 27: # ESC
             break
-        elif key == ord(' '):
-            cNum += 1
-            if cNum == len(color.DETECTABLE_COLORS):
-                cNum = 0
-            print('change color (%s)' % color.toString(color.DETECTABLE_COLORS[cNum]))
-        elif key == ord('d'):
-            debugMode = not debugMode
-            if debugMode:
-                color.trackBar_init()
-            else:
-                cv2.destroyWindow(color.trackBar_winname)
 
-        if debugMode:
-            colorSpace = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
-            color.trackBar_update(colorSpace)
+        canvas = 42 * np.ones(frame.shape, dtype=np.uint8)
+        for c in color.DETECTABLE_COLORS:
+            mask = color.colorMask(frame, c, useFilter=True)
 
-        mask = color.colorMask(frame, color.DETECTABLE_COLORS[cNum], useFilter=False)
-        cv2.imshow('MASK', mask)
+            pallete = np.zeros(frame.shape, dtype=np.uint8)
+            pallete[:,:] = 1/len(color.DETECTABLE_COLORS) * np.array(color.toRGB(c))
+            pallete = cv2.add(pallete, pallete, mask=mask)
+            canvas = cv2.add(canvas, pallete)
 
-        # boundingBoxes = []
-        # for c in color.DETECTABLE_COLORS:
-        #     mask = color.colorMask(frame, c)
-        #     contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
-        #     largestContour = max(contours, key=cv2.contourArea)
-        #     box = cv2.boundingRect(largestContour)
-        #     return box
+            contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+            for cont in contours:
+                if cv2.contourArea(cont) < 50:
+                    continue
+                x,y,w,h = cv2.boundingRect(cont)
+                cv2.rectangle(canvas, (x,y), (x+w, y+h), color.toRGB(c), 2)
+        
+        cv2.imshow('Objects', canvas)
+
+        # # 그냥 넣어본 기능 (마스크에 색 입히기)
+        # if printColor:
+        #     canvas = np.zeros(frame.shape, dtype=np.uint8)
+        #     canvas[:,:] = toRGB(colorRef)
+        #     mask = cv2.bitwise_and(canvas, canvas, mask=mask)
+            
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
