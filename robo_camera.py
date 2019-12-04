@@ -2,7 +2,7 @@ import cv2
 
 Video = None
 
-WIDTH, HEIGHT = (400, 300)
+WIDTH, HEIGHT = (240, 180)
 
 RESOLUTION = (WIDTH, HEIGHT)
 CENTER = (WIDTH//2, HEIGHT//2)

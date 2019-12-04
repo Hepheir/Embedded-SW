@@ -13,7 +13,8 @@ GREEN = 5
 BLUE = 6
 YELLOW = 7
 
-DETECTABLE_COLORS = [ BLACK, WHITE, GRAY, RED, GREEN, BLUE, YELLOW ]
+# 우선순위 순서로 정렬해야 함 (중요한 색상이 앞으로)
+DETECTABLE_COLORS = [ YELLOW, GREEN, BLUE, RED, WHITE, BLACK, GRAY ]
 
 MIN, MAX = 0, 255
 
@@ -110,10 +111,10 @@ def colorRangeYUV(colorRef):
     elif colorRef is GRAY:      return [( 64,MIN,MIN), (200,MAX,MAX)]
     elif colorRef is WHITE:     return [(200,MIN,MIN), (MAX,MAX,MAX)]
 
-    elif colorRef is YELLOW:    return ____________BYPASS____________
+    elif colorRef is YELLOW:    return [( 32,MIN,148), (200,100,240)]
     elif colorRef is GREEN:     return [( 32,MIN,MIN), (200,128,128)]
     elif colorRef is BLUE:      return [( 32,128,MIN), (200,MAX,128)]
-    elif colorRef is RED:       return [( 32,MIN,128), (200,148,MAX)]
+    elif colorRef is RED:       return [( 32,MIN,148), (200,148,MAX)]
 
     else:                       return ____________BYPASS____________
 
@@ -129,8 +130,6 @@ def colorMask(frame, colorRef, useFilter=True):
     if not colorRef in DETECTABLE_COLORS:
         print('Undetectable color', colorRef)
         return np.zeros(frame.shape)
-
-    lowerb, upperb = None, None
 
     if useFilter:
         frame = cv2.GaussianBlur(frame, (3,3), 1)
@@ -148,7 +147,39 @@ def colorMask(frame, colorRef, useFilter=True):
         mask = cv2.dilate(mask, (3,3), iterations=1)
 
     return mask
+#-----------------------------------------------
+def colorMaskAll(frame, useFilter=True):
+    # BGR 이미지로부터 colorRef에 해당하는 색을 검출하여 마스크이미지를 반환.
+    if useFilter:
+        frame = cv2.GaussianBlur(frame, (3,3), 1)
     
+    hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
+    yuv = cv2.cvtColor(frame,cv2.COLOR_BGR2YUV)
+
+    retval = []
+
+    for i in range(len(DETECTABLE_COLORS)):
+        cref = DETECTABLE_COLORS[i]
+
+        hsv_lowb, hsv_uppb = colorRangeHSV(cref)
+        hsv_mask = cv2.inRange(hsv, hsv_lowb, hsv_uppb)
+
+        yuv_lowb, yuv_uppb = colorRangeYUV(cref)
+        yuv_mask = cv2.inRange(yuv, yuv_lowb, yuv_uppb) 
+
+        mask = cv2.bitwise_and(hsv_mask, yuv_mask)
+        
+        # 중복 제거
+        for r, m in retval:
+            nm = cv2.bitwise_not(m)
+            mask = cv2.bitwise_and(mask, nm)
+
+        if useFilter:
+            mask = cv2.erode(mask, (3,3), iterations=1)
+            mask = cv2.dilate(mask, (3,3), iterations=1)
+
+        retval.append((cref, mask))
+    return retval
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
