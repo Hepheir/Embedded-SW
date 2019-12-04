@@ -14,7 +14,7 @@ BLUE = 6
 YELLOW = 7
 
 # 우선순위 순서로 정렬해야 함 (중요한 색상이 앞으로)
-DETECTABLE_COLORS = [ YELLOW, GREEN, BLUE, RED, WHITE, BLACK, GRAY ]
+DETECTABLE_COLORS = [ YELLOW, GREEN, RED, BLUE, WHITE, BLACK, GRAY ]
 
 MIN, MAX = 0, 255
 
@@ -113,7 +113,7 @@ def colorRangeYUV(colorRef):
 
     elif colorRef is YELLOW:    return [( 32,MIN,148), (200,100,240)]
     elif colorRef is GREEN:     return [( 32,MIN,MIN), (200,128,128)]
-    elif colorRef is BLUE:      return [( 32,128,MIN), (200,MAX,128)]
+    elif colorRef is BLUE:      return [( 32,148,MIN), (200,MAX,148)]
     elif colorRef is RED:       return [( 32,MIN,148), (200,148,MAX)]
 
     else:                       return ____________BYPASS____________

@@ -21,14 +21,24 @@ if __name__ == '__main__':
     while True:
         frame = cam.getFrame(imshow=True)
 
+
         key = cv2.waitKey(1)
         if key == 27: # ESC
             break
 
         masks = color.colorMaskAll(frame)
         
-        for ref, mask in masks:
-            cv2.imshow(color.toString(ref), mask)
+        detected = np.zeros((cam.HEIGHT,cam.WIDTH*7,3), dtype=np.uint8)
+
+        for i in range(len(masks)):
+            ref, mask = masks[i]
+            mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+            mask[:12,:] = color.toRGB(ref)
+            mask[12:16,:] = (255,255,255)
+
+            stX = cam.WIDTH * i
+            detected[:,stX:stX+cam.WIDTH] = mask
+        cv2.imshow('masks', cv2.resize(detected, (cam.WIDTH*7//2, cam.HEIGHT//2)))
         # # if len(areas) > 0 and max(areas) > 50:
         # #     serial.TX_data(10)
         
