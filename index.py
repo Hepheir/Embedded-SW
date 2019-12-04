@@ -38,7 +38,7 @@ if __name__ == '__main__':
 
             stX = cam.WIDTH * i
             detected[:,stX:stX+cam.WIDTH] = mask
-        cv2.imshow('masks', cv2.resize(detected, (cam.WIDTH*7//2, cam.HEIGHT//2)))
+        cv2.imshow('masks', cv2.resize(detected, (cam.WIDTH*7//3, cam.HEIGHT//3)))
         # # if len(areas) > 0 and max(areas) > 50:
         # #     serial.TX_data(10)
         
