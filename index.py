@@ -7,6 +7,8 @@ import robo_serial as serial
 import robo_camera as cam
 import robo_color as color
 
+import threading
+
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
@@ -25,7 +27,7 @@ if __name__ == '__main__':
 
         canvas = 42 * np.ones(frame.shape, dtype=np.uint8)
 
-        mask = color.colorMask(frame, color.BLACK)
+        mask = color.colorMask(frame, color.YELLOW)
         areas = [cv2.contourArea(cont) for cont in cv2.findContours(mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_NONE)[-2]]
 
         # if len(areas) > 0 and max(areas) > 50:

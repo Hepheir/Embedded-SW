@@ -2,9 +2,10 @@ import cv2
 
 Video = None
 
-RESOLUTION = (200, 150)
+WIDTH, HEIGHT = (400, 300)
 
-CENTER = (RESOLUTION[0]//2, RESOLUTION[1]//2)
+RESOLUTION = (WIDTH, HEIGHT)
+CENTER = (WIDTH//2, HEIGHT//2)
 
 # -----------------------------------------------
 def init():
@@ -15,8 +16,8 @@ def init():
         raise Exception("Could not open video device")
 
     print('Camera initialized.')
-    Video.set(cv2.CAP_PROP_FRAME_WIDTH,  RESOLUTION[0])
-    Video.set(cv2.CAP_PROP_FRAME_HEIGHT, RESOLUTION[1])
+    Video.set(cv2.CAP_PROP_FRAME_WIDTH,  WIDTH)
+    Video.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
     return Video
 # -----------------------------------------------
 def getFrame(imshow=False):
