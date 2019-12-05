@@ -14,25 +14,21 @@ import threading
 # ******************************************************************
 if __name__ == '__main__':
     Serial = serial.init()
-    Video  = cam.init()
+    # Video  = cam.init()
     color.init()
 
     print('Start mainloop.')
-    use_RGB = False
+    image = cv2.imread('color_chart.jpg')
+    image = cv2.resize(image, cam.RESOLUTION)
+    cv2.imshow('IMAGE', image)
 # ******************************************************************
     while True:
-        frame = cam.getFrame(imshow=True)
+        # frame = cam.getFrame(imshow=True)
+        frame = image.copy()
 
-
-        key = 0xFF & cv2.waitKey(1)
+        key = cv2.waitKey(1) & 0xFF
         if key == 27: # ESC
             break
-        elif key == ord(' '):
-            use_RGB = not use_RGB
-            print('toggle rgb')
-
-        if use_RGB:
-            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
         masks = color.colorMaskAll(frame)
         
@@ -54,9 +50,13 @@ if __name__ == '__main__':
             else:
                 mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
+            mask = cv2.addWeighted(mask, .7, image, .3, 0)
+
             stX = cam.WIDTH * i
             i += 1
             detected[:,stX:stX+cam.WIDTH] = mask
+            detected[:,stX+cam.WIDTH-1] = (255,255,255)
+
         cv2.imshow('masks', cv2.resize(detected, (cam.WIDTH*7//2, cam.HEIGHT//2)))
         # # if len(areas) > 0 and max(areas) > 50:
         # #     serial.TX_data(10)
