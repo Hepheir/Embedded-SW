@@ -26,6 +26,8 @@ if __name__ == '__main__':
         key = cv2.waitKey(1)
         if key == 27: # ESC
             break
+        elif key == ord(' '):
+            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
         masks = color.colorMaskAll(frame)
         
