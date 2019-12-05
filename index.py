@@ -15,6 +15,7 @@ import threading
 if __name__ == '__main__':
     Serial = serial.init()
     Video  = cam.init()
+    color.init()
 
     print('Start mainloop.')
 # ******************************************************************
@@ -30,15 +31,26 @@ if __name__ == '__main__':
         
         detected = np.zeros((cam.HEIGHT,cam.WIDTH*7,3), dtype=np.uint8)
 
-        for i in range(len(masks)):
-            ref, mask = masks[i]
-            mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-            mask[:12,:] = color.toRGB(ref)
-            mask[12:16,:] = (255,255,255)
+        i = 0
+        for color_name in masks:
+            mask = masks[color_name]
+
+            printColor = color.getRef(color_name)['rgb'][::-1]
+
+            contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+            if contours:
+                max_cont = max(contours, key=cv2.contourArea)
+                x,y,w,h = cv2.boundingRect(max_cont)
+
+                mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+                cv2.rectangle(mask, (x,y), (x+w,y+h), printColor, 4)
+            else:
+                mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
             stX = cam.WIDTH * i
+            i += 1
             detected[:,stX:stX+cam.WIDTH] = mask
-        cv2.imshow('masks', cv2.resize(detected, (cam.WIDTH*7, cam.HEIGHT)))
+        cv2.imshow('masks', cv2.resize(detected, (cam.WIDTH*7//2, cam.HEIGHT//2)))
         # # if len(areas) > 0 and max(areas) > 50:
         # #     serial.TX_data(10)
         

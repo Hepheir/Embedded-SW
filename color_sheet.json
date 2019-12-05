@@ -1,0 +1,82 @@
+{ 
+    "references" : [
+    {
+        "color" : "yellow",
+        "detectable" : true,
+        "rgb" : [255, 255, 0],
+
+        "hsv_lower" : [ 20, 40,  0],
+        "hsv_upper" : [ 40,255,255],
+
+        "yuv_lower" : [ 28,  0,128],
+        "yuv_upper" : [224,148,224]
+    },
+    {
+        "color" : "green",
+        "detectable" : true,
+        "rgb" : [0, 255, 0],
+
+        "hsv_lower" : [0,72,0],
+        "hsv_upper" : [255,255,255],
+
+        "yuv_lower" : [32,0,0],
+        "yuv_upper" : [200,128,128]
+    },
+    {
+        "color" : "red",
+        "detectable" : true,
+        "rgb" : [255, 0, 0],
+
+        
+        "hsv_lower" : [0,72,0],
+        "hsv_upper" : [255,255,255],
+    
+        "yuv_lower" : [32,0,148],
+        "yuv_upper" : [200,148,255]
+    },
+    {
+        "color" : "blue",
+        "detectable" : true,
+        "rgb" : [0, 0, 255],
+
+        "hsv_lower" : [  0, 72, 0],
+        "hsv_upper" : [255,255,255],
+
+        "yuv_lower" : [ 32,148,  0],
+        "yuv_upper" : [200,255,148]
+    },
+    {
+        "color" : "black",
+        "detectable" : true,
+        "rgb" : [42, 42, 42],
+
+        "hsv_lower" : [0,0,0],
+        "hsv_upper" : [255,255,92],
+    
+        "yuv_lower" : [0,0,0],
+        "yuv_upper" : [64,255,255]
+    },
+    {
+        "color" : "white",
+        "detectable" : true,
+        "rgb" : [255, 255, 255],
+        
+        "hsv_lower" : [0,0,0],
+        "hsv_upper" : [255,92,255],
+        
+        "yuv_lower" : [200,0,0],
+        "yuv_upper" : [255,255,255]
+    },
+    {
+        "color" : "gray",
+        "detectable" : true,
+        "rgb" : [128, 128, 128],
+        
+        "hsv_lower" : [0,0,72],
+        "hsv_upper" : [255,81,211],
+        
+        "yuv_lower" : [64,0,0],
+        "yuv_upper" : [200,255,255]
+    }
+]
+}
