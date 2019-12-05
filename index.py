@@ -24,7 +24,7 @@ if __name__ == '__main__':
         frame = cam.getFrame(imshow=True)
 
 
-        key = cv2.waitKey(1)
+        key = 0xFF & cv2.waitKey(1)
         if key == 27: # ESC
             break
         elif key == ord(' '):
