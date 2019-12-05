@@ -18,6 +18,7 @@ if __name__ == '__main__':
     color.init()
 
     print('Start mainloop.')
+    use_RGB = False
 # ******************************************************************
     while True:
         frame = cam.getFrame(imshow=True)
@@ -27,6 +28,9 @@ if __name__ == '__main__':
         if key == 27: # ESC
             break
         elif key == ord(' '):
+            use_RGB = not use_RGB
+
+        if use_RGB:
             frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
         masks = color.colorMaskAll(frame)
