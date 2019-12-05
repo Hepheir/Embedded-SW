@@ -7,8 +7,8 @@ if __name__ == "__main__":
     # video recorder
     w = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
     h = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    out = cv2.VideoWriter('output.mp4',fourcc, 15.0, (int(w),int(h)))
+    fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+    out = cv2.VideoWriter('output.avi',fourcc, 15.0, (int(w),int(h)))
 
 
     # record video

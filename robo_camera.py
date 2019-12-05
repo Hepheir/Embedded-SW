@@ -8,9 +8,9 @@ RESOLUTION = (WIDTH, HEIGHT)
 CENTER = (WIDTH//2, HEIGHT//2)
 
 # -----------------------------------------------
-def init():
+def init(device=0):
     global Video
-    Video = cv2.VideoCapture(0)
+    Video = cv2.VideoCapture(device)
 
     if not Video.isOpened():
         raise Exception("Could not open video device")
