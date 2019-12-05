@@ -21,6 +21,7 @@ if __name__ == '__main__':
     image = cv2.imread('color_chart.jpg')
     image = cv2.resize(image, cam.RESOLUTION)
     cv2.imshow('IMAGE', image)
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 # ******************************************************************
     while True:
         # frame = cam.getFrame(imshow=True)
@@ -50,7 +51,7 @@ if __name__ == '__main__':
             else:
                 mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
-            mask = cv2.addWeighted(mask, .7, image, .3, 0)
+            mask = cv2.addWeighted(mask, .8, frame, .2, 0)
 
             stX = cam.WIDTH * i
             i += 1
