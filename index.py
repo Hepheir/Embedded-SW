@@ -21,7 +21,6 @@ if __name__ == '__main__':
     image = cv2.imread('color_chart.jpg')
     image = cv2.resize(image, cam.RESOLUTION)
     cv2.imshow('IMAGE', image)
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 # ******************************************************************
     while True:
         # frame = cam.getFrame(imshow=True)

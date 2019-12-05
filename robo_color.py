@@ -32,7 +32,7 @@ def nothing(x):
 def init(filename="color_sheet.json"):
     global COLOR_REFERENCES
     global DETECTABLE_COLORS
-    with open(filename) as file:
+    with open(filename, 'r', encoding='utf8') as file:
         references = json.load(file)['references']
         # 리스트 --> 튜플로 변경
         for i in range(len(references)):
