@@ -9,7 +9,7 @@
         "hsv_upper" : [ 40,255,255],
 
         "yuv_lower" : [ 28,  0,128],
-        "yuv_upper" : [224,148,224]
+        "yuv_upper" : [248,148,224]
     },
     {
         "color" : "green",

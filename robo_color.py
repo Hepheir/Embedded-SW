@@ -3,7 +3,6 @@
 import numpy as np
 import cv2
 
-import codecs
 import json
 
 
@@ -33,7 +32,7 @@ def nothing(x):
 def init(filename="color_sheet.json"):
     global COLOR_REFERENCES
     global DETECTABLE_COLORS
-    with codecs.open(filename, 'r', encoding='utf8') as file:
+    with open(filename, 'r') as file:
         references = json.load(file)['references']
         # 리스트 --> 튜플로 변경
         for i in range(len(references)):

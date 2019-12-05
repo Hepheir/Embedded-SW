@@ -3,61 +3,69 @@
 import numpy as np
 import cv2
 
-import robo_serial as serial
-import robo_camera as cam
-import robo_color as color
+import robo_serial  as serial
+import robo_camera  as cam
+import robo_color   as color
+import robo_move    as move
 
 import threading
+
+def showMasks(masks):
+    detected = np.zeros((cam.HEIGHT,cam.WIDTH*7,3), dtype=np.uint8)
+
+    i = 0
+    for color_name in masks:
+        mask = masks[color_name]
+
+        printColor = color.getRef(color_name)['rgb'][::-1]
+
+        contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+        if contours:
+            max_cont = max(contours, key=cv2.contourArea)
+            x,y,w,h = cv2.boundingRect(max_cont)
+
+            mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+            cv2.rectangle(mask, (x,y), (x+w,y+h), printColor, 4)
+        else:
+            mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+
+        mask = cv2.addWeighted(mask, .8, frame, .2, 0)
+
+        stX = cam.WIDTH * i
+        i += 1
+        detected[:,stX:stX+cam.WIDTH] = mask
+        detected[:,stX+cam.WIDTH-1] = (255,255,255)
+
+    cv2.imshow('masks', cv2.resize(detected, (cam.WIDTH*7//2, cam.HEIGHT//2)))
 
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
 if __name__ == '__main__':
     Serial = serial.init()
-    # Video  = cam.init()
+    Video  = cam.init('1.mp4')
     color.init()
 
     print('Start mainloop.')
-    image = cv2.imread('color_chart.jpg')
-    image = cv2.resize(image, cam.RESOLUTION)
-    cv2.imshow('IMAGE', image)
 # ******************************************************************
     while True:
-        # frame = cam.getFrame(imshow=True)
-        frame = image.copy()
+        frame = cam.getFrame(imshow=True)
 
         key = cv2.waitKey(1) & 0xFF
         if key == 27: # ESC
             break
 
         masks = color.colorMaskAll(frame)
+        cut_masks = {}
+        for c in masks:
+            cut_masks[c] = masks[c][cam.HEIGHT*2//3:,:]
+        move.context(cut_masks)
+        showMasks(masks)
+
+
         
-        detected = np.zeros((cam.HEIGHT,cam.WIDTH*7,3), dtype=np.uint8)
 
-        i = 0
-        for color_name in masks:
-            mask = masks[color_name]
 
-            printColor = color.getRef(color_name)['rgb'][::-1]
-
-            contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
-            if contours:
-                max_cont = max(contours, key=cv2.contourArea)
-                x,y,w,h = cv2.boundingRect(max_cont)
-
-                mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-                cv2.rectangle(mask, (x,y), (x+w,y+h), printColor, 4)
-            else:
-                mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-
-            mask = cv2.addWeighted(mask, .8, frame, .2, 0)
-
-            stX = cam.WIDTH * i
-            i += 1
-            detected[:,stX:stX+cam.WIDTH] = mask
-            detected[:,stX+cam.WIDTH-1] = (255,255,255)
-
-        cv2.imshow('masks', cv2.resize(detected, (cam.WIDTH*7//2, cam.HEIGHT//2)))
         # # if len(areas) > 0 and max(areas) > 50:
         # #     serial.TX_data(10)
         
