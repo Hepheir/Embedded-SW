@@ -29,6 +29,7 @@ if __name__ == '__main__':
             break
         elif key == ord(' '):
             use_RGB = not use_RGB
+            print('toggle rgb')
 
         if use_RGB:
             frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
