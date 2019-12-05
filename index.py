@@ -56,9 +56,13 @@ if __name__ == '__main__':
             break
 
         masks = color.colorMaskAll(frame)
+
+        # 세로 3분할
         cut_masks = {}
         for c in masks:
             cut_masks[c] = masks[c][cam.HEIGHT*2//3:,:]
+
+        # 현재 상황 파악
         move.context(cut_masks)
         showMasks(masks)
 
