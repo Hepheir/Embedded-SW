@@ -46,7 +46,7 @@ def init(filename="data_color.json"):
                 new_key = str(key)
                 if type(ref[key]) is type([]):
                     new_ref[new_key] = tuple(ref[key])
-                elif type(ref[key]) is type(''):
+                elif type(ref[key]) is type(u''):
                     new_ref[new_key] = str(ref[key])
                 else:
                     new_ref[new_key] = ref[key]
