@@ -32,6 +32,9 @@ if __name__ == '__main__':
         if key == 27: # ESC
             break
 
+        cv2.imshow('HSV', cv2.cvtColor(frame, cv2.COLOR_BGR2HSV))
+        cv2.imshow('YUV', cv2.cvtColor(frame, cv2.COLOR_BGR2YUV))
+        
         # 프레임의 세로 3분할
         cut_frame = frame[cam.HEIGHT*2//3:,:]
 
