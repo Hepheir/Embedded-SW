@@ -30,12 +30,12 @@ def showAllColorMasks(frame,color_masks):
         else:
             mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
 
-        mask = cv2.addWeighted(mask, .8, frame, .2, 0)
+        mask = cv2.addWeighted(mask, .7, frame, .3, 0)
 
         stX = width * i # StartX : 이미지 붙여넣을 위치 (x좌표)
         detected[:, stX:(stX+width)] = mask # 마스크 붙여넣기
         detected[:, (stX+width-1)] = (255,255,255) # 각 마스크별 흰색 두께 1의 경계선
-
+        
         i += 1
 
     scaler = 0.5 # 이미지 축소/확대 비율
@@ -44,27 +44,27 @@ def showAllColorMasks(frame,color_masks):
 def record():
     # find the webcam
     cap = cv2.VideoCapture(0)
-
     # video recorder
     w = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
     h = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
     fourcc = cv2.VideoWriter_fourcc(*'MJPG')
     out = cv2.VideoWriter('output.avi',fourcc, 15.0, (int(w),int(h)))
-
     # record video
     while (cap.isOpened()):
-        ret, frame = cap.read()
-        if ret:
-            out.write(frame)
-            cv2.imshow('Video Stream', frame)
-        else:
+        if ord(' ') == (cv2.waitKey(1) & 0xFF):
             break
-
-        if cv2.waitKey(1) & 0xFF == ord(' '):
+        ret, frame = cap.read() 
+        if not ret:
             break
+        out.write(frame)
+        cv2.imshow('Video Stream', frame)
 
     cap.release()
     cv2.destroyAllWindows()
+# -----------------------------------------------
+def runtime():
+    ms = int(cv2.getTickCount() / cv2.getTickFrequency() * 1000)
+    return "%7d:%02d"%(ms//1000, ms//10%100)
 # -----------------------------------------------
 if __name__ == "__main__":
     record()

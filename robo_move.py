@@ -7,10 +7,13 @@ import robo_serial as serial
 import robo_color as color
 import time
 
-#-----------------------------------------------
-def runtime():
-    ms = int(cv2.getTickCount() / cv2.getTickFrequency() * 1000)
-    return "%6d:%02d"%(ms//1000, ms//10%100)
+LINE_MISSING = 'LINE MISSING'
+WALKING = 'WALKING'
+
+BRIDGE = 'BRIDGE'
+
+DRILL_CAN = 'DRILL-CAN'
+DRILL_PACK = 'DRILL-PACK'
 #-----------------------------------------------
 def objTrace(mask, minObjSize=50):
     retval = []
@@ -34,32 +37,31 @@ def context(color_masks):
     obj = {}
     for c in color_masks:
         obj[c] = objTrace(color_masks[c])
-    
+    # --------
     if not obj['yellow']:
-        status = 'LINE MISSING'
-        print(runtime(), '%-20s'%status, end="\r")
-
-    # if yellow
+        # 라인 찾기
+        return LINE_MISSING
+    # --------
     elif obj['red'] and obj['black']:
-        status = 'BRIDGE'
-        print(runtime(), '%-20s'%status, end="\r")
-    
+        # 다리 건너기
+        return BRIDGE
+    # --------
     elif obj['red'] and not obj['black']:
-        status = 'DRILL-CAN'
-        print(runtime(), '%-20s'%status, end="\r")
-
+        # 코카콜라 캔 치우기
+        return DRILL_CAN
+    # --------
     elif obj['green'] and obj['blue']:
-        status = 'SORT-PACK'
-        print(runtime(), '%-20s'%status, end="\r")
-
+        # 우유곽 파란선 안으로 옮기기
+        return DRILL_PACK
+    # --------
     elif obj['green'] and not obj['blue']:
-        status = 'DRILL-PACK'
-        print(runtime(), '%-20s'%status, end="\r")
-    
+        # 우유곽 치우기
+        return DRILL_PACK
+    # --------
     else:
-        status = 'WALKING'
-        print(runtime(), '%-20s'%status, end="\r")
-
+        # 걷기
+        return WALKING
+    # --------
 
 #-----------------------------------------------
 def walking():

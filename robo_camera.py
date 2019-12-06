@@ -10,14 +10,22 @@ CENTER = (WIDTH//2, HEIGHT//2)
 # -----------------------------------------------
 def init(device=0):
     global Video
+
+    print('"robo_camera.py" initialized')
+    
     Video = cv2.VideoCapture(device)
 
     if not Video.isOpened():
+        print('    Could not find video device.')
+        print('    >> capturing disabled.')
         raise Exception("Could not open video device")
 
-    print('Camera initialized.')
+    print('    Successfully opened video capturing device.')
     Video.set(cv2.CAP_PROP_FRAME_WIDTH,  WIDTH)
     Video.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
+
+    print('    Screen resolution :', RESOLUTION)
+    print('    >> capturing enabled.')
     return Video
 # -----------------------------------------------
 def getFrame(imshow=False):

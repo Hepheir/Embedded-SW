@@ -12,13 +12,18 @@ except:
 #-----------------------------------------------
 def init(bps=4800):
     global Serial
+
+    print('"robo_serial.py" initialized.')
+
     if not SERIAL_USABLE:
-        print('[!] Could not find module <serial>')
+        print('    failed to import serial.')
+        print('    >> serial disabled.')
         return None
 
-    print('Serial initialized.')
     Serial = serial.Serial('/dev/ttyAMA0', bps, timeout=0.001) # sudo chmod 777 /dev/ttyAMA0
     Serial.flush() # serial cls
+    print('    Successfully loaded serial.Serial')
+    print('    >> Serial enabled.')
     return Serial
 #-----------------------------------------------
 def TX_data(byte):  # one_byte= 0~255
@@ -30,7 +35,6 @@ def TX_data(byte):  # one_byte= 0~255
     return True
 #-----------------------------------------------
 def RX_data():
-    global failCount
     if not SERIAL_USABLE:
         print('[R] Serial is not available')
         return None

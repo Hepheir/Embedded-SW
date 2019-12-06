@@ -12,12 +12,15 @@ import robo_debug as debug
 
 import threading
 
+# video_fname = '1.mp4'
+video_fname = 0
+
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
 if __name__ == '__main__':
     Serial = serial.init()
-    Video  = cam.init('1.mp4') # 불러올 동영상 파일 이름 넣기 (index.py랑 같은 폴더에 있어야 함.)
+    Video  = cam.init(video_fname) # 불러올 동영상 파일 이름 넣기 (index.py랑 같은 폴더에 있어야 함.)
     color.init()
 
     print('Start mainloop.')
@@ -37,39 +40,11 @@ if __name__ == '__main__':
         # 반환 값은 Dict 형식으로, { "색상1" : 마스크1, "색상2" : 마스크2, ... } 형식
 
         # 현재 상황 파악
-        move.context(masks)
+        context = move.context(masks)
+
+        print(debug.runtime(), "%-20s" % context, end='\r')
 
         debug.showAllColorMasks(cut_frame, masks)
-
-
-        # # if len(areas) > 0 and max(areas) > 50:
-        # #     serial.TX_data(10)
-        
-        # cv2.imshow('MASK', mask)
-
-
-        # for c in color.DETECTABLE_COLORS:
-        #     mask = color.colorMask(frame, c, useFilter=True)
-
-        #     pix = 1/len(color.DETECTABLE_COLORS) * np.array(color.toRGB(c))
-
-        #     pallete = np.zeros(frame.shape, dtype=np.uint8)
-        #     pallete[:,:] = pix
-        #     pallete = cv2.bitwise_and(pallete, pallete, mask=mask)
-        #     canvas = cv2.add(canvas, pallete)
-
-        #     if c is color.GREEN and mask.any():
-        #         serial.TX_data(10)
-
-            # contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
-            # for cont in contours:
-            #     if cv2.contourArea(cont) < 30:
-            #         continue
-            #     x,y,w,h = cv2.boundingRect(cont)
-            #     cv2.rectangle(canvas, (x,y), (x+w, y+h), color.toRGB(c), 2)
-        
-        # cv2.imshow('Objects', canvas)
-            
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
