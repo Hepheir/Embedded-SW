@@ -37,7 +37,7 @@ def showAllColorMasks(frame,color_masks):
     for color_name in color_masks:
         mask = color_masks[color_name].copy()
         ref = color.getRef(color_name)
-        color_bgr = cv2.cvtColor(ref['rgb'], cv2.COLOR_RGB2BGR) # [::-1], RGB 를 역순으로 --> BGR
+        color_bgr = ref['rgb'][::-1] # [::-1], RGB 를 역순으로 --> BGR
 
         # RETR_EXTERNAL : 외곽선만 구함 --> 처리속도 효율 향상 / APPROX_SIMPLE : 근사화 --> 데이터 량 줄임, 속도 향상
         contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
