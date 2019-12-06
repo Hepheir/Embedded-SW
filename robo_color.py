@@ -95,7 +95,7 @@ def colorMaskAll(frame, useFilter=True):
     yuv = cv2.cvtColor(frame,cv2.COLOR_BGR2YUV)
 
     if debug.isRasp():
-        yuv[:,:,1:] = yuv[:,:,2:0]
+        yuv[:,:,1:] = yuv[:,:,2:0:-1]
 
     retval = {}
 
