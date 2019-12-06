@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import cv2
 
 Video = None
@@ -12,7 +14,7 @@ def init(device=0):
     global Video
 
     print('"robo_camera.py" initialized')
-    
+
     Video = cv2.VideoCapture(device)
 
     if not Video.isOpened():
