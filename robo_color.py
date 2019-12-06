@@ -44,7 +44,10 @@ def init(filename="data_color.json"):
             for key in references[i]:
                 if type(references[i][key]) is type([]):
                     references[i][key] = tuple(references[i][key])
-        COLOR_REFERENCES = references
+        def importance(ref):
+            return ref['importance']
+        COLOR_REFERENCES = sorted(references, key=importance)
+    
     for ref in COLOR_REFERENCES:
         if ref['detectable']:
             DETECTABLE_COLORS.append(ref)
