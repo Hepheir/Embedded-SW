@@ -100,9 +100,9 @@ def colorMaskAll(frame, useFilter=True):
         hsv_mask = cv2.inRange(hsv, ref['hsv_lower'], ref['hsv_upper'])
         yuv_mask = cv2.inRange(yuv, ref['yuv_lower'], ref['yuv_upper'])
 
-        cv2.imshow('hsv', hsv_mask)
-        cv2.imshow('yuv', yuv_mask)
-        
+        cv2.imshow('hsv %s' % ref['color_name'], hsv_mask)
+        cv2.imshow('yuv %s' % ref['color_name'], yuv_mask)
+
         mask = cv2.bitwise_and(hsv_mask, yuv_mask)
 
         # 중복 제거
