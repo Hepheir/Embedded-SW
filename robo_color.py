@@ -94,14 +94,15 @@ def colorMaskAll(frame, useFilter=True):
     hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
     yuv = cv2.cvtColor(frame,cv2.COLOR_BGR2YUV)
 
-    if debug.isRasp():
-        yuv[:,:,1:] = yuv[:,:,2:0:-1]
-
     retval = {}
 
     for ref in DETECTABLE_COLORS:
         hsv_mask = cv2.inRange(hsv, ref['hsv_lower'], ref['hsv_upper'])
         yuv_mask = cv2.inRange(yuv, ref['yuv_lower'], ref['yuv_upper'])
+
+        cv2.imshow('hsv', hsv_mask)
+        cv2.imshow('yuv', yuv_mask)
+        
         mask = cv2.bitwise_and(hsv_mask, yuv_mask)
 
         # 중복 제거
