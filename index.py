@@ -14,6 +14,8 @@ import sys
 
 
 video_fname = '1.mp4'
+if debug.isRasp():
+    video_fname = 0
 
 # ******************************************************************
 # ******************************************************************
@@ -24,9 +26,7 @@ if __name__ == '__main__':
     color.init()
 
     if debug.isRasp():
-        video_fname = 0
-
-        print('trying to test')
+        #DEBUG
         im = cv2.imread('yuv.jpg')
         im = cv2.cvtColor(im, cv2.COLOR_BGR2YUV)
         masks = color.colorMaskAll(im)
