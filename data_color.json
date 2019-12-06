@@ -48,7 +48,7 @@
     {
         "color_name" : "black",
         "detectable" : true,
-        "rgb" : [42, 42, 42],
+        "rgb" : [  0,  0,  0],
 
         "hsv_lower" : [0,0,0],
         "hsv_upper" : [255,255,92],

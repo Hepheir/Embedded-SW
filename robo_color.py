@@ -105,7 +105,7 @@ def colorMaskAll(frame, useFilter=True):
 
         mask = cv2.bitwise_and(hsv_mask, yuv_mask)
 
-        cv2.imshow('raw %s' % ref['color_name'], cv2.addWeighted(frame, 0.3, cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR), 0.7, 0))
+        # cv2.imshow('raw %s' % ref['color_name'], cv2.addWeighted(frame, 0.3, cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR), 0.7, 0))
 
         # 중복 제거
         for color in retval:
