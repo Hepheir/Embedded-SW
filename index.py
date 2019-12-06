@@ -23,7 +23,7 @@ if __name__ == '__main__':
     Video  = cam.init(video_fname) # 불러올 동영상 파일 이름 넣기 (index.py랑 같은 폴더에 있어야 함.)
     color.init()
 
-    if not debug.isRasp():
+    if debug.isRasp():
         video_fname = 0
 
         print('trying to test')
