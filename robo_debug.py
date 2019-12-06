@@ -36,7 +36,6 @@ def showAllColorMasks(frame,color_masks):
         mask = color_masks[color_name]
         ref = color.getRef(color_name)
         color_bgr = ref['rgb'][::-1] # [::-1], RGB 를 역순으로 --> BGR
-        _print('(%s)'%color_name+'[%3d %3d %3d], ' % color_bgr)
 
         # RETR_EXTERNAL : 외곽선만 구함 --> 처리속도 효율 향상 / APPROX_SIMPLE : 근사화 --> 데이터 량 줄임, 속도 향상
         contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
@@ -57,7 +56,6 @@ def showAllColorMasks(frame,color_masks):
         detected[:, (stX+width-1)] = (255,255,255) # 각 마스크별 흰색 두께 1의 경계선
         
         i += 1
-    print('')
 
     scaler = 0.5 # 이미지 축소/확대 비율
     cv2.imshow('masks', cv2.resize(detected, ( int(width*colors*scaler), int(height*scaler))))

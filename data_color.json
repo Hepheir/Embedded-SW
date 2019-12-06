@@ -2,8 +2,6 @@
     "references" : [
     {
         "color_name" : "yellow",
-
-        "importance" : 0,
         "detectable" : true,
         "rgb" : [255, 255, 0],
 
@@ -14,9 +12,18 @@
         "yuv_upper" : [248,148,224]
     },
     {
+        "color_name" : "green",
+        "detectable" : true,
+        "rgb" : [0, 255, 0],
+
+        "hsv_lower" : [0,72,0],
+        "hsv_upper" : [255,255,255],
+
+        "yuv_lower" : [32,0,0],
+        "yuv_upper" : [200,128,128]
+    },
+    {
         "color_name" : "red",
-        
-        "importance" : 2,
         "detectable" : true,
         "rgb" : [255, 0, 0],
 
@@ -28,22 +35,7 @@
         "yuv_upper" : [200,148,255]
     },
     {
-        "color_name" : "green",
-        
-        "importance" : 1,
-        "detectable" : true,
-        "rgb" : [0, 255, 0],
-
-        "hsv_lower" : [0,72,0],
-        "hsv_upper" : [255,255,255],
-
-        "yuv_lower" : [32,0,0],
-        "yuv_upper" : [200,128,128]
-    },
-    {
         "color_name" : "blue",
-        
-        "importance" : 3,
         "detectable" : true,
         "rgb" : [0, 0, 255],
 
@@ -55,8 +47,6 @@
     },
     {
         "color_name" : "black",
-        
-        "importance" : 4,
         "detectable" : true,
         "rgb" : [42, 42, 42],
 
@@ -68,8 +58,6 @@
     },
     {
         "color_name" : "white",
-        
-        "importance" : 5,
         "detectable" : false,
         "rgb" : [255, 255, 255],
         
@@ -81,8 +69,6 @@
     },
     {
         "color_name" : "gray",
-        
-        "importance" : 6,
         "detectable" : false,
         "rgb" : [128, 128, 128],
         

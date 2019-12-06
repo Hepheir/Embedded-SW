@@ -44,9 +44,7 @@ def init(filename="data_color.json"):
             for key in references[i]:
                 if type(references[i][key]) is type([]):
                     references[i][key] = tuple(references[i][key])
-        def importance(ref):
-            return ref['importance']
-        COLOR_REFERENCES = sorted(references, key=importance)
+        COLOR_REFERENCES = references
     
     for ref in COLOR_REFERENCES:
         if ref['detectable']:
@@ -99,7 +97,9 @@ def colorMaskAll(frame, useFilter=True):
 
     retval = {}
 
-    for ref in DETECTABLE_COLORS:
+    for i in range(len(DETECTABLE_COLORS)):
+        ref = DETECTABLE_COLORS[i]
+        
         hsv_mask = cv2.inRange(hsv, ref['hsv_lower'], ref['hsv_upper'])
         yuv_mask = cv2.inRange(yuv, ref['yuv_lower'], ref['yuv_upper'])
 
