@@ -2,15 +2,11 @@
 
 import cv2
 
-import sys
-
-Video = None
-
 WIDTH, HEIGHT = (320, 240)
 
+Video = None
 RESOLUTION = (WIDTH, HEIGHT)
 CENTER = (WIDTH//2, HEIGHT//2)
-
 # -----------------------------------------------
 def init(device=0):
     global Video

@@ -34,11 +34,8 @@ if __name__ == '__main__':
         if key == 27: # ESC
             break
 
-        # 프레임의 세로 3분할
-        cut_frame = frame[cam.HEIGHT*2//3:,:]
-
         # 분할된 프레임으로부터 검출할 수 있는 모든 색상을 검출
-        masks = color.colorMaskAll(cut_frame)
+        masks = color.colorMaskAll(frame)
         # 반환 값은 Dict 형식으로, { "색상1" : 마스크1, "색상2" : 마스크2, ... } 형식
 
         # 현재 상황 파악
@@ -50,7 +47,7 @@ if __name__ == '__main__':
         
         debug._print("\r%s %-20s" % (debug.runtime(), context))
 
-        debug.showAllColorMasks(cut_frame, masks)
+        debug.showAllColorMasks(frame, masks)
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************

@@ -3,9 +3,8 @@
 import numpy as np
 import cv2
 
-import robo_serial as serial
 import robo_color as color
-import time
+import robo_camera as cam
 
 LINE_MISSING = 'LINE MISSING'
 WALKING = 'WALKING'
@@ -36,7 +35,11 @@ def centerOfBox(box):
 def context(color_masks):
     obj = {}
     for c in color_masks:
-        obj[c] = objTrace(color_masks[c])
+        # 프레임의 세로 3분할
+        c1b3_color_mask = color_masks[c][cam.HEIGHT*2//3:,:]
+
+        # 3분할 된 마스크 가장 아래꺼에서 '특정 크기 이상의 물체'의 '바운딩박스' 구하기
+        obj[c] = objTrace(c1b3_color_mask)
     # --------
     if not obj['yellow']:
         # 라인 찾기

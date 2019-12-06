@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 
-Serial = None # initialize with serial_init()
-
 SERIAL_USABLE = True
 
+Serial = None # initialize with serial_init()
 #-----------------------------------------------
 try:
     import serial
 except:
     SERIAL_USABLE = False
+
+import robo_debug as debug
 #-----------------------------------------------
 def init(bps=4800):
     global Serial
@@ -28,7 +29,7 @@ def init(bps=4800):
 #-----------------------------------------------
 def TX_data(byte):  # one_byte= 0~255
     if not SERIAL_USABLE:
-        print('[T] Serial is not available')
+        debug._print('[T] Serial is not available')
         return None
     
     Serial.write(chr(int(byte)))
@@ -36,7 +37,7 @@ def TX_data(byte):  # one_byte= 0~255
 #-----------------------------------------------
 def RX_data():
     if not SERIAL_USABLE:
-        print('[R] Serial is not available')
+        debug._print('[R] Serial is not available')
         return None
 
     if Serial.inWaiting() <= 0:
