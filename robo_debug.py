@@ -41,20 +41,19 @@ def showAllColorMasks(frame,color_masks):
 
         # RETR_EXTERNAL : 외곽선만 구함 --> 처리속도 효율 향상 / APPROX_SIMPLE : 근사화 --> 데이터 량 줄임, 속도 향상
         contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+
+        mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
+        color_mask = cv2.addWeighted(mask, .7, frame, .3, 32)
+
         if contours:
             max_cont = max(contours, key=cv2.contourArea)
             x,y,w,h = cv2.boundingRect(max_cont)
 
             # mask는 GRAY_SCALE 이므로, 컬러를 입히려면 BGR로 convert 해주어야함.
-            mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR) 
-            cv2.rectangle(mask, (x,y), (x+w,y+h), color_bgr, int(line_thick/scaler))
-        else:
-            mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-
-        mask = cv2.addWeighted(mask, .7, frame, .3, 0)
+            cv2.rectangle(color_mask, (x,y), (x+w,y+h), color_bgr, int(line_thick/scaler))
 
         stX = width * i # StartX : 이미지 붙여넣을 위치 (x좌표)
-        detected[:, stX:(stX+width)] = mask # 마스크 붙여넣기
+        detected[:, stX:(stX+width)] = color_mask # 마스크 붙여넣기
         detected[:, (stX+width-1)] = (255,255,255) # 각 마스크별 흰색 두께 1의 경계선
         
         i += 1
