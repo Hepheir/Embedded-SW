@@ -7,10 +7,10 @@ import robo_serial  as serial
 import robo_camera  as cam
 import robo_color   as color
 import robo_move    as move
-
-import robo_debug as debug
+import robo_debug   as debug
 
 import threading
+import sys
 
 # video_fname = '1.mp4'
 video_fname = 0
@@ -41,11 +41,8 @@ if __name__ == '__main__':
 
         # 현재 상황 파악
         context = move.context(masks)
-
-        if debug.isRasp():
-            print(debug.runtime()+" %-20s\r" % context,)
-        else:
-            print(debug.runtime(), "%-20s" % context, end='\r')
+        
+        debug._print("\r%s %-20s" % (debug.runtime(), context))
 
         debug.showAllColorMasks(cut_frame, masks)
 # ******************************************************************

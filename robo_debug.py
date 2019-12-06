@@ -9,12 +9,18 @@ import robo_color as color
 # 디버그용으로 임시로 쓰고 말 것들
 
 # -----------------------------------------------
+def python_version():
+    return (sys.hexversion & 0xFF000000) // 0x1000000
+# -----------------------------------------------
 def isRasp():
-    python_version = (sys.hexversion & 0xFF000000) // 0x1000000
-    if python_version < 3:
-        return True
-    else:
-        return False
+    return python_version() < 3
+# -----------------------------------------------
+def _print(string):
+    try:
+        print(string, end='')
+    except:
+        sys.stdout.write(string)
+        sys.stdout.flush()
 # -----------------------------------------------
 def showAllColorMasks(frame,color_masks):
     height, width = frame.shape[:2]
