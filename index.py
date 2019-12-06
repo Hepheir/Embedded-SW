@@ -17,7 +17,7 @@ import threading
 # ******************************************************************
 if __name__ == '__main__':
     Serial = serial.init()
-    Video  = cam.init('2.mp4') # 불러올 동영상 파일 이름 넣기 (index.py랑 같은 폴더에 있어야 함.)
+    Video  = cam.init('1.mp4') # 불러올 동영상 파일 이름 넣기 (index.py랑 같은 폴더에 있어야 함.)
     color.init()
 
     print('Start mainloop.')

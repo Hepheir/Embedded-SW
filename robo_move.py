@@ -3,6 +3,7 @@
 import numpy as np
 import cv2
 
+import robo_serial as serial
 import robo_color as color
 import time
 
@@ -35,19 +36,29 @@ def context(color_masks):
         obj[c] = objTrace(color_masks[c])
     
     if not obj['yellow']:
-        print(runtime(), 'LINE MISSING', end="\r")
+        status = 'LINE MISSING'
+        print(runtime(), '%-20s'%status, end="\r")
 
-    elif obj['black'] and obj['red']:
-        print(runtime(), 'BRIDGE      ', end="\r")
+    # if yellow
+    elif obj['red'] and obj['black']:
+        status = 'BRIDGE'
+        print(runtime(), '%-20s'%status, end="\r")
     
     elif obj['red'] and not obj['black']:
-        print(runtime(), 'DRILL_2     ', end="\r")
+        status = 'DRILL-CAN'
+        print(runtime(), '%-20s'%status, end="\r")
 
     elif obj['green'] and obj['blue']:
-        print(runtime(), 'DRILL_1     ', end="\r")
+        status = 'SORT-PACK'
+        print(runtime(), '%-20s'%status, end="\r")
+
+    elif obj['green'] and not obj['blue']:
+        status = 'DRILL-PACK'
+        print(runtime(), '%-20s'%status, end="\r")
     
     else:
-        print(runtime(), 'WALKING     ', end="\r")
+        status = 'WALKING'
+        print(runtime(), '%-20s'%status, end="\r")
 
 
 #-----------------------------------------------

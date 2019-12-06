@@ -29,7 +29,7 @@ MIN, MAX = 0, 255
 def nothing(x):
     pass
 #-----------------------------------------------
-def init(filename="color_sheet.json"):
+def init(filename="data_color.json"):
     global COLOR_REFERENCES
     global DETECTABLE_COLORS
     with open(filename, 'r') as file:

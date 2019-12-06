@@ -4,7 +4,8 @@ import cv2
 import robo_color as color
 # 디버그용으로 임시로 쓰고 말 것들
 
-#-----------------------------------------------
+# -----------------------------------------------
+# -----------------------------------------------
 def showAllColorMasks(frame,color_masks):
     height, width = frame.shape[:2]
     colors = len(color.DETECTABLE_COLORS)
@@ -39,7 +40,7 @@ def showAllColorMasks(frame,color_masks):
 
     scaler = 0.5 # 이미지 축소/확대 비율
     cv2.imshow('masks', cv2.resize(detected, ( int(width*colors*scaler), int(height*scaler))))
-#-----------------------------------------------
+# -----------------------------------------------
 def record():
     # find the webcam
     cap = cv2.VideoCapture(0)
@@ -64,6 +65,6 @@ def record():
 
     cap.release()
     cv2.destroyAllWindows()
-#-----------------------------------------------
+# -----------------------------------------------
 if __name__ == "__main__":
     record()
