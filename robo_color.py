@@ -102,8 +102,7 @@ def colorMaskAll(frame, useFilter=True):
     for ref in DETECTABLE_COLORS:
         hsv_mask = cv2.inRange(hsv, ref['hsv_lower'], ref['hsv_upper'])
         yuv_mask = cv2.inRange(yuv, ref['yuv_lower'], ref['yuv_upper'])
-        # mask = cv2.bitwise_and(hsv_mask, yuv_mask)
-        mask = yuv_mask
+        mask = cv2.bitwise_and(hsv_mask, yuv_mask)
 
         # 중복 제거
         for color in retval:
