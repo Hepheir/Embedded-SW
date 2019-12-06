@@ -30,6 +30,7 @@ def showAllColorMasks(frame,color_masks):
     colors = len(color.DETECTABLE_COLORS)
     line_thick = 2
     scaler = 0.5 # 이미지 축소/확대 비율
+    gamma = 72
 
     detected = np.zeros((height, width * colors, 3), dtype=np.uint8)
 
@@ -43,7 +44,7 @@ def showAllColorMasks(frame,color_masks):
         contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
 
         mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-        color_mask = cv2.addWeighted(mask, .7, frame, .3, 32)
+        color_mask = cv2.addWeighted(mask, .7, frame, .3, gamma)
 
         if contours:
             max_cont = max(contours, key=cv2.contourArea)
