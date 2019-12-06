@@ -16,11 +16,8 @@ def isRasp():
     return python_version() < 3
 # -----------------------------------------------
 def _print(string):
-    try:
-        print(string, end='')
-    except:
-        sys.stdout.write(string)
-        sys.stdout.flush()
+    sys.stdout.write(string)
+    sys.stdout.flush()
 # -----------------------------------------------
 def showAllColorMasks(frame,color_masks):
     height, width = frame.shape[:2]
