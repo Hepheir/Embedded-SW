@@ -14,14 +14,6 @@ import sys
 
 
 video_fname = '1.mp4'
-if debug.isRasp():
-    video_fname = 0
-
-    im = cv2.imread('yuv.jpg')
-    im = cv2.cvtColor(im, cv2.COLOR_BGR2YUV)
-    masks = color.colorMaskAll(im)
-    for c in masks:
-        cv2.imshow(c, masks[c])
 
 # ******************************************************************
 # ******************************************************************
@@ -31,6 +23,16 @@ if __name__ == '__main__':
     Video  = cam.init(video_fname) # 불러올 동영상 파일 이름 넣기 (index.py랑 같은 폴더에 있어야 함.)
     color.init()
 
+    if not debug.isRasp():
+        video_fname = 0
+
+        print('trying to test')
+        im = cv2.imread('yuv.jpg')
+        im = cv2.cvtColor(im, cv2.COLOR_BGR2YUV)
+        masks = color.colorMaskAll(im)
+        for c in masks:
+            cv2.imshow(c, masks[c])
+            
     print('Start mainloop.')
 # ******************************************************************
     while True:
