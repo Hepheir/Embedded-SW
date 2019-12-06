@@ -12,8 +12,10 @@ import robo_debug   as debug
 import threading
 import sys
 
+
 video_fname = '1.mp4'
-# video_fname = 0
+if debug.isRasp():
+    video_fname = 0
 
 # ******************************************************************
 # ******************************************************************
