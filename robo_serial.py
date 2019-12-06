@@ -26,12 +26,12 @@ def init(bps=4800):
     print('    >> Serial enabled.')
     return Serial
 #-----------------------------------------------
-def TX_data(byte):  # one_byte= 0~255
+def TX_data(data):  # one_byte= 0~255
     if not SERIAL_USABLE:
         print('[T] Serial is not available')
         return None
     
-    Serial.write(chr(int(byte)))
+    Serial.write(data)
     return True
 #-----------------------------------------------
 def RX_data():
