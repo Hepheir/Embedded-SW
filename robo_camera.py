@@ -2,6 +2,10 @@
 
 import cv2
 
+import sys
+
+import robo_debug as debug
+
 Video = None
 
 WIDTH, HEIGHT = (320, 240)
@@ -39,6 +43,9 @@ def getFrame(imshow=False):
     if imshow:
         cv2.imshow('CAM', frame)
 
+    if debug.isRasp():
+        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        
     return frame
 # -----------------------------------------------
 def printCursor(frame, radius=6, cursorColor=(0,0,255)):

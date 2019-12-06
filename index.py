@@ -42,7 +42,10 @@ if __name__ == '__main__':
         # 현재 상황 파악
         context = move.context(masks)
 
-        print(debug.runtime()+" %-20s" % context + '\r',)
+        if debug.isRasp():
+            print(debug.runtime()+" %-20s\r" % context,)
+        else:
+            print(debug.runtime(), "%-20s" % context, end='\r')
 
         debug.showAllColorMasks(cut_frame, masks)
 # ******************************************************************
