@@ -44,7 +44,12 @@ def init(filename="data_color.json"):
             new_ref = {}
             for key in ref:
                 new_key = str(key)
-                new_ref[new_key] = tuple(ref[key]) if type(ref[key]) is type([]) else ref[key]
+                if type(ref[key]) is type([]):
+                    new_ref[new_key] = tuple(ref[key])
+                elif type(ref[key]) is type(''):
+                    new_ref[new_key] = str(ref[key])
+                else:
+                    new_ref[new_key] = ref[key]
             COLOR_REFERENCES.append(new_ref)
     
     for ref in COLOR_REFERENCES:
