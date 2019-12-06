@@ -40,11 +40,12 @@ def init(filename="data_color.json"):
     with open(filename, 'r') as file:
         references = json.load(file)['references']
         # 리스트 --> 튜플로 변경
-        for i in range(len(references)):
-            for key in references[i]:
-                if type(references[i][key]) is type([]):
-                    references[i][key] = tuple(references[i][key])
-        COLOR_REFERENCES = references
+        for ref in references:
+            new_ref = {}
+            for key in ref:
+                new_key = str(key)
+                new_ref[new_key] = tuple(ref[key]) if type(ref[key]) is type([]) else ref[key]
+            COLOR_REFERENCES.append(new_ref)
     
     for ref in COLOR_REFERENCES:
         if ref['detectable']:
