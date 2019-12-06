@@ -19,6 +19,12 @@ def _print(string):
     sys.stdout.write(string)
     sys.stdout.flush()
 # -----------------------------------------------
+def _cvtColor(src, code):
+    ret = cv2.cvtColor(src, code)
+    if isRasp() and code is cv2.COLOR_BGR2YUV:
+        ret[:,:,1:] = ret[:,:,2:0:-1]
+    return ret
+# -----------------------------------------------
 def showAllColorMasks(frame,color_masks):
     height, width = frame.shape[:2]
     colors = len(color.DETECTABLE_COLORS)

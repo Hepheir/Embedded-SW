@@ -27,10 +27,7 @@ if __name__ == '__main__':
 
     #DEBUG
     im = cv2.imread('yuv.jpg')
-    im = cv2.cvtColor(im, cv2.COLOR_BGR2YUV)
-
-    if debug.isRasp():
-        im[:,:,1:] = im[:,:,2:0:-1]
+    im = debug._cvtColor(im, cv2.COLOR_BGR2YUV)
     ranges = [
         ("1", (0,128,128), (255,255,255)),
         ("2", (0,  0,128), (255,128,255)),

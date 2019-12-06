@@ -92,7 +92,7 @@ def colorMaskAll(frame, useFilter=True):
         frame = cv2.GaussianBlur(frame, (3,3), 1)
     
     hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
-    yuv = cv2.cvtColor(frame,cv2.COLOR_BGR2YUV)
+    yuv = debug._cvtColor(frame,cv2.COLOR_BGR2YUV)
 
     retval = {}
 
