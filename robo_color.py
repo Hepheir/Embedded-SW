@@ -43,7 +43,7 @@ def init(filename="color_sheet.json"):
     for ref in COLOR_REFERENCES:
         if ref['detectable']:
             DETECTABLE_COLORS.append(ref)
-    print([ref['color'] for ref in DETECTABLE_COLORS])
+    print([ref['color_name'] for ref in DETECTABLE_COLORS])
 #-----------------------------------------------
 def pickColor(frame):
     # 입력된 이미지에 있는 모든 픽셀 값들의 평균을 반환.
@@ -73,7 +73,7 @@ def pixColorRefHSV(hsv_pixel):
 # ******************************************************************
 def getRef(color):
     for ref in COLOR_REFERENCES:
-        if ref['color'] == color:
+        if ref['color_name'] == color:
             return ref
     return None
 #-----------------------------------------------
@@ -101,7 +101,7 @@ def colorMaskAll(frame, useFilter=True):
             mask = cv2.erode(mask, (3,3), iterations=1)
             mask = cv2.dilate(mask, (3,3), iterations=1)
 
-        retval[ref['color']] = mask
+        retval[ref['color_name']] = mask
     return retval
 # ******************************************************************
 # ******************************************************************
