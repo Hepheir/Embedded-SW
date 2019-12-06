@@ -5,6 +5,8 @@ import cv2
 
 import json
 
+import robo_debug as debug
+
 
 # 색상 상수
 UNDEF   = 'undefined'
@@ -85,12 +87,15 @@ def getRef(color):
 def colorMaskAll(frame, useFilter=True):
     # BGR 이미지로부터 colorRef에 해당하는 색을 검출하여 마스크이미지를 반환.
     frame = frame.copy()
-    
+
     if useFilter:
         frame = cv2.GaussianBlur(frame, (3,3), 1)
     
     hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
     yuv = cv2.cvtColor(frame,cv2.COLOR_BGR2YUV)
+
+    if debug.isRasp():
+        yuv[:,:,1:] = yuv[:,:,2:0]
 
     retval = {}
 

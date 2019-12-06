@@ -12,8 +12,8 @@ import robo_debug   as debug
 import threading
 import sys
 
-# video_fname = '1.mp4'
-video_fname = 0
+video_fname = '1.mp4'
+# video_fname = 0
 
 # ******************************************************************
 # ******************************************************************
@@ -34,6 +34,8 @@ if __name__ == '__main__':
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         yuv = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
         cv2.imshow('HSV h', hsv[:,:,0])
+        cv2.imshow('HSV s', hsv[:,:,1])
+        cv2.imshow('HSV v', hsv[:,:,2])
         cv2.imshow('YUV y', yuv[:,:,0])
         cv2.imshow('YUV u', yuv[:,:,1])
         cv2.imshow('YUV v', yuv[:,:,2])
