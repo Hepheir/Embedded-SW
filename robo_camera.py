@@ -4,8 +4,6 @@ import cv2
 
 import sys
 
-import robo_debug as debug
-
 Video = None
 
 WIDTH, HEIGHT = (320, 240)

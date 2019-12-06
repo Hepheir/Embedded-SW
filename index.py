@@ -25,17 +25,19 @@ if __name__ == '__main__':
     Video  = cam.init(video_fname) # 불러올 동영상 파일 이름 넣기 (index.py랑 같은 폴더에 있어야 함.)
     color.init()
 
+    #DEBUG
+    im = cv2.imread('yuv.jpg')
+    im = cv2.cvtColor(im, cv2.COLOR_BGR2YUV)
+
     if debug.isRasp():
-        #DEBUG
-        im = cv2.imread('yuv.jpg')
-        im = cv2.cvtColor(im, cv2.COLOR_BGR2YUV)
-        ranges = [
-            ("1", (0,128,128), (255,255,255)),
-            ("2", (0,  0,128), (255,128,255)),
-            ("3", (0,  0,  0), (255,128,128)),
-            ("4", (0,128,  0), (255,255,128))]
-        for winname, lowerb, upperb in ranges:
-            cv2.imshow(winname, cv2.inRange(im, lowerb, upperb))
+        im[:,:,1:] = im[:,:,2:0:-1]
+    ranges = [
+        ("1", (0,128,128), (255,255,255)),
+        ("2", (0,  0,128), (255,128,255)),
+        ("3", (0,  0,  0), (255,128,128)),
+        ("4", (0,128,  0), (255,255,128))]
+    for winname, lowerb, upperb in ranges:
+        cv2.imshow(winname, cv2.inRange(im, lowerb, upperb))
             
     print('Start mainloop.')
 # ******************************************************************
