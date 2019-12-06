@@ -32,7 +32,7 @@ def nothing(x):
 def init(filename="data_color.json"):
     global COLOR_REFERENCES
     global DETECTABLE_COLORS
-    
+
     print('"robo_color.py" initialized')
 
     with open(filename, 'r') as file:
@@ -48,7 +48,7 @@ def init(filename="data_color.json"):
             DETECTABLE_COLORS.append(ref)
 
     print('    Data loaded from', filename)
-    print('    Detectable colors : ', [ref['color_name'] for ref in DETECTABLE_COLORS])
+    print('    Detectable colors :', [ref['color_name'] for ref in DETECTABLE_COLORS])
 #-----------------------------------------------
 def pickColor(frame):
     # 입력된 이미지에 있는 모든 픽셀 값들의 평균을 반환.
