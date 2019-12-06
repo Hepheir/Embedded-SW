@@ -45,6 +45,15 @@ if __name__ == '__main__':
         context = move.context(masks)
         if context is move.WALKING:
             serial.TX_data(2) # 전진종종걸음
+            serial.TX_data(2) # 전진종종걸음
+            serial.TX_data(2) # 전진종종걸음
+            serial.TX_data(2) # 전진종종걸음
+            serial.TX_data(2) # 전진종종걸음
+            serial.TX_data(2) # 전진종종걸음
+            serial.TX_data(2) # 전진종종걸음
+            serial.TX_data(2) # 전진종종걸음
+            serial.TX_data(2) # 전진종종걸음
+            serial.TX_data(2) # 전진종종걸음
         else:
             serial.TX_data(12) # 안정화자세
         
