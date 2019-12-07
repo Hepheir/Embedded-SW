@@ -30,6 +30,8 @@ class act:
     CLEAR_CAN               = 18 # 캔 날리기
     BACKWARD_WALK           = 29 # 연속 후진
     STABLE                  = 26 # 안정화 자세
+    TURN_LEFT               = 27 # 왼쪽 턴 20
+    TURN_RIGHT              = 28 # 오른쪽 턴 20
 # -----------------------------------------------
 def do(action):
     for _ in range(8):

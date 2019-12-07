@@ -37,11 +37,11 @@ if __name__ == '__main__':
         elif key is ord('w'):
             move.do(move.act.FORWARD_WALK)
         elif key is ord('a'):
-            move.do(move.act.TURN_LEFT_3)
+            move.do(move.act.TURN_LEFT)
         elif key is ord('s'):
-            move.do(move.act.TURN_RIGHT_3)
-        elif key is ord('d'):
             move.do(move.act.BACKWARD_WALK)
+        elif key is ord('d'):
+            move.do(move.act.TURN_RIGHT)
         else:
             move.do(move.act.STABLE)
 
