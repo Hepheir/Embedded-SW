@@ -42,6 +42,8 @@ if __name__ == '__main__':
             move.do(move.act.TURN_RIGHT_3)
         elif key is ord('d'):
             move.do(move.act.BACKWARD_WALK)
+        else:
+            move.do(move.act.STABLE)
 
         # 분할된 프레임으로부터 검출할 수 있는 모든 색상을 검출
         masks = color.colorMaskAll(frame)

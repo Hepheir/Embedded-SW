@@ -29,9 +29,10 @@ class act:
     FREE_OBJECT             = 15 # 우유곽 놓기
     CLEAR_CAN               = 18 # 캔 날리기
     BACKWARD_WALK           = 29 # 연속 후진
+    STABLE                  = 26 # 안정화 자세
 # -----------------------------------------------
 def do(action):
-    for _ in range(16):
+    for _ in range(8):
         serial.TX_data(action)
 # -----------------------------------------------
 def objTrace(mask, minObjSize=50):
