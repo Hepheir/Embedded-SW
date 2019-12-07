@@ -30,10 +30,10 @@ if __name__ == '__main__':
     print('Start mainloop.')
 # ******************************************************************
     while True:
+        debug.clc()
         # --------
         frame = cam.getFrame(imshow=True)
         key = debug.waitKey(1)
-        debug.clc()
         # --------
         if key is 27: # ESC
             break
