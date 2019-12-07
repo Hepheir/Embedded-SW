@@ -5,6 +5,9 @@ import cv2
 
 import robo_color as color
 import robo_camera as cam
+import robo_serial as serial
+
+import enum
 
 LINE_MISSING = 'LINE MISSING'
 WALKING = 'WALKING'
@@ -13,6 +16,25 @@ BRIDGE = 'BRIDGE'
 
 DRILL_CAN = 'DRILL-CAN'
 DRILL_PACK = 'DRILL-PACK'
+#-----------------------------------------------
+class act(enum.IntEnum):
+    HAND_SHUTTER            = 1  # 손셔터
+    FORWARD_WALK            = 2  # 전진종종걸음
+    RIGHT_HAND_OPEN_DOOR    = 3  # 오른손 들고 문열기
+    TURN_LEFT_3             = 4  # 왼쪽 턴 3
+    FORWARD_RUN             = 5  # 전진 달리기 50
+    TURN_RIGHT_3            = 6  # 오른쪽 턴 3
+    SIT_1                   = 7  # 앉은자세 1
+    FORWARD_WALK_1          = 8  # 전진종종걸음 1 (팔 안움직이고 걷기)
+    FORWARD_WALK_2          = 9  # 전진종종걸음 2 (팔 안움직이고 앉아서 걷기)
+    GRAB_OBJECT             = 10 # 우유곽 잡기
+    FREE_OBJECT             = 15 # 우유곽 놓기
+    CLEAR_CAN               = 18 # 캔 날리기
+    BACKWARD_WALK           = 29 # 연속 후진
+
+
+    def do(self, action):
+        serial.TX_data(action)
 #-----------------------------------------------
 def objTrace(mask, minObjSize=50):
     retval = []
