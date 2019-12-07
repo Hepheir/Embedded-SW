@@ -90,27 +90,38 @@ def runtime():
 # -----------------------------------------------
 def waitKey(delay):
     key = cv2.waitKey(delay)
-    if key == -1:
-        print('No Key')
-        return False
+    key = key & 0xFF if key != -1 else False
 
-    key = key & 0xFF
-
-    _print('[%c] ' % chr(key))
-
+    if DEBUG_MODE:
+        if not key:
+            print('[keydown] : No key')
+        else:
+            print('[keydown] : %c' % chr(key))
     return key
 # -----------------------------------------------
 def remoteCtrl(key):
-    if key is ord('w'):
-        move.do(move.act.FORWARD_WALK)
-    elif key is ord('a'):
-        move.do(move.act.TURN_LEFT)
-    elif key is ord('s'):
-        move.do(move.act.BACKWARD_WALK)
-    elif key is ord('d'):
-        move.do(move.act.TURN_RIGHT)
-    else:
-        move.do(move.act.STABLE)
+    a = move.act
+    macro = {
+        'w' : a.WALK_FORWARD_CONTINUOUS,
+        's' : a.WALK_BACKWARD_CONTINUOUS,
+        'x' : a.WALK_LOWER_FORWARD_CONTINUOUS,
+
+        'a' : a.TURN_LEFT,
+        'd' : a.TURN_RIGHT,
+
+        'q' : a.HEAD_LEFT,
+        'e' : a.HEAD_RIGHT,
+
+        '1' : a.STABLE,
+        '2' : a.HEAD_CENTER
+    }
+    for c in macro:
+        if key is ord(c):
+            move.do(macro[c])
+# -----------------------------------------------
+def clc():
+    for _ in range(16):
+        print('')
 # -----------------------------------------------
 if __name__ == "__main__":
     record()

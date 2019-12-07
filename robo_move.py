@@ -16,23 +16,22 @@ DRILL_CAN = 'DRILL-CAN'
 DRILL_PACK = 'DRILL-PACK'
 # -----------------------------------------------
 class act:
-    FORWARD_WALK            = 2  # 전진종종걸음
-    BACKWARD_WALK           = 12 # 연속 후진
-    TURN_LEFT               = 6  # 왼쪽 턴 20
-    TURN_RIGHT              = 7  # 오른쪽 턴 20
+    STABLE                          = 1 # 안정화 자세
 
-    HAND_SHUTTER            = 1  # 손셔터
-    RIGHT_HAND_OPEN_DOOR    = 3  # 오른손 들고 문열기
-    TURN_LEFT_3             = 4  # 왼쪽 턴 3
-    FORWARD_RUN             = 5  # 전진 달리기 50
-    TURN_RIGHT_3            = 6  # 오른쪽 턴 3
-    SIT_1                   = 7  # 앉은자세 1
-    FORWARD_WALK_1          = 8  # 전진종종걸음 1 (팔 안움직이고 걷기)
-    FORWARD_WALK_2          = 9  # 전진종종걸음 2 (팔 안움직이고 앉아서 걷기)
-    GRAB_OBJECT             = 10 # 우유곽 잡기
-    FREE_OBJECT             = 15 # 우유곽 놓기
-    CLEAR_CAN               = 18 # 캔 날리기
-    STABLE                  = 26 # 안정화 자세
+    WALK_FORWARD_CONTINUOUS         = 2 # 전진종종걸음
+    WALK_BACKWARD_CONTINUOUS        = 12 # 연속 후진
+
+    WALK_LOWER_FORWARD_CONTINUOUS   = 3 # 전진종종걸음 - 쭈구려가기
+
+    TURN_LEFT                       = 6 # 왼쪽 턴 20
+    TURN_RIGHT                      = 7 # 오른쪽 턴 20
+
+    HEAD_CENTER                     = 13 # 머리 중앙
+    HEAD_RIGHT                      = 14 # 머리 오른쪽 90도
+    HEAD_LEFT                       = 15 # 머리 왼쪽 90도
+
+    
+    
 class sensor:
     DISTANCE                = None # 적외선 센서 거리측정
 # -----------------------------------------------

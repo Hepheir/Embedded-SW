@@ -33,10 +33,11 @@ if __name__ == '__main__':
         # --------
         frame = cam.getFrame(imshow=True)
         key = debug.waitKey(1)
+        debug.clc()
         # --------
         if key is 27: # ESC
             break
-        elif key is ord(' '):
+        elif key is ord('`'):
             debug.DEBUG_MODE = not debug.DEBUG_MODE
         # --------
         if debug.DEBUG_MODE:
