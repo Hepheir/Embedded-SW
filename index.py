@@ -33,13 +33,13 @@ if __name__ == '__main__':
         if key is 27: # ESC
             break
         elif key is ord('w'):
-            move.act.do(move.act.FORWARD_WALK)
+            move.do(move.act.FORWARD_WALK)
         elif key is ord('a'):
-            move.act.do(move.act.TURN_LEFT_3)
+            move.do(move.act.TURN_LEFT_3)
         elif key is ord('s'):
-            move.act.do(move.act.TURN_RIGHT_3)
+            move.do(move.act.TURN_RIGHT_3)
         elif key is ord('d'):
-            move.act.do(move.act.BACKWARD_WALK)
+            move.do(move.act.BACKWARD_WALK)
 
         # 분할된 프레임으로부터 검출할 수 있는 모든 색상을 검출
         masks = color.colorMaskAll(frame)

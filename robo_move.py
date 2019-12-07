@@ -14,7 +14,7 @@ BRIDGE = 'BRIDGE'
 
 DRILL_CAN = 'DRILL-CAN'
 DRILL_PACK = 'DRILL-PACK'
-#-----------------------------------------------
+# -----------------------------------------------
 class act:
     HAND_SHUTTER            = 1  # 손셔터
     FORWARD_WALK            = 2  # 전진종종걸음
@@ -29,10 +29,10 @@ class act:
     FREE_OBJECT             = 15 # 우유곽 놓기
     CLEAR_CAN               = 18 # 캔 날리기
     BACKWARD_WALK           = 29 # 연속 후진
-
-    def do(action):
-        serial.TX_data(action)
-#-----------------------------------------------
+# -----------------------------------------------
+def do(action):
+    serial.TX_data(action)
+# -----------------------------------------------
 def objTrace(mask, minObjSize=50):
     retval = []
     contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
@@ -45,12 +45,12 @@ def objTrace(mask, minObjSize=50):
         box = cv2.boundingRect(cont)
         retval.append(box)
     return retval
-#-----------------------------------------------
+# -----------------------------------------------
 def centerOfBox(box):
     x,y,w,h = box
     cx, cy = (x + w//2, y + h//2)
     return (cx,cy)
-#-----------------------------------------------
+# -----------------------------------------------
 def context(color_masks):
     obj = {}
     for c in color_masks:
@@ -85,7 +85,7 @@ def context(color_masks):
         return WALKING
     # --------
 
-#-----------------------------------------------
+# -----------------------------------------------
 def walking():
     pass
 
