@@ -29,7 +29,6 @@ if __name__ == '__main__':
 # ******************************************************************
     while True:
         frame = cam.getFrame(imshow=True)
-
         key = cv2.waitKey(1) & 0xFF
         if key is 27: # ESC
             break

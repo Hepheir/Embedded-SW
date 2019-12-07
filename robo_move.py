@@ -7,8 +7,6 @@ import robo_color as color
 import robo_camera as cam
 import robo_serial as serial
 
-import enum
-
 LINE_MISSING = 'LINE MISSING'
 WALKING = 'WALKING'
 
@@ -17,7 +15,7 @@ BRIDGE = 'BRIDGE'
 DRILL_CAN = 'DRILL-CAN'
 DRILL_PACK = 'DRILL-PACK'
 #-----------------------------------------------
-class act(enum.IntEnum):
+class act:
     HAND_SHUTTER            = 1  # 손셔터
     FORWARD_WALK            = 2  # 전진종종걸음
     RIGHT_HAND_OPEN_DOOR    = 3  # 오른손 들고 문열기
@@ -32,8 +30,7 @@ class act(enum.IntEnum):
     CLEAR_CAN               = 18 # 캔 날리기
     BACKWARD_WALK           = 29 # 연속 후진
 
-
-    def do(self, action):
+    def do(action):
         serial.TX_data(action)
 #-----------------------------------------------
 def objTrace(mask, minObjSize=50):
