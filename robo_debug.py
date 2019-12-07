@@ -90,13 +90,13 @@ def runtime():
 # -----------------------------------------------
 def waitKey(delay):
     key = cv2.waitKey(delay)
-    key = key & 0xFF if key != -1 else False
+    key = key & 0xFF if (key != -1) else False
 
     if DEBUG_MODE:
         if not key:
             print('[keydown] : No key')
         else:
-            print('[keydown] : %c' % chr(key))
+            print('[keydown] : %c (%d)' % (chr(key), key))
     return key
 # -----------------------------------------------
 def remoteCtrl(key):
