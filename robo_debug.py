@@ -89,12 +89,15 @@ def runtime():
     return "%7d:%02d"%(ms//1000, ms//10%100)
 # -----------------------------------------------
 def waitKey(delay):
-    key = cv2.waitKey(delay) & 0xFF
+    key = cv2.waitKey(delay)
     if key == -1:
         _print('[ ] ')
-        key = False
-    else:
-        _print('[%c] ' % chr(key))
+        return False
+
+    key = key & 0xFF
+
+    _print('[%c] ' % chr(key))
+    
     return key
 # -----------------------------------------------
 def remoteCtrl(key):
