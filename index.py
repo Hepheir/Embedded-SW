@@ -29,17 +29,22 @@ if __name__ == '__main__':
 # ******************************************************************
     while True:
         frame = cam.getFrame(imshow=True)
+        
         key = cv2.waitKey(1) & 0xFF
         if key is 27: # ESC
             break
         elif key is ord('w'):
             move.do(move.act.FORWARD_WALK)
+            continue
         elif key is ord('a'):
             move.do(move.act.TURN_LEFT_3)
+            continue
         elif key is ord('s'):
             move.do(move.act.TURN_RIGHT_3)
+            continue
         elif key is ord('d'):
             move.do(move.act.BACKWARD_WALK)
+            continue
 
         # 분할된 프레임으로부터 검출할 수 있는 모든 색상을 검출
         masks = color.colorMaskAll(frame)
