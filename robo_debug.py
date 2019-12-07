@@ -92,6 +92,7 @@ def waitKey(delay):
     key = cv2.waitKey(delay) & 0xFF
     if key == -1:
         _print('[ ] ')
+        key = False
     else:
         _print('[%c] ' % chr(key))
     return key

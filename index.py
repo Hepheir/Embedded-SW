@@ -30,17 +30,20 @@ if __name__ == '__main__':
     print('Start mainloop.')
 # ******************************************************************
     while True:
+        # --------
         frame = cam.getFrame(imshow=True)
-
-        if debug.DEBUG_MODE:
-            key = debug.waitKey(0)
-            debug.remoteCtrl(key)
-            
-        else:
-            key = debug.waitKey(1)
-
+        key = debug.waitKey(1)
+        # --------
         if key is 27: # ESC
             break
+        elif key is ord(' '):
+            debug.DEBUG_MODE = not debug.DEBUG_MODE
+        # --------
+        if debug.DEBUG_MODE:
+            if key:
+                debug.remoteCtrl(key)
+            continue
+        # --------
 
 
         # 분할된 프레임으로부터 검출할 수 있는 모든 색상을 검출
