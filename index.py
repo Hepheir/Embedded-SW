@@ -29,7 +29,7 @@ if __name__ == '__main__':
 # ******************************************************************
     while True:
         frame = cam.getFrame(imshow=True)
-        
+
         key = cv2.waitKey(1) & 0xFF
         if key is 27: # ESC
             break
@@ -52,10 +52,10 @@ if __name__ == '__main__':
 
         # 현재 상황 파악
         context = move.context(masks)
-        if context is move.WALKING:
-            serial.TX_data(2) # 전진종종걸음
-        else:
-            serial.TX_data(12) # 안정화자세
+        # if context is move.WALKING:
+        #     serial.TX_data(2) # 전진종종걸음
+        # else:
+        #     serial.TX_data(12) # 안정화자세
         
         debug._print("\r%s %-20s" % (debug.runtime(), context))
 
