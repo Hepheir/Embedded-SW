@@ -6,7 +6,10 @@ import cv2
 import sys
 
 import robo_color as color
+import robo_move as move
 # 디버그용으로 임시로 쓰고 말 것들
+
+DEBUG_MODE = False
 
 # -----------------------------------------------
 def python_version():
@@ -84,6 +87,26 @@ def record():
 def runtime():
     ms = int(cv2.getTickCount() / cv2.getTickFrequency() * 1000)
     return "%7d:%02d"%(ms//1000, ms//10%100)
+# -----------------------------------------------
+def waitKey(delay):
+    key = cv2.waitKey(delay) & 0xFF
+    if key == -1:
+        _print('[ ] ')
+    else:
+        _print('[%c] ' % chr(key))
+    return key
+# -----------------------------------------------
+def remoteCtrl(key):
+    if key is ord('w'):
+        move.do(move.act.FORWARD_WALK)
+    elif key is ord('a'):
+        move.do(move.act.TURN_LEFT)
+    elif key is ord('s'):
+        move.do(move.act.BACKWARD_WALK)
+    elif key is ord('d'):
+        move.do(move.act.TURN_RIGHT)
+    else:
+        move.do(move.act.STABLE)
 # -----------------------------------------------
 if __name__ == "__main__":
     record()

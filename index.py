@@ -25,25 +25,23 @@ if __name__ == '__main__':
     Video  = cam.init(video_fname) # 불러올 동영상 파일 이름 넣기 (index.py랑 같은 폴더에 있어야 함.)
     color.init()
 
+    debug.DEBUG_MODE = True
+    key = None
     print('Start mainloop.')
 # ******************************************************************
     while True:
         frame = cam.getFrame(imshow=True)
 
-        key = cv2.waitKey(1) & 0xFF
-        debug._print('[%c] ' % chr(key))
+        if debug.DEBUG_MODE:
+            key = debug.waitKey(0)
+            debug.remoteCtrl(key)
+            
+        else:
+            key = debug.waitKey(1)
+
         if key is 27: # ESC
             break
-        elif key is ord('w'):
-            move.do(move.act.FORWARD_WALK)
-        elif key is ord('a'):
-            move.do(move.act.TURN_LEFT)
-        elif key is ord('s'):
-            move.do(move.act.BACKWARD_WALK)
-        elif key is ord('d'):
-            move.do(move.act.TURN_RIGHT)
-        else:
-            move.do(move.act.STABLE)
+
 
         # 분할된 프레임으로부터 검출할 수 있는 모든 색상을 검출
         masks = color.colorMaskAll(frame)

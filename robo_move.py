@@ -16,8 +16,12 @@ DRILL_CAN = 'DRILL-CAN'
 DRILL_PACK = 'DRILL-PACK'
 # -----------------------------------------------
 class act:
-    HAND_SHUTTER            = 1  # 손셔터
     FORWARD_WALK            = 2  # 전진종종걸음
+    BACKWARD_WALK           = 12 # 연속 후진
+    TURN_LEFT               = 6  # 왼쪽 턴 20
+    TURN_RIGHT              = 7  # 오른쪽 턴 20
+
+    HAND_SHUTTER            = 1  # 손셔터
     RIGHT_HAND_OPEN_DOOR    = 3  # 오른손 들고 문열기
     TURN_LEFT_3             = 4  # 왼쪽 턴 3
     FORWARD_RUN             = 5  # 전진 달리기 50
@@ -28,14 +32,16 @@ class act:
     GRAB_OBJECT             = 10 # 우유곽 잡기
     FREE_OBJECT             = 15 # 우유곽 놓기
     CLEAR_CAN               = 18 # 캔 날리기
-    BACKWARD_WALK           = 29 # 연속 후진
     STABLE                  = 26 # 안정화 자세
-    TURN_LEFT               = 27 # 왼쪽 턴 20
-    TURN_RIGHT              = 28 # 오른쪽 턴 20
+class sensor:
+    DISTANCE                = None # 적외선 센서 거리측정
 # -----------------------------------------------
 def do(action):
-    for _ in range(8):
-        serial.TX_data(action)
+    serial.TX_data(action)
+# -----------------------------------------------
+def get(sensor):
+    serial.TX_data(sensor)
+    return serial.RX_data
 # -----------------------------------------------
 def objTrace(mask, minObjSize=50):
     retval = []
