@@ -17,11 +17,12 @@ DRILL_PACK = 'DRILL-PACK'
 # -----------------------------------------------
 class act:
     STABLE                          = 1 # 안정화 자세
+    LOWER                           = None # 앉기
 
     WALK_FORWARD_CONTINUOUS         = 2 # 전진종종걸음
     WALK_BACKWARD_CONTINUOUS        = 12 # 연속 후진
 
-    WALK_LOWER_FORWARD_CONTINUOUS   = 3 # 전진종종걸음 - 쭈구려가기
+    WALK_LOWER_FORWARD_CONTINUOUS   = 3 # 전진종종걸음 - 앉아서 가기
 
     TURN_LEFT                       = 6 # 왼쪽 턴 20
     TURN_RIGHT                      = 7 # 오른쪽 턴 20
@@ -30,6 +31,9 @@ class act:
     HEAD_RIGHT                      = 14 # 머리 오른쪽 90도
     HEAD_LEFT                       = 15 # 머리 왼쪽 90도
 
+    MACRO_ARM_SWING                 = 10 # 캔 날리기
+    MACRO_SHUTTER                   = 17 # 손 셔터
+    MACRO_OPEN_DOOR                 = 11 # 오른손 들고 문 열기
     
     
 class sensor:
