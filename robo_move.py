@@ -31,7 +31,8 @@ class act:
     BACKWARD_WALK           = 29 # 연속 후진
 # -----------------------------------------------
 def do(action):
-    serial.TX_data(action)
+    for _ in range(16):
+        serial.TX_data(action)
 # -----------------------------------------------
 def objTrace(mask, minObjSize=50):
     retval = []
