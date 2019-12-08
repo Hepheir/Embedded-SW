@@ -40,6 +40,9 @@ if __name__ == '__main__':
             debug.DEBUG_MODE = not debug.DEBUG_MODE
         elif key is ord('/'):
             serial.TX_data(int(input('SERIAL : ')))
+            debug.waitKey(10*1000)
+            print('TIMEOUT')
+            continue
         # --------
         if debug.DEBUG_MODE:
             if key:

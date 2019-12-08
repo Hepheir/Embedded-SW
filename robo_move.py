@@ -35,7 +35,7 @@ class LOOP_MOTION:
 
     TURN_LEFT = 40
     TURN_RIGHT = 41
-    
+
     TURN_LOWER_LEFT = 42
     TURN_LOWER_RIGHT = 43
 
@@ -61,11 +61,13 @@ class HEAD:
     YAW_CENTER = 96
     YAW_LEFT_90 = 97
     YAW_RIGHT_90 = 98
+    YAW_LEFT_45 = 99
+    YAW_RIGHT_45 = 100
     
     # 상하
-    PITCH_CENTER = 99
-    PITCH_LOWER_45 = 100
-    PITCH_LOWER_90 = 101
+    PITCH_CENTER = 101
+    PITCH_LOWER_45 = 102
+    PITCH_LOWER_90 = 103
 
 class ARM:
     DOWN = 112
