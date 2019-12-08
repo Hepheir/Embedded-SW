@@ -22,46 +22,54 @@ def _print(string):
     sys.stdout.write(string)
     sys.stdout.flush()
 # -----------------------------------------------
+def runtime_str():
+    # 현재 실행시간 출력 : sec:ms (문자열 최소길이 7)
+    total_ms = int(cv2.getTickCount() / cv2.getTickFrequency() * 1000)
+    cs = (total_ms // 10) % 100
+    s = (total_ms // 1000) % 60
+    m = total_ms // 60000
+    return '%d:%02d:%02d'%(m,s,cs)
+# -----------------------------------------------
 def _cvtColor(src, code):
+    # 라즈베리파이에서는 YUV가 YVU순서로 되어있는 오류 보정
     ret = cv2.cvtColor(src, code)
     if isRasp() and code is cv2.COLOR_BGR2YUV:
         ret[:,:,1:] = ret[:,:,2:0:-1]
     return ret
 # -----------------------------------------------
-def showAllColorMasks(frame,color_masks):
+def waitKey(delay):
+    key = cv2.waitKey(delay)
+    return key & 0xFF if (key != -1) else False
+# -----------------------------------------------
+def showAllColorMasks(frame, color_masks, winname='masks'):
+    LINE_THICKNESS = 2
+    SCALER = 0.25 # 이미지 축소/확대 비율
+    GAMMA = 32
+    # --------
     height, width = frame.shape[:2]
     colors = len(color.DETECTABLE_COLORS)
-    line_thick = 2
-    scaler = 0.5 # 이미지 축소/확대 비율
-    gamma = 72
-
-    detected = np.zeros((height, width * colors, 3), dtype=np.uint8)
-
-    i = 0
-    for color_name in color_masks:
-        mask = color_masks[color_name].copy()
-        ref = color.getRef(color_name)
-        color_bgr = ref['rgb'][::-1] # [::-1], RGB 를 역순으로 --> BGR
+    resolution = (int(width * colors * SCALER), int(height * SCALER) )
+    # --------
+    def _(color_name):
+        mask_gray, ref = (color_masks[color_name], color.getRef(color_name))
+        mask_bgr = cv2.cvtColor(mask_gray, cv2.COLOR_GRAY2BGR)
+        selected_color_bgr = ref['rgb'][::-1] # [::-1], RGB 를 역순으로 --> BGR
 
         # RETR_EXTERNAL : 외곽선만 구함 --> 처리속도 효율 향상 / APPROX_SIMPLE : 근사화 --> 데이터 량 줄임, 속도 향상
-        contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
-
-        mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)
-        color_mask = cv2.addWeighted(mask, .7, frame, .3, gamma)
-
+        contours = cv2.findContours(mask_gray, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
         if contours:
             max_cont = max(contours, key=cv2.contourArea)
             x,y,w,h = cv2.boundingRect(max_cont)
 
             # mask는 GRAY_SCALE 이므로, 컬러를 입히려면 BGR로 convert 해주어야함.
-            cv2.rectangle(color_mask, (x,y), (x+w,y+h), color_bgr, int(line_thick/scaler))
+            cv2.rectangle(mask_bgr, (x,y), (x+w,y+h), selected_color_bgr, int(LINE_THICKNESS/SCALER))
+        mask_bgr = cv2.addWeighted(frame, 0.3, mask_bgr, 0.7, GAMMA)
+        mask_bgr[:,int(-1/SCALER):] = (255,255,255) # 각 마스크별 경계선
+        return mask_bgr
 
-        stX = width * i # StartX : 이미지 붙여넣을 위치 (x좌표)
-        detected[:, stX:(stX+width)] = color_mask # 마스크 붙여넣기
-        detected[:, (stX+width-1)] = (255,255,255) # 각 마스크별 흰색 두께 1의 경계선
-        
-        i += 1
-    cv2.imshow('masks', cv2.resize(detected, ( int(width*colors*scaler), int(height*scaler))))
+    stacked_masks = np.hstack( tuple([_(color_name) for color_name in color_masks]) )
+    resized = cv2.resize(stacked_masks, resolution)
+    cv2.imshow('stacked masks', resized)
 # -----------------------------------------------
 def record():
     # find the webcam
@@ -83,19 +91,6 @@ def record():
 
     cap.release()
     cv2.destroyAllWindows()
-# -----------------------------------------------
-def runtime():
-    ms = int(cv2.getTickCount() / cv2.getTickFrequency() * 1000)
-    return "%7d:%02d"%(ms//1000, ms//10%100)
-# -----------------------------------------------
-def waitKey(delay):
-    key = cv2.waitKey(delay)
-    key = key & 0xFF if (key != -1) else False
-
-    if DEBUG_MODE:
-        if key:
-            print('[keydown] : %c (%d)' % (chr(key), key))
-    return key
 # -----------------------------------------------
 def remoteCtrl(key):
     macro = {
@@ -123,10 +118,6 @@ def remoteCtrl(key):
         if key is ord(c):
             print('ROBOT REMOTE [%d]' % macro[c])
             move.do(macro[c])
-# -----------------------------------------------
-def clc():
-    for _ in range(16):
-        print('')
 # -----------------------------------------------
 if __name__ == "__main__":
     record()

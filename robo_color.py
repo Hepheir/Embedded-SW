@@ -91,8 +91,10 @@ def getRef(color):
             return ref
     return None
 #-----------------------------------------------
-def colorMaskAll(frame, useFilter=True):
+def colorMaskAll(frame, useFilter=True,imshow=False):
     # BGR 이미지로부터 colorRef에 해당하는 색을 검출하여 마스크이미지를 반환.
+    # 주어진 프레임으로부터 검출할 수 있는 모든 색상을 검출
+    # 반환 값은 Dict 형식으로, { "색상1" : 마스크1, "색상2" : 마스크2, ... } 형식
     frame = frame.copy()
 
     if useFilter:
@@ -123,6 +125,10 @@ def colorMaskAll(frame, useFilter=True):
             mask = cv2.dilate(mask, (3,3), iterations=1)
 
         retval[ref['color_name']] = mask
+
+    if imshow:
+        debug.showAllColorMasks(frame, retval)
+
     return retval
 # ******************************************************************
 # ******************************************************************

@@ -33,12 +33,13 @@ if __name__ == '__main__':
         # --------
         frame = cam.getFrame(imshow=True)
         key = debug.waitKey(1)
+        key_chr = chr(key) if key else 'NO_KEY'
         # --------
         if key is 27: # ESC
             break
-        elif key is ord('`'):
+        elif key_chr is '`':
             debug.DEBUG_MODE = not debug.DEBUG_MODE
-        elif key is ord('/'):
+        elif key_chr is '/':
             serial.TX_data(int(input('SERIAL : ')))
             debug.waitKey(5*1000)
             print('TIMEOUT')
@@ -48,20 +49,15 @@ if __name__ == '__main__':
             if key:
                 debug.remoteCtrl(key)
         # --------
-        # 분할된 프레임으로부터 검출할 수 있는 모든 색상을 검출
-        masks = color.colorMaskAll(frame)
-        # 반환 값은 Dict 형식으로, { "색상1" : 마스크1, "색상2" : 마스크2, ... } 형식
 
         # 현재 상황 파악
-        context = move.context(masks)
+        context = move.context(frame)
         # if context is move.WALKING:
         #     serial.TX_data(2) # 전진종종걸음
         # else:
         #     serial.TX_data(12) # 안정화자세
         
-        debug._print("\r%s %-20s" % (debug.runtime(), context))
-
-        debug.showAllColorMasks(frame, masks)
+        debug._print("\r%-64s" % ('[t=%s][cntx=%s][key=%s]'%(debug.runtime_str(), context, key_chr) ))
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************

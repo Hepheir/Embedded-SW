@@ -106,14 +106,17 @@ def centerOfBox(box):
     cx, cy = (x + w//2, y + h//2)
     return (cx,cy)
 # -----------------------------------------------
-def context(color_masks):
+def context(frame):
+    # 현재 로봇이 처한 상황을 파악
+    # --------
     obj = {}
-    for c in color_masks:
-        # 프레임의 세로 3분할
-        c1b3_color_mask = color_masks[c][cam.HEIGHT*2//3:,:]
-
+    # 프레임의 세로 3분할
+    c1b3_frame = frame[cam.HEIGHT*2//3:,:]
+    c1b3_colorMasks = color.colorMaskAll(c1b3_frame, imshow=True)
+    for c in c1b3_colorMasks:
+        mask = c1b3_colorMasks[c]
         # 3분할 된 마스크 가장 아래꺼에서 '특정 크기 이상의 물체'의 '바운딩박스' 구하기
-        obj[c] = objTrace(c1b3_color_mask)
+        obj[c] = objTrace(mask)
     # --------
     if not obj['yellow']:
         # 라인 찾기
