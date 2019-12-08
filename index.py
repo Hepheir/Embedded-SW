@@ -25,7 +25,6 @@ if __name__ == '__main__':
     Video  = cam.init(video_fname) # 불러올 동영상 파일 이름 넣기 (index.py랑 같은 폴더에 있어야 함.)
     color.init()
 
-    debug.DEBUG_MODE = True
     key = None
     key_chr = '_'
     tx_data = -1
@@ -40,7 +39,10 @@ if __name__ == '__main__':
         if key is 27: # ESC
             break
         elif key_chr is '`':
+            key_chr = '_'
             debug.DEBUG_MODE = not debug.DEBUG_MODE
+            continue
+
         elif key_chr is '/':
             key_chr = '_'
             debug._print('\n\nSERIAL : ')
@@ -55,17 +57,20 @@ if __name__ == '__main__':
 
         # 현재 상황 파악
         context = move.context(frame)
-        # if context is move.WALKING:
-        #     serial.TX_data(2) # 전진종종걸음
-        # else:
-        #     serial.TX_data(12) # 안정화자세
+
+        if not debug.DEBUG_MODE:
+            if context is move.STATUS.WALKING:
+                serial.TX_data(2) # 전진종종걸음
+            else:
+                serial.TX_data(12) # 안정화자세
         
 
-        debug._print('\r%-12s %-24s %-8s %-8s ' % (
+        debug._print('\r%-12s %-24s %-8s %-8s %-6s ' % (
             '[t=%s]'        % debug.runtime_str(),
             '[cntx=%s]'     % context,
             '[key=%c]'      % key_chr,
-            '[tx=%d]'       % tx_data
+            '[tx=%d]'       % tx_data,
+            '[d=%c]'        % ('T' if debug.DEBUG_MODE else 'F')
         ))
 # ******************************************************************
 # ******************************************************************
