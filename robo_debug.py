@@ -22,6 +22,12 @@ def _print(string):
     sys.stdout.write(string)
     sys.stdout.flush()
 # -----------------------------------------------
+def _scan():
+    line = sys.stdin.readline()
+    sys.stdin.flush()
+    sys.stdin.flush()
+    return line
+# -----------------------------------------------
 def runtime_str():
     # 현재 실행시간 출력 : sec:ms (문자열 최소길이 7)
     total_ms = int(cv2.getTickCount() / cv2.getTickFrequency() * 1000)
@@ -118,6 +124,7 @@ def remoteCtrl(key):
         if key is ord(c):
             move.do(macro[c])
             return macro[c]
+    return -1
 # -----------------------------------------------
 if __name__ == "__main__":
     record()

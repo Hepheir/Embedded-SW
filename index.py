@@ -28,7 +28,7 @@ if __name__ == '__main__':
     debug.DEBUG_MODE = True
     key = None
     key_chr = '_'
-    tx_data = 0
+    tx_data = -1
     print('Start mainloop.')
 # ******************************************************************
     while True:
@@ -42,12 +42,13 @@ if __name__ == '__main__':
         elif key_chr is '`':
             debug.DEBUG_MODE = not debug.DEBUG_MODE
         elif key_chr is '/':
-            serial.TX_data(int(input('SERIAL : ')))
-            debug.waitKey(5*1000)
-            print('TIMEOUT')
-            continue
+            key_chr = '_'
+            debug._print('\n\nSERIAL : ')
+            
+            tx_data = int( debug._scan() )
+            serial.TX_data(tx_data)
         # --------
-        if debug.DEBUG_MODE:
+        elif debug.DEBUG_MODE:
             if key:
                 tx_data = debug.remoteCtrl(key)
         # --------
@@ -60,7 +61,7 @@ if __name__ == '__main__':
         #     serial.TX_data(12) # 안정화자세
         
 
-        debug._print('\r%-12s %-24s %-8s %-8s' % (
+        debug._print('\r%-12s %-24s %-8s %-8s ' % (
             '[t=%s]'        % debug.runtime_str(),
             '[cntx=%s]'     % context,
             '[key=%c]'      % key_chr,
