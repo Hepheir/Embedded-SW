@@ -107,12 +107,17 @@ def remoteCtrl(key):
         'a' : move.LOOP_MOTION.TURN_LEFT,
         'd' : move.LOOP_MOTION.TURN_RIGHT,
 
-        '2' : move.HEAD.YAW_CENTER,
+        'r' : move.HEAD.YAW_CENTER,
         'q' : move.HEAD.YAW_LEFT_90,
         'e' : move.HEAD.YAW_RIGHT_90,
 
-        '1' : move.HEAD.PITCH_LOWER_45,
-        '3' : move.HEAD.PITCH_LOWER_90
+        'z' : move.HEAD.PITCH_LOWER_45,
+        'c' : move.HEAD.PITCH_LOWER_90,
+
+        '1' : 1, '2' : 2, '3' : 3,
+        '4' : 4, '5' : 5, '6' : 6,
+        '7' : 7, '8' : 8, '9' : 9,
+        '0' : 0
     }
     for c in macro:
         if key is ord(c):
