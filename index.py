@@ -38,14 +38,14 @@ if __name__ == '__main__':
             break
         elif key is ord('`'):
             debug.DEBUG_MODE = not debug.DEBUG_MODE
+        elif key is ord('/'):
+            serial.TX_data(int(input('SERIAL : ')))
         # --------
         if debug.DEBUG_MODE:
             if key:
                 debug.remoteCtrl(key)
             continue
         # --------
-
-
         # 분할된 프레임으로부터 검출할 수 있는 모든 색상을 검출
         masks = color.colorMaskAll(frame)
         # 반환 값은 Dict 형식으로, { "색상1" : 마스크1, "색상2" : 마스크2, ... } 형식
