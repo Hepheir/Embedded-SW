@@ -27,14 +27,15 @@ if __name__ == '__main__':
 
     debug.DEBUG_MODE = True
     key = None
+    key_chr = '_'
+    tx_data = 0
     print('Start mainloop.')
 # ******************************************************************
     while True:
         # --------
         frame = cam.getFrame(imshow=True)
         key = debug.waitKey(1)
-        key_chr = chr(key) if key else 'NO_KEY'
-        tx_data = 'NO_TX'
+        key_chr = chr(key) if key else key_chr
         # --------
         if key is 27: # ESC
             break
@@ -49,7 +50,6 @@ if __name__ == '__main__':
         if debug.DEBUG_MODE:
             if key:
                 tx_data = debug.remoteCtrl(key)
-                tx_data = str(tx_data)
         # --------
 
         # 현재 상황 파악
@@ -59,7 +59,13 @@ if __name__ == '__main__':
         # else:
         #     serial.TX_data(12) # 안정화자세
         
-        debug._print("\r%-64s" % ('[t=%s][cntx=%s][key=%s][tx=%s]'%(debug.runtime_str(), context, key_chr, tx_data) ))
+
+        debug._print('\r%-12s %-24s %-8s %-8s' % (
+            '[t=%s]'        % debug.runtime_str(),
+            '[cntx=%s]'     % context,
+            '[key=%c]'      % key_chr,
+            '[tx=%d]'       % tx_data
+        ))
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
