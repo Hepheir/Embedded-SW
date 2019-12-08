@@ -116,6 +116,7 @@ def remoteCtrl(key):
     }
     for c in macro:
         if key is ord(c):
+            print('ROBOT REMOTE [%d]' % macro[c])
             move.do(macro[c])
 # -----------------------------------------------
 def clc():
