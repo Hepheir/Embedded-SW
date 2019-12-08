@@ -36,14 +36,14 @@ if __name__ == '__main__':
         key = debug.waitKey(1)
         key_chr = chr(key) if key else key_chr
         # --------
-        if key is 27: # ESC
+        if key == 27: # ESC
             break
-        elif key_chr is '`':
+        elif key_chr == '`':
             key_chr = '_'
             debug.DEBUG_MODE = not debug.DEBUG_MODE
             continue
 
-        elif key_chr is '/':
+        elif key_chr == '/':
             key_chr = '_'
             debug._print('\n\nSERIAL : ')
             
@@ -65,9 +65,11 @@ if __name__ == '__main__':
                 serial.TX_data(12) # 안정화자세
         
 
-        debug._print('\r%-12s %-24s %-8s %-8s %-6s ' % (
+        cv2.imshow('Frame', frame)
+        debug._print('\r%-12s %-24s %-12s %-8s %-8s %-6s ' % (
             '[t=%s]'        % debug.runtime_str(),
             '[cntx=%s]'     % context,
+            '[l=%7.2f]'        % move.line_angle,
             '[key=%c]'      % key_chr,
             '[tx=%d]'       % tx_data,
             '[d=%c]'        % ('T' if debug.DEBUG_MODE else 'F')

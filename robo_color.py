@@ -43,13 +43,19 @@ def init(filename="data_color.json"):
         for ref in references:
             new_ref = {}
             for key in ref:
+                # 유니코드 디코딩
                 new_key = str(key)
+                # 자료형을 알맞게 변환하는 과정
                 if type(ref[key]) is type([]):
                     new_ref[new_key] = tuple(ref[key])
                 elif type(ref[key]) is type(u''):
                     new_ref[new_key] = str(ref[key])
                 else:
                     new_ref[new_key] = ref[key]
+                # 새로운 bgr 속성도 추가
+                if new_key == 'rgb': 
+                    new_ref['bgr'] = tuple(ref[key][::-1])
+            
             COLOR_REFERENCES.append(new_ref)
     
     for ref in COLOR_REFERENCES:

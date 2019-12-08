@@ -7,6 +7,8 @@ import robo_color as color
 import robo_camera as cam
 import robo_serial as serial
 
+line_angle = 0
+
 class STATUS:
     LINE_MISSING = 'LINE MISSING'
     WALKING = 'WALKING'
@@ -89,22 +91,17 @@ def get(sensor):
     return serial.RX_data
 # -----------------------------------------------
 def objTrace(mask, minObjSize=50):
-    retval = []
     contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
     if not contours:
-        return retval
-    for cont in contours:
-        area = cv2.contourArea(cont)
-        if (area < minObjSize):
-            continue
-        box = cv2.boundingRect(cont)
-        retval.append(box)
-    return retval
+        return []
+    return list(filter(lambda c: cv2.contourArea(c) > minObjSize, contours))
 # -----------------------------------------------
-def centerOfBox(box):
-    x,y,w,h = box
-    cx, cy = (x + w//2, y + h//2)
-    return (cx,cy)
+def center_of_contour(contour):
+	# compute the center of the contour
+    M = cv2.moments(contour)
+    cx = int(M["m10"] / M["m00"])
+    cy = int(M["m01"] / M["m00"])
+    return (cx, cy)
 # -----------------------------------------------
 def context(frame):
     # 현재 로봇이 처한 상황을 파악
@@ -115,7 +112,7 @@ def context(frame):
     c1b3_colorMasks = color.colorMaskAll(c1b3_frame, imshow=True)
     for c in c1b3_colorMasks:
         mask = c1b3_colorMasks[c]
-        # 3분할 된 마스크 가장 아래꺼에서 '특정 크기 이상의 물체'의 '바운딩박스' 구하기
+        # 3분할 된 마스크 가장 아래꺼에서 '특정 크기 이상의 물체'의 '윤곽선' 구하기
         obj[c] = objTrace(mask)
     # --------
     if not obj['yellow']:
@@ -139,7 +136,25 @@ def context(frame):
         return STATUS.DRILL_PACK
     # --------
     else:
-        # 걷기
+        # 라인트레이싱
+        line = max(obj['yellow'], key=cv2.contourArea)
+
+        line_rect = cv2.minAreaRect(line)
+
+        global line_angle
+        line_angle = line_rect[-1]
+
+        line_center = center_of_contour(line)
+        line_box = np.int0( cv2.boxPoints(line_rect) )
+        line_color = color.getRef('yellow')['bgr']
+        line_thickness = 2
+
+        cv2.circle(c1b3_frame, line_center, 2, line_color, -1)
+        # cv2.line(c1b3_frame, )
+        cv2.drawContours(c1b3_frame, [line_box], -1 , line_color, line_thickness)
+
+        # 서브루틴 :
+        
         return STATUS.WALKING
     # --------
 
