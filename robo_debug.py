@@ -93,9 +93,7 @@ def waitKey(delay):
     key = key & 0xFF if (key != -1) else False
 
     if DEBUG_MODE:
-        if not key:
-            print('[keydown] : No key')
-        else:
+        if key:
             print('[keydown] : %c (%d)' % (chr(key), key))
     return key
 # -----------------------------------------------
