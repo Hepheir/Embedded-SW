@@ -7,37 +7,77 @@ import robo_color as color
 import robo_camera as cam
 import robo_serial as serial
 
-LINE_MISSING = 'LINE MISSING'
-WALKING = 'WALKING'
+class STATUS:
+    LINE_MISSING = 'LINE MISSING'
+    WALKING = 'WALKING'
 
-BRIDGE = 'BRIDGE'
+    BRIDGE = 'BRIDGE'
 
-DRILL_CAN = 'DRILL-CAN'
-DRILL_PACK = 'DRILL-PACK'
+    DRILL_CAN = 'DRILL-CAN'
+    DRILL_PACK = 'DRILL-PACK'
 # -----------------------------------------------
-class act:
-    STABLE                          = 1 # 안정화 자세
-    LOWER                           = None # 앉기
+class STOP_MOTION:
+    STABLE  = 10
+    STAND   = 11
+    LOWER   = 12
+    LIMBO   = 13
 
-    WALK_FORWARD_CONTINUOUS         = 2 # 전진종종걸음
-    WALK_BACKWARD_CONTINUOUS        = 12 # 연속 후진
+class LOOP_MOTION:
+    WALK_FORWARD = 32
+    WALK_BACKWARD = 33
+    WALK_LEFT = 34
+    WALK_RIGHT = 35
 
-    WALK_LOWER_FORWARD_CONTINUOUS   = 3 # 전진종종걸음 - 앉아서 가기
+    LOWER_FORWARD = 36
+    LOWER_BACKWARD = 37
+    LOWER_LEFT = 38
+    LOWER_RIGHT = 39
 
-    TURN_LEFT                       = 6 # 왼쪽 턴 20
-    TURN_RIGHT                      = 7 # 오른쪽 턴 20
-
-    HEAD_CENTER                     = 13 # 머리 중앙
-    HEAD_RIGHT                      = 14 # 머리 오른쪽 90도
-    HEAD_LEFT                       = 15 # 머리 왼쪽 90도
-
-    MACRO_ARM_SWING                 = 10 # 캔 날리기
-    MACRO_SHUTTER                   = 17 # 손 셔터
-    MACRO_OPEN_DOOR                 = 11 # 오른손 들고 문 열기
+    TURN_LEFT = 40
+    TURN_RIGHT = 41
     
+    TURN_LOWER_LEFT = 42
+    TURN_LOWER_RIGHT = 43
+
+class STEP:
+    FORWARD = 64
+    BACKWARD = 65
+    LEFT = 66
+    RIGHT = 67
+
+    LOWER_FORWARD = 68
+    LOWER_BACKWARD = 69
+    LOWER_LEFT = 70
+    LOWER_RIGHT = 71
+
+    TURN_LEFT = 72
+    TURN_RIGHT = 73
+
+    TURN_LOWER_LEFT = 74
+    TURN_LOWER_RIGHT = 75
+
+class HEAD:
+    # 좌우
+    YAW_CENTER = 96
+    YAW_LEFT_90 = 97
+    YAW_RIGHT_90 = 98
     
-class sensor:
-    DISTANCE                = None # 적외선 센서 거리측정
+    # 상하
+    PITCH_CENTER = 99
+    PITCH_LOWER_45 = 100
+    PITCH_LOWER_90 = 101
+
+class ARM:
+    DOWN = 112
+    MID = 113
+    UP = 114
+
+class MACRO:
+    SHUTTER = 128
+    OPEN_DOOR = 129
+    
+class SENSOR:
+    DISTANCE = None # 적외선 센서 거리측정
 # -----------------------------------------------
 def do(action):
     serial.TX_data(action)
@@ -75,27 +115,27 @@ def context(color_masks):
     # --------
     if not obj['yellow']:
         # 라인 찾기
-        return LINE_MISSING
+        return STATUS.LINE_MISSING
     # --------
     elif obj['red'] and obj['black']:
         # 다리 건너기
-        return BRIDGE
+        return STATUS.BRIDGE
     # --------
     elif obj['red'] and not obj['black']:
         # 코카콜라 캔 치우기
-        return DRILL_CAN
+        return STATUS.DRILL_CAN
     # --------
     elif obj['green'] and obj['blue']:
         # 우유곽 파란선 안으로 옮기기
-        return DRILL_PACK
+        return STATUS.DRILL_PACK
     # --------
     elif obj['green'] and not obj['blue']:
         # 우유곽 치우기
-        return DRILL_PACK
+        return STATUS.DRILL_PACK
     # --------
     else:
         # 걷기
-        return WALKING
+        return STATUS.WALKING
     # --------
 
 # -----------------------------------------------

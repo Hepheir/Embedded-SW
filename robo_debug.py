@@ -100,21 +100,21 @@ def waitKey(delay):
     return key
 # -----------------------------------------------
 def remoteCtrl(key):
-    a = move.act
     macro = {
-        ' ' : a.STABLE,
+        ' ' : move.STOP_MOTION.STABLE,
+        'x' : move.STOP_MOTION.LOWER,
         
-        'w' : a.WALK_FORWARD_CONTINUOUS,
-        's' : a.WALK_BACKWARD_CONTINUOUS,
-        'x' : a.WALK_LOWER_FORWARD_CONTINUOUS,
+        'w' : move.LOOP_MOTION.WALK_FORWARD,
+        's' : move.LOOP_MOTION.WALK_BACKWARD,
+        'a' : move.LOOP_MOTION.TURN_LEFT,
+        'd' : move.LOOP_MOTION.TURN_RIGHT,
 
-        'a' : a.TURN_LEFT,
-        'd' : a.TURN_RIGHT,
+        '2' : move.HEAD.YAW_CENTER,
+        'q' : move.HEAD.YAW_LEFT_90,
+        'e' : move.HEAD.YAW_RIGHT_90,
 
-        '2' : a.HEAD_CENTER,
-        'q' : a.HEAD_LEFT,
-        'e' : a.HEAD_RIGHT
-
+        '1' : move.HEAD.PITCH_LOWER_45,
+        '3' : move.HEAD.PITCH_LOWER_90
     }
     for c in macro:
         if key is ord(c):
