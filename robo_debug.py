@@ -116,8 +116,8 @@ def remoteCtrl(key):
     }
     for c in macro:
         if key is ord(c):
-            print('ROBOT REMOTE [%d]' % macro[c])
             move.do(macro[c])
+            return macro[c]
 # -----------------------------------------------
 if __name__ == "__main__":
     record()
