@@ -173,8 +173,8 @@ def dirCalibration(cmask, prescaler=1/6):
     top_x = vx/vy * ( - y) + x
     bot_x = vx/vy * ((cam.HEIGHT + cam.CENTER[1]*2/3) - y) + x
 
-    dx = top_x - bot_x 
-    bx = bot_x - cam.CENTER[0]
+    dx = (top_x - bot_x) / cam.WIDTH * 100
+    bx = (bot_x - cam.CENTER[0]) / cam.CENTER[0] * 100
     print('%f, %f ' % (bx, dx))
 
     if abs(bx) + abs(dx) > 1000:
