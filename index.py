@@ -24,10 +24,10 @@ key_chr = None
 
 routine_stoppers = []
 
-main_routine_time_s = 1
+main_routine_time_s = 0.5
 main_routine_args = {}
 
-sub_routine_time_s = main_routine_time_s * 1.5
+sub_routine_time_s = 2
 sub_routine_args = {}
 
 serial_queue = []
