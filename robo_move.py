@@ -129,15 +129,12 @@ def stadingOnLine(cmask):
 # --------
 def isEndOfLine(cmask):
     y_msk = cmask['yellow']
-    roi = y_msk[:cam.HEIGHT//2,:]
+    roi = y_msk[:cam.HEIGHT*2//3,:]
     conts = objContTrace(roi)
     return len(conts) == 0
 # --------
 def endOfLine(cmask):
-    y_msk = cmask['yellow'][cam.HEIGHT*2//4:,:]
-    cali = dirCalibration(cmask, prescaler=3/4)
-    if not (cali == LOOP_MOTION.WALK_FORWARD):
-        return cali
+    y_msk = cmask['yellow'][cam.HEIGHT//2:,:]
     
     msk_l = y_msk[:,:cam.WIDTH//3]
     if len(objContTrace(msk_l)):
@@ -174,9 +171,9 @@ def dirCalibration(cmask, prescaler=1/2):
     upperx = vx/vy * (upperh - y) + x
 
     cx = (lowerx + upperx - cam.WIDTH) / (2 * cam.WIDTH) * 100
-    if cx < -20:
+    if cx < -10:
         return STEP.LEFT
-    elif cx > 20:
+    elif cx > 10:
         return STEP.RIGHT
 
     # 회전각 보정
