@@ -175,6 +175,9 @@ def dirCalibration(cmask, prescaler=1/6):
     dx = tx - bx
     print('%f, %f ' % (tx, bx))
 
+    if (tx > 1000):
+        return False
+
     # 위치 보정
     if abs(bx) > ltr_shift_sen:
         return STEP.RIGHT if bx > 0 else STEP.LEFT
