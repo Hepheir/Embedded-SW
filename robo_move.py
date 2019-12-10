@@ -155,7 +155,7 @@ def findObstacles(cmask):
 # -----------------------------------------------
 def dirCalibration(cmask, prescaler=1/6):
     ltr_turn_sen = 3
-    ltr_shift_sen = 2
+    ltr_shift_sen = 3
     lowerh = int(cam.HEIGHT * prescaler)
     upperh = cam.HEIGHT - 1
     y_msk = cmask['yellow'][lowerh:,:]
@@ -171,12 +171,12 @@ def dirCalibration(cmask, prescaler=1/6):
     theta = 0 if (vx == 0) else math.atan(vy/vx)
     th = theta - np.pi/2
 
-    if abs(th) > np.pi/2 / ltr_turn_sen:
+    if abs(th) > (np.pi/2 / ltr_turn_sen):
         return STEP.TURN_LEFT if (th > 0) else STEP.TURN_RIGHT
         
     # 위치 보정
-    cx = center_of_contour(line)[0] - cam.CENTER[0]
-    if abs(cx) > (cam.CENTER[0] // ltr_shift_sen):
+    cx = center_of_contour(line)[0]/cam.CENTER[0] - 1
+    if abs(cx) > (1 / ltr_shift_sen):
         return STEP.RIGHT if cx > 0 else STEP.LEFT
 
     # 문제가 없으면 전진
