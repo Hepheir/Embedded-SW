@@ -109,7 +109,7 @@ def context(frame):
     obj = {}
     # 프레임의 세로 3분할
     cmask = color.colorMaskAll(frame)
-    return str(ContextHelper.onLine(frame, cmask))
+    return str(onLine(frame, cmask))
 
     c1b3_frame = frame[cam.HEIGHT*2//3:,:]
     c1b3_colorMasks = color.colorMaskAll(c1b3_frame, imshow=True)
