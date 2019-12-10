@@ -53,7 +53,7 @@ def waitKey(delay):
     key = cv2.waitKey(delay)
     return key & 0xFF if (key != -1) else False
 # -----------------------------------------------
-def showAllColorMasks(frame, color_masks, winname='masks'):
+def stackedColorMasks(frame, color_masks, winname='masks'):
     LINE_THICKNESS = 2
     SCALER = 0.25 # 이미지 축소/확대 비율
     GAMMA = 32
@@ -81,7 +81,7 @@ def showAllColorMasks(frame, color_masks, winname='masks'):
 
     stacked_masks = np.hstack( tuple([_(color_name) for color_name in color_masks]) )
     resized = cv2.resize(stacked_masks, resolution)
-    cv2.imshow('stacked masks', resized)
+    return resized
 # -----------------------------------------------
 def record():
     # find the webcam
@@ -128,7 +128,6 @@ def remoteCtrl(key):
     }
     for c in macro:
         if key is ord(c):
-            move.do(macro[c])
             return macro[c]
     return None
 

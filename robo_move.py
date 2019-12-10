@@ -84,13 +84,6 @@ class MACRO:
 class SENSOR:
     DISTANCE = None # 적외선 센서 거리측정
 # -----------------------------------------------
-def do(action):
-    serial.TX_data(action)
-# -----------------------------------------------
-def once(action):
-    serial.TX_data(action)
-    time.sleep(2)
-# -----------------------------------------------
 def get(sensor):
     serial.TX_data(sensor)
     return serial.RX_data
@@ -173,7 +166,8 @@ def onLine(frame, cmask):
 
     line_objs = objTrace(roi_cmask)
     if not line_objs:
-        return 'NO LINE'
+        return False
+
     line_obj = max(line_objs, key=cv2.contourArea)
     vx,vy,x,y = cv2.fitLine(line_obj, cv2.DIST_L2,0,0.01,0.01)
 
