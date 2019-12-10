@@ -171,11 +171,11 @@ def dirCalibration(cmask, prescaler=1/6):
         return False
 
     tx = vx/vy * ( - y) + x - cam.CENTER[0]
-    bx = vx/vy * (cam.HEIGHT + cam.CENTER[1] - y) + x - cam.CENTER[0]
+    bx = vx/vy * (cam.HEIGHT + cam.CENTER[1]*2/3 - y) + x - cam.CENTER[0]
     dx = tx - bx
     print('%f, %f ' % (tx, bx))
 
-    if abs(tx) > 1000:
+    if abs(tx) + abs(bx) > 1000:
         return False
 
     # 위치 보정
