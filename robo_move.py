@@ -172,7 +172,9 @@ def onLine(frame, cmask):
     line_obj = max(line_objs, key=cv2.contourArea)
     vx,vy,x,y = cv2.fitLine(line_obj, cv2.DIST_L2,0,0.01,0.01)
     dx = vx*(vy/abs(vy))
-
+    adx = abs(dx)
+    if adx > 0.2:
+        return 'NEED to TURN'
     return dx
 
     roi_c_l = cmask[:,                : cam.WIDTH//3   ]
