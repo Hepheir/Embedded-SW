@@ -54,25 +54,25 @@ if __name__ == '__main__':
             if key:
                 tx_data = debug.remoteCtrl(key)
         # --------
+        try:
+            # 현재 상황 파악
+            context = move.context(frame)
 
-        # 현재 상황 파악
-        context = move.context(frame)
+            if not debug.DEBUG_MODE:
+                if context is move.STATUS.WALKING:
+                    serial.TX_data(2) # 전진종종걸음
+                else:
+                    serial.TX_data(12) # 안정화자세
+            
 
-        if not debug.DEBUG_MODE:
-            if context is move.STATUS.WALKING:
-                serial.TX_data(2) # 전진종종걸음
-            else:
-                serial.TX_data(12) # 안정화자세
-        
-
-        cv2.imshow('Frame', frame)
-        debug._print('\r%-12s %-24s %-8s %-8s %-6s ' % (
-            '[t=%s]'        % debug.runtime_str(),
-            '[cntx=%s]'     % context,
-            '[key=%c]'      % key_chr,
-            '[tx=%d]'       % tx_data,
-            '[d=%c]'        % ('T' if debug.DEBUG_MODE else 'F')
-        ))
+            cv2.imshow('Frame', frame)
+            debug._print('\r%-12s %-24s %-8s %-8s %-6s ' % (
+                '[t=%s]'        % debug.runtime_str(),
+                '[cntx=%s]'     % context,
+                '[key=%c]'      % key_chr,
+                '[tx=%d]'       % tx_data,
+                '[d=%c]'        % ('T' if debug.DEBUG_MODE else 'F')
+            ))
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
