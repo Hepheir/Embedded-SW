@@ -79,15 +79,20 @@ if __name__ == '__main__':
             debug.DEBUG_MODE = not debug.DEBUG_MODE
             continue
 
+        remote = debug.remoteCtrl(key)
+        if not (remote is None):
+            serial_queue.append(remote)
+
         try:
             cv2.imshow('frame', main_routine_args['frame'])
 
-            debug._print('\r%-12s %-24s %-8s %-8s %-6s ' % (
+            debug._print('\r%-12s %-24s %-8s %-8s %-6s %-8s ' % (
                 '[t=%s]'        % debug.runtime_ms_str(),
                 '[cntx=%s]'     % main_routine_args['context'],
                 '[key=%c]'      % key_chr,
                 '[tx=%d]'       % sub_routine_args['tx_data'],
-                '[d=%c]'        % ('T' if debug.DEBUG_MODE else 'F')
+                '[d=%c]'        % ('T' if debug.DEBUG_MODE else 'F'),
+                '[txq=%d]'      % len(serial_queue)
             ))
         except:
             pass

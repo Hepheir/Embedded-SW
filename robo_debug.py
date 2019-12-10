@@ -130,7 +130,7 @@ def remoteCtrl(key):
         if key is ord(c):
             move.do(macro[c])
             return macro[c]
-    return -1
+    return None
 
 # -----------------------------------------------
 # https://codeday.me/ko/qa/20190403/183242.html
