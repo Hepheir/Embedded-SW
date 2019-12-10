@@ -154,7 +154,7 @@ def dirCalibration(cmask):
         else:
             return STEP.TURN_RIGHT
     else:
-        return STEP.FORWARD
+        return LOOP_MOTION.WALK_FORWARD
 
 
 def walking():
