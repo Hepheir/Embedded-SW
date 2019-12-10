@@ -53,7 +53,7 @@ def main_routine(main_routine_args):
 
     else:
         if context in ['Return to Line', 'End of Line', 'Undefined']:
-            serial_queue.clear()
+            del serial_queue[:]
             serial_queue.append(move.STOP_MOTION.STABLE)
 
 
