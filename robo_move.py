@@ -159,8 +159,8 @@ def dirCalibration(cmask):
 
     # 회전각 보정
 
-    dx = vx*(vy/abs(vy))
-    if abs(dx) > 0.2:
+    dx = vx*(vy/abs(vy)) * 100
+    if abs(dx) > 15:
         if dx > 0:
             return STEP.TURN_LEFT
         else:
