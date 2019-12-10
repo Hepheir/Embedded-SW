@@ -173,7 +173,7 @@ def dirCalibration(cmask, prescaler=1/6):
     tx = vx/vy * ( - y) + x - cam.CENTER[0]
     bx = vx/vy * (cam.HEIGHT + cam.CENTER[1] - y) + x - cam.CENTER[0]
     dx = tx - bx
-    print(tx, bx)
+    print('%f, %f ' % (tx, bx))
 
     # 위치 보정
     if abs(bx) > ltr_shift_sen:
