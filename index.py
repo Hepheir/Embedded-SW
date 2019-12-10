@@ -102,7 +102,7 @@ if __name__ == '__main__':
                 serial_queue.append(remote)
         # --------
         try:
-            debug._print('\r                                                        ')
+            debug._print('\r'+' '*64)
             debug._print('\r' +
                 '[%s]' % debug.runtime_ms_str() +
                 '[key=%c]' % key_chr +

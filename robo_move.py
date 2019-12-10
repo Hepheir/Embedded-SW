@@ -45,8 +45,8 @@ class LOOP_MOTION:
 class STEP:
     FORWARD = 64
     BACKWARD = 65
-    LEFT = 66
-    RIGHT = 67
+    LEFT = 9 # 66
+    RIGHT = 8 # 67
 
     LOWER_FORWARD = 68
     LOWER_BACKWARD = 69
@@ -150,9 +150,9 @@ def dirCalibration(cmask):
 
     bottom_x = (cam.HEIGHT-1 - y) * vx / vy
     if bottom_x < (cam.WIDTH // 3): # 로봇이 직선의 왼쪽에 있음
-        return 8 # 오른쪽으로 평행이동
+        return STEP.LEFT
     elif bottom_x > (cam.WIDTH *2 // 3): # 로봇이 직선의 오른쪽에 있음
-        return 9 # 왼쪽으로 평행이동
+        return STEP.RIGHT
 
     # 회전각 보정
     dx = vx*(vy/abs(vy))
