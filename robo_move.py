@@ -165,17 +165,17 @@ def dirCalibration(cmask, prescaler=1/6):
 
     line = max(line_probs, key=cv2.contourArea)
 
-    # 위치 보정
-    cx = (center_of_contour(line)[0] / cam.CENTER[0] - 1) * 100
-    if abs(cx) > ltr_shift_sen:
-        return STEP.RIGHT if cx > 0 else STEP.LEFT
-
     # 회전각 보정
     vx,vy,x,y = cv2.fitLine(line, cv2.DIST_L2,0,0.01,0.01)
     dx = vx*(vy/abs(vy)) * 100
     if abs(dx) > ltr_turn_sen:
         return STEP.TURN_LEFT if dx > 0 else STEP.TURN_RIGHT
         
+    # 위치 보정
+    cx = (center_of_contour(line)[0] / cam.CENTER[0] - 1) * 100
+    if abs(cx) > ltr_shift_sen:
+        return STEP.RIGHT if cx > 0 else STEP.LEFT
+
     # 문제가 없으면 전진
     return LOOP_MOTION.WALK_FORWARD
 
