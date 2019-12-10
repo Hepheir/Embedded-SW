@@ -175,7 +175,7 @@ def dirCalibration(cmask, prescaler=1/2):
 
     cx = (upperx - lowerx) / cam.WIDTH * 100
     if abs(cx) > ltr_shift_sen:
-        return STEP.LEFT if cx > 0 else STEP.RIGHT
+        return STEP.RIGHT if cx > 0 else STEP.LEFT
 
     # 회전각 보정
     dx = vx*(vy/abs(vy)) * 100
