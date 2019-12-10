@@ -24,10 +24,10 @@ key_chr = None
 
 routine_stoppers = []
 
-main_routine_time_s = 0.5
+main_routine_time_s = 0.8
 main_routine_args = {}
 
-sub_routine_time_s = 2
+sub_routine_time_s = 1.6
 sub_routine_args = {}
 
 serial_queue = []
@@ -44,7 +44,8 @@ def main_routine(main_routine_args):
         del serial_queue[:]
         serial_queue.append(action)
 
-    cv2.line(frame, (0, cam.HEIGHT//2), (cam.WIDTH, cam.HEIGHT//2), (192,192,192), 1)
+    cv2.line(frame, (cam.CENTER[0],0), (cam.CENTER[0], cam.HEIGHT), (192,192,192), 1)
+    cv2.line(frame, (0, cam.CENTER[1]), (cam.WIDTH, cam.CENTER[1]), (192,192,192), 1)
     for h in [1,2,3]:
         h = cam.HEIGHT*h//3 - 1
         cv2.line(frame, (0, h), (cam.WIDTH, h), (255,255,255), 1)
