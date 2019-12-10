@@ -166,7 +166,7 @@ def dirCalibration(cmask, prescaler=1/6):
     line = max(line_probs, key=cv2.contourArea)
 
     # 위치 보정
-    cx = (center_of_contour(line) / cam.CENTER[0] - 1) * 100
+    cx = (center_of_contour(line)[0] / cam.CENTER[0] - 1) * 100
     if abs(cx) > ltr_shift_sen:
         return STEP.RIGHT if cx > 0 else STEP.LEFT
 
