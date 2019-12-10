@@ -170,10 +170,10 @@ def dirCalibration(cmask, prescaler=1/6):
     if not vy:
         return False
 
-    tx = vx/vy * (cam.HEIGHT - y) + x - cam.CENTER[0]
-    bx = vx/vy * (-cam.CENTER[1] - y) + x - cam.CENTER[0]
+    tx = vx/vy * ( - y) + x - cam.CENTER[0]
+    bx = vx/vy * (cam.HEIGHT + cam.CENTER[1] - y) + x - cam.CENTER[0]
     dx = tx - bx
-    print(bx)
+    print(tx, bx)
 
     # 위치 보정
     if abs(bx) > ltr_shift_sen:
