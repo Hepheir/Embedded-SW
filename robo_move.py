@@ -155,9 +155,9 @@ def findObstacles(cmask):
     return len(conts) > 0
 # -----------------------------------------------
 def dirCalibration(cmask, prescaler=1/2):
-    ltr_shift_sen = 30
+    ltr_shift_sen = 15
     ltr_turn_sen = 25
-    lowerh = cam.HEIGHT * prescaler
+    lowerh = int(cam.HEIGHT * prescaler)
     upperh = cam.HEIGHT - 1
     y_msk = cmask['yellow'][lowerh:,:]
 
@@ -173,7 +173,7 @@ def dirCalibration(cmask, prescaler=1/2):
     lowerx = vx/vy * (lowerh - y) + x
     upperx = vx/vy * (upperh - y) + x
 
-    cx = (lowerx + upperx - cam.WIDTH) / (2 * cam.WIDTH) * 100
+    cx = (upperx - lowerx) / cam.WIDTH * 100
     if abs(cx) > ltr_shift_sen:
         return STEP.LEFT if cx > 0 else STEP.RIGHT
 

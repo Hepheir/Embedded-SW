@@ -114,8 +114,8 @@ if __name__ == '__main__':
                 str(serial_queue) + 
                 ' ')
             cv2.imshow('frame', main_routine_args['frame'])
-            cv2.imshow('cmask', main_routine_args['stacked_cmask'])
-            cv2.imshow('t', main_routine_args['t'])
+            cv2.imshow('scmsk full', main_routine_args['scmsk full'])
+            cv2.imshow('scmsk 1/3', main_routine_args['scmsk 1/3'])
         except:
             pass
 
