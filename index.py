@@ -66,10 +66,9 @@ if __name__ == '__main__':
         
 
         cv2.imshow('Frame', frame)
-        debug._print('\r%-12s %-24s %-12s %-8s %-8s %-6s ' % (
+        debug._print('\r%-12s %-24ss %-8s %-8s %-6s ' % (
             '[t=%s]'        % debug.runtime_str(),
             '[cntx=%s]'     % context,
-            '[l=%7.2f]'        % move.line_angle,
             '[key=%c]'      % key_chr,
             '[tx=%d]'       % tx_data,
             '[d=%c]'        % ('T' if debug.DEBUG_MODE else 'F')

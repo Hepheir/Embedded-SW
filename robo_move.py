@@ -7,7 +7,7 @@ import robo_color as color
 import robo_camera as cam
 import robo_serial as serial
 
-line_angle = 0
+# line_angle = 0 # @ context
 
 class STATUS:
     LINE_MISSING = 'LINE MISSING'
@@ -140,17 +140,15 @@ def context(frame):
         line = max(obj['yellow'], key=cv2.contourArea)
 
         line_rect = cv2.minAreaRect(line)
-
-        global line_angle
-        line_angle = line_rect[-1]
+        [vx,vy,x,y] = cv2.fitLine(line, cv2.DIST_L2,0,0.01,0.01)
 
         line_center = center_of_contour(line)
         line_box = np.int0( cv2.boxPoints(line_rect) )
         line_color = color.getRef('yellow')['bgr']
         line_thickness = 2
 
-        cv2.circle(c1b3_frame, line_center, 2, line_color, -1)
-        # cv2.line(c1b3_frame, )
+        cv2.line(frame, (x,y), (x+vx, y+vy), line_color, line_thickness)
+        # cv2.circle(c1b3_frame, line_center, 2, line_color, -1)
         cv2.drawContours(c1b3_frame, [line_box], -1 , line_color, line_thickness)
 
         # 서브루틴 :
