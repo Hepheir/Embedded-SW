@@ -154,8 +154,8 @@ def findObstacles(cmask):
     conts = objContTrace(g_msk) + objContTrace(r_msk)
     return len(conts) > 0
 # -----------------------------------------------
-def dirCalibration(cmask, prescaler=1/2):
-    ltr_shift_sen = 15
+def dirCalibration(cmask, prescaler=1/6):
+    ltr_shift_sen = 10
     ltr_turn_sen = 25
     lowerh = int(cam.HEIGHT * prescaler)
     upperh = cam.HEIGHT - 1
