@@ -27,7 +27,7 @@ routine_stoppers = []
 main_routine_time_s = 0.5
 main_routine_args = {}
 
-sub_routine_time_s = 2
+sub_routine_time_s = 1
 sub_routine_args = {}
 
 serial_queue = []
@@ -39,23 +39,19 @@ def main_routine(main_routine_args):
     cmasks = color.colorMaskAll(frame)
     context = move.context(cmasks)
 
-    if not serial_queue:
-        if context == 'Go straight':
-            serial_queue.append(move.LOOP_MOTION.WALK_FORWARD)
+    predefined = {
+        'Go straight' : move.LOOP_MOTION.WALK_FORWARD,
+        'Turn left' : move.STEP.TURN_LEFT,
+        'Turn right' : move.STEP.TURN_RIGHT,
+        'Return to Line' : move.STOP_MOTION.STABLE,
+        'End of Line' : move.STOP_MOTION.STABLE,
+        'Undefined' : move.STOP_MOTION.LOWER
+    }
 
-        if context == 'Turn left':
-            serial_queue.append(move.STEP.TURN_LEFT)
-            serial_queue.append(move.STEP.TURN_LEFT)
-
-        if context == 'Turn right':
-            serial_queue.append(move.STEP.TURN_RIGHT)
-            serial_queue.append(move.STEP.TURN_RIGHT)
-
-    else:
-        if context in ['Return to Line', 'End of Line', 'Undefined']:
+    for cntx in predefined:
+        if context == cntx:
             del serial_queue[:]
-            serial_queue.append(move.STOP_MOTION.STABLE)
-
+            serial_queue.append(predefined[cntx])
 
     main_routine_args['frame'] = frame
     main_routine_args['context'] = context
