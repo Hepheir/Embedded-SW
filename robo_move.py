@@ -185,7 +185,7 @@ def onLine(frame, cmask):
             else:
                 do(STEP.TURN_RIGHT)
         else:
-            do(STEP.FORWARD)
+            do(LOOP_MOTION.FORWARD)
     
     return dx
 
