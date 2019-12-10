@@ -53,6 +53,7 @@ def main_routine(main_routine_args):
     main_routine_args['context'] = '?'
     main_routine_args['color_masks'] = cmasks
     main_routine_args['stacked_cmask'] = debug.stackedColorMasks(frame, main_routine_args['color_masks'])
+    main_routine_args['t'] = debug.stackedColorMasks(frame[cam.HEIGHT//2:,:], color.colorMaskAll(frame[cam.HEIGHT//2:,:]))
 
 
 @debug.setInterval(sub_routine_time_s)
@@ -113,6 +114,7 @@ if __name__ == '__main__':
                 ' ')
             cv2.imshow('frame', main_routine_args['frame'])
             cv2.imshow('cmask', main_routine_args['stacked_cmask'])
+            cv2.imshow('t', main_routine_args['t'])
         except:
             pass
 

@@ -142,19 +142,20 @@ def dirCalibration(cmask):
         return False
 
     line = max(line_probs, key=cv2.contourArea)
-    vx,vy,x,y = cv2.fitLine(line, cv2.DIST_L2,0,0.01,0.01)
 
     # 위치 보정
-    if vy == 0:
-        return STOP_MOTION.LIMBO # 예외 처리 해야함.
-
-    bottom_x = (cam.HEIGHT-1 - y) * vx / vy
-    if bottom_x < (cam.WIDTH // 3): # 로봇이 직선의 왼쪽에 있음
+    x,y,w,h = cv2.boundingRect(line)
+    _sx = x - cam.CENTER[0]
+    _ex = x+w - cam.CENTER[0]
+    _x = (_sx + _ex) * 2 * 100 / cam.WIDTH
+    if _x < -50:
         return STEP.LEFT
-    elif bottom_x > (cam.WIDTH *2 // 3): # 로봇이 직선의 오른쪽에 있음
+    elif _x > 50:
         return STEP.RIGHT
 
     # 회전각 보정
+    vx,vy,x,y = cv2.fitLine(line, cv2.DIST_L2,0,0.01,0.01)
+
     dx = vx*(vy/abs(vy))
     if abs(dx) > 0.2:
         if dx > 0:
