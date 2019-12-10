@@ -135,7 +135,9 @@ def findObstacles(cmask):
     return len(conts) > 0
 # -----------------------------------------------
 def dirCalibration(cmask):
-    y_msk = cmask['yellow'][cam.HEIGHT//2:,:]
+    lowerh = cam.HEIGHT //2
+    upperh = cam.HEIGHT - 1
+    y_msk = cmask['yellow'][lowerh:,:]
 
     line_probs = objContTrace(y_msk)
     if not line_probs:
@@ -144,17 +146,18 @@ def dirCalibration(cmask):
     line = max(line_probs, key=cv2.contourArea)
 
     # 위치 보정
-    x,y,w,h = cv2.boundingRect(line)
-    _sx = x - cam.CENTER[0]
-    _ex = x+w - cam.CENTER[0]
-    _x = (_sx + _ex) * 2 * 100 / cam.WIDTH
-    if _x < -50:
+    vx,vy,x,y = cv2.fitLine(line, cv2.DIST_L2,0,0.01,0.01)
+
+    lowerx = vx/vy * (lowerh - y) + x
+    upperx = vx/vy * (upperh - y) + x
+
+    cx = (lowerx + upperx - cam.WIDTH) / (2 * cam.WIDTH) * 100
+    if cx < -20:
         return STEP.LEFT
-    elif _x > 50:
+    elif cx > 20:
         return STEP.RIGHT
 
     # 회전각 보정
-    vx,vy,x,y = cv2.fitLine(line, cv2.DIST_L2,0,0.01,0.01)
 
     dx = vx*(vy/abs(vy))
     if abs(dx) > 0.2:
