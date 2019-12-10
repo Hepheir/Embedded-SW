@@ -137,24 +137,33 @@ def findObstacles(cmask):
 def dirCalibration(cmask):
     y_msk = cmask['yellow'][cam.HEIGHT//2:,:]
 
-    # Line direction
     line_probs = objContTrace(y_msk)
     if not line_probs:
         return False
 
     line = max(line_probs, key=cv2.contourArea)
-
     vx,vy,x,y = cv2.fitLine(line, cv2.DIST_L2,0,0.01,0.01)
 
-    dx = vx*(vy/abs(vy))
+    # 위치 보정
+    if vy == 0:
+        return STOP_MOTION.LIMBO # 예외 처리 해야함.
 
+    bottom_x = (cam.HEIGHT-1 - y) * vx / vy
+    if bottom_x < (cam.WIDTH // 3): # 로봇이 직선의 왼쪽에 있음
+        return 8 # 오른쪽으로 평행이동
+    elif bottom_x > (cam.WIDTH *2 // 3): # 로봇이 직선의 오른쪽에 있음
+        return 9 # 왼쪽으로 평행이동
+
+    # 회전각 보정
+    dx = vx*(vy/abs(vy))
     if abs(dx) > 0.2:
         if dx > 0:
             return STEP.TURN_LEFT
         else:
             return STEP.TURN_RIGHT
-    else:
-        return LOOP_MOTION.WALK_FORWARD
+    
+    # 문제가 없으면 전진
+    return LOOP_MOTION.WALK_FORWARD
 
 
 def walking():

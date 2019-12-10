@@ -102,6 +102,7 @@ if __name__ == '__main__':
                 serial_queue.append(remote)
         # --------
         try:
+            debug._print('\r                                                        ')
             debug._print('\r' +
                 '[%s]' % debug.runtime_ms_str() +
                 '[key=%c]' % key_chr +
@@ -109,7 +110,7 @@ if __name__ == '__main__':
                 '[tx0=%d]' % (serial_queue[0] if len(serial_queue) else -1) +
                 '[d=%c]' % ('T' if debug.DEBUG_MODE else 'F') +
                 str(serial_queue) + 
-                '        ')
+                ' ')
             cv2.imshow('frame', main_routine_args['frame'])
             cv2.imshow('cmask', main_routine_args['stacked_cmask'])
         except:
