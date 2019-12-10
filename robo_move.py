@@ -180,11 +180,9 @@ def onLine(frame, cmask):
     dx = vx*(vy/abs(vy))
     if not debug.DEBUG_MODE and abs(dx) > 0.2:
         if dx > 0:
-            once(STEP.TURN_LEFT)
-            once(STEP.TURN_LEFT)
+            do(STEP.TURN_LEFT)
         else:
-            once(STEP.TURN_RIGHT)
-            once(STEP.TURN_RIGHT)
+            do(STEP.TURN_RIGHT)
     return dx
 
     roi_c_l = cmask[:,                : cam.WIDTH//3   ]

@@ -28,9 +28,13 @@ def _scan():
     sys.stdin.flush()
     return line
 # -----------------------------------------------
-def runtime_str():
+def runtime_ms():
+    # ms 단위
+    return int(cv2.getTickCount() / cv2.getTickFrequency() * 1000)
+# -----------------------------------------------
+def runtime_ms_str():
     # 현재 실행시간 출력 : sec:ms (문자열 최소길이 7)
-    total_ms = int(cv2.getTickCount() / cv2.getTickFrequency() * 1000)
+    total_ms = runtime_ms()
     cs = (total_ms // 10) % 100
     s = (total_ms // 1000) % 60
     m = total_ms // 60000
