@@ -6,8 +6,9 @@ import cv2
 import robo_color as color
 import robo_camera as cam
 import robo_serial as serial
+import robo_debug as debug
 
-# line_angle = 0 # @ context
+import time
 
 class STATUS:
     LINE_MISSING = 'LINE MISSING'
@@ -85,6 +86,10 @@ class SENSOR:
 # -----------------------------------------------
 def do(action):
     serial.TX_data(action)
+# -----------------------------------------------
+def once(action):
+    serial.TX_data(action)
+    time.sleep(2)
 # -----------------------------------------------
 def get(sensor):
     serial.TX_data(sensor)
@@ -171,10 +176,15 @@ def onLine(frame, cmask):
         return 'NO LINE'
     line_obj = max(line_objs, key=cv2.contourArea)
     vx,vy,x,y = cv2.fitLine(line_obj, cv2.DIST_L2,0,0.01,0.01)
+
     dx = vx*(vy/abs(vy))
-    adx = abs(dx)
-    if adx > 0.2:
-        return 'NEED to TURN'
+    if not debug.DEBUG_MODE and abs(dx) > 0.2:
+        if dx > 0:
+            once(STEP.TURN_LEFT)
+            once(STEP.TURN_LEFT)
+        else:
+            once(STEP.TURN_RIGHT)
+            once(STEP.TURN_RIGHT)
     return dx
 
     roi_c_l = cmask[:,                : cam.WIDTH//3   ]
