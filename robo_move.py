@@ -103,11 +103,41 @@ def center_of_contour(contour):
     cy = int(M["m01"] / M["m00"])
     return (cx, cy)
 # -----------------------------------------------
+class ContextHelper:
+    def onLine(frame, cmask):
+        roi_frame = frame[cam.HEIGHT*2//3:,:]
+        roi_cmask = cmask['yellow'][cam.HEIGHT*2//3:,:]
+
+        # Line direction
+        line_obj = max(objTrace(roi_cmask), key=cv2.contourArea)
+        vx,vy,x,y = cv2.fitLine(line_obj, cv2.DIST_L2,0,0.01,0.01)
+        dx = vx*(vy/abs(vy))
+
+        return dx
+
+        roi_c_l = cmask[:,                : cam.WIDTH//3   ]
+        roi_c_c = cmask[:, cam.WIDTH//3   : cam.WIDTH*2//3 ]
+        roi_c_r = cmask[:, cam.WIDTH*2//3 :               ]
+        
+        roi_obj = [ objTrace(roic) for roic in [roi_c_l, roi_c_c, roi_c_r] ]
+
+        if roi_obj[0]:
+            return -1
+        elif roi_obj[1]:
+            return 0
+        elif roi_obj[2]:
+            return 1
+        else:
+            return None
+
 def context(frame):
     # 현재 로봇이 처한 상황을 파악
     # --------
     obj = {}
     # 프레임의 세로 3분할
+    cmask = color.colorMaskAll(frame)
+    return str(ContextHelper.onLine(frame, cmask))
+
     c1b3_frame = frame[cam.HEIGHT*2//3:,:]
     c1b3_colorMasks = color.colorMaskAll(c1b3_frame, imshow=True)
     for c in c1b3_colorMasks:

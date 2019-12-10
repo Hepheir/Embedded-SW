@@ -66,7 +66,7 @@ if __name__ == '__main__':
         
 
         cv2.imshow('Frame', frame)
-        debug._print('\r%-12s %-24ss %-8s %-8s %-6s ' % (
+        debug._print('\r%-12s %-24s %-8s %-8s %-6s ' % (
             '[t=%s]'        % debug.runtime_str(),
             '[cntx=%s]'     % context,
             '[key=%c]'      % key_chr,
