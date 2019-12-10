@@ -165,7 +165,11 @@ def onLine(frame, cmask):
     roi_cmask = cmask['yellow'][cam.HEIGHT*2//3:,:]
 
     # Line direction
-    line_obj = max(objTrace(roi_cmask), key=cv2.contourArea)
+
+    line_objs = objTrace(roi_cmask)
+    if not line_objs:
+        return 'NO LINE'
+    line_obj = max(line_objs, key=cv2.contourArea)
     vx,vy,x,y = cv2.fitLine(line_obj, cv2.DIST_L2,0,0.01,0.01)
     dx = vx*(vy/abs(vy))
 
