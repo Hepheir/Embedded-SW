@@ -88,7 +88,7 @@ def get(sensor):
     serial.TX_data(sensor)
     return serial.RX_data
 # -----------------------------------------------
-def objTrace(mask, minObjSize=50):
+def objContTrace(mask, minObjSize=50):
     contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
     if not contours:
         return []
@@ -101,102 +101,61 @@ def center_of_contour(contour):
     cy = int(M["m01"] / M["m00"])
     return (cx, cy)
 # -----------------------------------------------
-def context(frame):
+def context(cmask):
     # 현재 로봇이 처한 상황을 파악
-    # --------
-    obj = {}
-    # 프레임의 세로 3분할
-    cmask = color.colorMaskAll(frame)
-    return str(onLine(frame, cmask))
+    if not findLine(cmask):
+        return 'Return to Line'
+    
+    if endOfLine(cmask):
+        return 'End of Line'
+    
+    if not findObstacles(cmask):
+        return dirCalibration(cmask) # Running | Walking
 
-    c1b3_frame = frame[cam.HEIGHT*2//3:,:]
-    c1b3_colorMasks = color.colorMaskAll(c1b3_frame, imshow=True)
-    for c in c1b3_colorMasks:
-        mask = c1b3_colorMasks[c]
-        # 3분할 된 마스크 가장 아래꺼에서 '특정 크기 이상의 물체'의 '윤곽선' 구하기
-        obj[c] = objTrace(mask)
+    return 'Undefined'
     # --------
-    if not obj['yellow']:
-        # 라인 찾기
-        return STATUS.LINE_MISSING
-    # --------
-    elif obj['red'] and obj['black']:
-        # 다리 건너기
-        return STATUS.BRIDGE
-    # --------
-    elif obj['red'] and not obj['black']:
-        # 코카콜라 캔 치우기
-        return STATUS.DRILL_CAN
-    # --------
-    elif obj['green'] and obj['blue']:
-        # 우유곽 파란선 안으로 옮기기
-        return STATUS.DRILL_PACK
-    # --------
-    elif obj['green'] and not obj['blue']:
-        # 우유곽 치우기
-        return STATUS.DRILL_PACK
-    # --------
-    else:
-        # 라인트레이싱
-        line = max(obj['yellow'], key=cv2.contourArea)
-
-        line_rect = cv2.minAreaRect(line)
-        [vx,vy,x,y] = cv2.fitLine(line, cv2.DIST_L2,0,0.01,0.01)
-
-        line_center = center_of_contour(line)
-        line_box = np.int0( cv2.boxPoints(line_rect) )
-        line_color = color.getRef('yellow')['bgr']
-        line_thickness = 2
-
-        cv2.line(frame, (x,y), (x+vx, y+vy), line_color, line_thickness)
-        # cv2.circle(c1b3_frame, line_center, 2, line_color, -1)
-        cv2.drawContours(c1b3_frame, [line_box], -1 , line_color, line_thickness)
-
-        # 서브루틴 :
-        
-        return STATUS.WALKING
     # --------
 
 # -----------------------------------------------
-def onLine(frame, cmask):
-    roi_frame = frame[cam.HEIGHT*2//3:,:]
-    roi_cmask = cmask['yellow'][cam.HEIGHT*2//3:,:]
+def findLine(cmask):
+    y_msk = cmask['yellow']
+    conts = objContTrace(y_msk)
+    return len(conts) > 0
+# --------
+def endOfLine(cmask):
+    y_msk = cmask['yellow']
+    roi = y_msk[:cam.HEIGHT//3,:]
+    conts = objContTrace(roi)
+    return len(conts) == 0
+# --------
+def findObstacles(cmask):
+    g_msk = cmask['green']
+    r_msk = cmask['red']
+    conts = objContTrace(g_msk) + objContTrace(r_msk)
+    return len(conts) > 0
+# -----------------------------------------------
+def dirCalibration(cmask):
+    y_msk = cmask['yellow'][cam.HEIGHT//3:,:]
 
     # Line direction
-
-    line_objs = objTrace(roi_cmask)
-    if not line_objs:
+    line_probs = objContTrace(y_msk)
+    if not line_probs:
         return False
 
-    line_obj = max(line_objs, key=cv2.contourArea)
-    vx,vy,x,y = cv2.fitLine(line_obj, cv2.DIST_L2,0,0.01,0.01)
+    line = max(line_probs, key=cv2.contourArea)
+
+    vx,vy,x,y = cv2.fitLine(line, cv2.DIST_L2,0,0.01,0.01)
 
     dx = vx*(vy/abs(vy))
-    if not debug.DEBUG_MODE:
-        if abs(dx) > 0.2:
-            if dx > 0:
-                do(STEP.TURN_LEFT)
-            else:
-                do(STEP.TURN_RIGHT)
+
+    if abs(dx) > 0.2:
+        if dx > 0:
+            return 'Turn left'
         else:
-            do(LOOP_MOTION.FORWARD)
-    
-    return dx
-
-    roi_c_l = cmask[:,                : cam.WIDTH//3   ]
-    roi_c_c = cmask[:, cam.WIDTH//3   : cam.WIDTH*2//3 ]
-    roi_c_r = cmask[:, cam.WIDTH*2//3 :               ]
-    
-    roi_obj = [ objTrace(roic) for roic in [roi_c_l, roi_c_c, roi_c_r] ]
-
-    if roi_obj[0]:
-        return -1
-    elif roi_obj[1]:
-        return 0
-    elif roi_obj[2]:
-        return 1
+            return 'Turn right'
     else:
-        return None
+        return 'Go straight'
+
 
 def walking():
     pass

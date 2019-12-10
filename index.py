@@ -36,12 +36,30 @@ serial_queue = []
 
 @debug.setInterval(main_routine_time_s)
 def main_routine(main_routine_args):
-    context = move.context(frame)
+    cmasks = color.colorMaskAll(frame)
+    context = move.context(cmasks)
+
+    if not serial_queue:
+        if context == 'Go straight':
+            serial_queue.append(move.LOOP_MOTION.WALK_FORWARD)
+
+        if context == 'Turn left':
+            serial_queue.append(move.STEP.TURN_LEFT)
+            serial_queue.append(move.STEP.TURN_LEFT)
+
+        if context == 'Turn right':
+            serial_queue.append(move.STEP.TURN_RIGHT)
+            serial_queue.append(move.STEP.TURN_RIGHT)
+
+    else:
+        if context in ['Return to Line', 'End of Line', 'Undefined']:
+            serial_queue.clear()
+            serial_queue.append(move.STOP_MOTION.STABLE)
 
 
     main_routine_args['frame'] = frame
     main_routine_args['context'] = context
-    main_routine_args['color_masks'] = color.colorMaskAll(frame)
+    main_routine_args['color_masks'] = cmasks
     main_routine_args['stacked_cmask'] = debug.stackedColorMasks(frame, main_routine_args['color_masks'])
 
 
