@@ -170,12 +170,14 @@ def dirCalibration(cmask, prescaler=1/6):
     if not vy:
         return False
 
-    tx = vx/vy * ( - y) + x - cam.CENTER[0]
-    bx = vx/vy * (cam.HEIGHT + cam.CENTER[1]*2/3 - y) + x - cam.CENTER[0]
-    dx = tx - bx
-    print('%f, %f ' % (tx, bx))
+    top_x = vx/vy * ( - y) + x
+    bot_x = vx/vy * ((cam.HEIGHT + cam.CENTER[1]*2/3) - y) + x
 
-    if abs(tx) + abs(bx) > 1000:
+    dx = top_x - bot_x 
+    bx = bot_x - cam.CENTER[0]
+    print('%f, %f ' % (bx, dx))
+
+    if abs(bx) + abs(dx) > 1000:
         return False
 
     # 위치 보정
