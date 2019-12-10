@@ -29,7 +29,7 @@ def init(bps=4800):
 #-----------------------------------------------
 def TX_data(byte):  # one_byte= 0~255
     if not SERIAL_USABLE:
-        debug._print('[T] Serial is not available')
+        print('[T] Serial is not available')
         return None
     
     Serial.write(chr(int(byte)))
@@ -37,7 +37,7 @@ def TX_data(byte):  # one_byte= 0~255
 #-----------------------------------------------
 def RX_data():
     if not SERIAL_USABLE:
-        debug._print('[R] Serial is not available')
+        print('[R] Serial is not available')
         return None
 
     if Serial.inWaiting() <= 0:

@@ -11,31 +11,61 @@ import robo_debug   as debug
 
 import threading
 import sys
+import time
+
+# ******************************************************************
+
 
 # ******************************************************************
 
 frame = None
-
 key = None
-key_chr = '_'
+key_chr = None
+
+main_routine_time_s = 0.5
+main_routine_args = {}
+
+sub_routine_time_s = 2
+sub_routine_args = {}
+
+serial_queue = []
 
 # ******************************************************************
 
-@debug.setInterval(2)
-def main_routine():
-    # TIMER
-    print('1')
+@debug.setInterval(main_routine_time_s)
+def main_routine(main_routine_args):
+    context = move.context(frame)
+
+
+    main_routine_args['frame'] = frame
+    main_routine_args['context'] = context
+
+
+@debug.setInterval(sub_routine_time_s)
+def sub_routine(sub_routine_args):
+    if serial_queue:
+        sub_routine_args['tx_data'] = serial_queue[0]
+        del serial_queue[0]
+
+        serial.TX_data(sub_routine_args['tx_data'])
+    else:
+        sub_routine_args['tx_data'] = -1
 
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
 if __name__ == '__main__':
     serial.init()
-    cam.init(0 if debug.isRasp() else '1.mp4') # 불러올 동영상 파일 이름 넣기 (index.py랑 같은 폴더에 있어야 함.)
+    # cam.init(0 if debug.isRasp() else '1.mp4')
+    cam.init(0)
     color.init()
     # --------
     frame = cam.getFrame()
-    main_routine()
+    key_chr = '_'
+    
+    main_routine(main_routine_args)
+    sub_routine(sub_routine_args)
+    time.sleep(max([main_routine_time_s, sub_routine_time_s]))
     # --------
     while True:
         frame = cam.getFrame(imshow=True)
@@ -49,9 +79,24 @@ if __name__ == '__main__':
             debug.DEBUG_MODE = not debug.DEBUG_MODE
             continue
 
+        try:
+            cv2.imshow('frame', main_routine_args['frame'])
+
+            debug._print('\r%-12s %-24s %-8s %-8s %-6s ' % (
+                '[t=%s]'        % debug.runtime_ms_str(),
+                '[cntx=%s]'     % main_routine_args['context'],
+                '[key=%c]'      % key_chr,
+                '[tx=%d]'       % sub_routine_args['tx_data'],
+                '[d=%c]'        % ('T' if debug.DEBUG_MODE else 'F')
+            ))
+        except:
+            pass
+
+
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
 cv2.destroyAllWindows()
 print('')
 print('Exit program')
+print('')
