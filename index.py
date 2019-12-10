@@ -41,7 +41,7 @@ def main_routine(main_routine_args):
     action = move.context(cmasks)
 
     if not debug.DEBUG_MODE:
-        del serial_queue[1:]
+        del serial_queue[:]
         serial_queue.append(action)
 
     cv2.line(frame, (0, cam.HEIGHT//2), (cam.WIDTH, cam.HEIGHT//2), (192,192,192), 1)
@@ -52,8 +52,8 @@ def main_routine(main_routine_args):
     main_routine_args['frame'] = frame
     main_routine_args['context'] = '?'
     main_routine_args['color_masks'] = cmasks
-    main_routine_args['stacked_cmask'] = debug.stackedColorMasks(frame, main_routine_args['color_masks'])
-    main_routine_args['t'] = debug.stackedColorMasks(frame[cam.HEIGHT//2:,:], color.colorMaskAll(frame[cam.HEIGHT//2:,:]))
+    main_routine_args['scmsk full'] = debug.stackedColorMasks(frame, main_routine_args['color_masks'])
+    main_routine_args['scmsk 1/3'] = debug.stackedColorMasks(frame[cam.HEIGHT//2:,:], color.colorMaskAll(frame[cam.HEIGHT//2:,:]))
 
 
 @debug.setInterval(sub_routine_time_s)
@@ -74,6 +74,7 @@ if __name__ == '__main__':
     cam.init(0 if debug.isRasp() else '1.mp4')
     color.init()
     # --------
+    serial_queue.append(move.HEAD.PITCH_LOWER_45)
     frame = cam.getFrame()
     key_chr = '_'
     

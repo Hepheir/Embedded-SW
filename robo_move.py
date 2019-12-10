@@ -80,9 +80,12 @@ class ARM:
 class MACRO:
     SHUTTER = 128
     OPEN_DOOR = 129
+
+    TEMP = 1
     
 class SENSOR:
     DISTANCE = None # 적외선 센서 거리측정
+
 # -----------------------------------------------
 def get(sensor):
     serial.TX_data(sensor)
@@ -103,30 +106,49 @@ def center_of_contour(contour):
 # -----------------------------------------------
 def context(cmask):
     # 현재 로봇이 처한 상황을 파악
-    if not findLine(cmask):
-        return STOP_MOTION.STABLE # return to line
+    if not stadingOnLine(cmask):
+        return MACRO.TEMP # return to line
     
-    if endOfLine(cmask):
-        return STOP_MOTION.STAND # end of line
+    if isEndOfLine(cmask):
+        return endOfLine(cmask)
+
+    return dirCalibration(cmask) #DEBUG TMP END
     
+    # --------
     if not findObstacles(cmask):
         return dirCalibration(cmask) # Running | Walking
 
     return STOP_MOTION.LOWER # undefined
     # --------
-    # --------
 
 # -----------------------------------------------
-def findLine(cmask):
+def stadingOnLine(cmask):
     y_msk = cmask['yellow']
     conts = objContTrace(y_msk)
     return len(conts) > 0
 # --------
-def endOfLine(cmask):
+def isEndOfLine(cmask):
     y_msk = cmask['yellow']
-    roi = y_msk[:cam.HEIGHT//3,:]
+    roi = y_msk[:cam.HEIGHT//2,:]
     conts = objContTrace(roi)
     return len(conts) == 0
+# --------
+def endOfLine(cmask):
+    y_msk = cmask['yellow'][cam.HEIGHT*2//4:,:]
+    cali = dirCalibration(cmask, prescaler=3/4)
+    if not (cali == LOOP_MOTION.WALK_FORWARD):
+        return cali
+    
+    msk_l = y_msk[:,:cam.WIDTH//3]
+    if len(objContTrace(msk_l)):
+        return STEP.TURN_LEFT
+
+    msk_r = y_msk[:,cam.WIDTH*2//3:]
+    if len(objContTrace(msk_r)):
+        return STEP.TURN_RIGHT
+
+    # 문 / 셔터 / 림보인지 검사 시작
+    return STOP_MOTION.LIMBO
 # --------
 def findObstacles(cmask):
     g_msk = cmask['green'][cam.HEIGHT*2//3:,:]
@@ -134,8 +156,8 @@ def findObstacles(cmask):
     conts = objContTrace(g_msk) + objContTrace(r_msk)
     return len(conts) > 0
 # -----------------------------------------------
-def dirCalibration(cmask):
-    lowerh = cam.HEIGHT //2
+def dirCalibration(cmask, prescaler=1/2):
+    lowerh = cam.HEIGHT * prescaler
     upperh = cam.HEIGHT - 1
     y_msk = cmask['yellow'][lowerh:,:]
 
@@ -158,7 +180,6 @@ def dirCalibration(cmask):
         return STEP.RIGHT
 
     # 회전각 보정
-
     dx = vx*(vy/abs(vy)) * 100
     if abs(dx) > 15:
         if dx > 0:
