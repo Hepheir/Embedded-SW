@@ -154,8 +154,8 @@ def findObstacles(cmask):
     return len(conts) > 0
 # -----------------------------------------------
 def dirCalibration(cmask, prescaler=1/6):
-    ltr_turn_sen = 3
-    ltr_shift_sen = 3
+    ltr_turn_sen = 30
+    ltr_shift_sen = 30
     lowerh = int(cam.HEIGHT * prescaler)
     upperh = cam.HEIGHT - 1
     y_msk = cmask['yellow'][lowerh:,:]
@@ -165,9 +165,31 @@ def dirCalibration(cmask, prescaler=1/6):
         return False
 
     line = max(line_probs, key=cv2.contourArea)
+    vx,vy,x,y = cv2.fitLine(line, cv2.DIST_L2,0,0.01,0.01)
+
+    if not vy:
+        return False
+
+    tx = vx/vy * (cam.HEIGHT - y) + x - cam.CENTER[0]
+    bx = vx/vy * (-cam.CENTER[1] - y) + x - cam.CENTER[0]
+    dx = tx - bx
+    print(bx)
+
+    # 위치 보정
+    if abs(bx) > ltr_shift_sen:
+        return STEP.RIGHT if bx > 0 else STEP.LEFT
 
     # 회전각 보정
-    vx,vy,x,y = cv2.fitLine(line, cv2.DIST_L2,0,0.01,0.01)
+    if abs(dx) > ltr_turn_sen:
+        return STEP.TURN_RIGHT if dx > 0 else STEP.TURN_LEFT
+        
+
+    # 문제가 없으면 전진
+    return LOOP_MOTION.WALK_FORWARD
+
+
+
+    # 회전각 보정
     theta = 0 if (vx == 0) else math.atan(vy/vx)
     th = theta - np.pi/2
 

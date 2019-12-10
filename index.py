@@ -13,6 +13,8 @@ import threading
 import sys
 import time
 
+# 32cm h / 24 cm w
+
 # ******************************************************************
 
 
