@@ -4,9 +4,11 @@ import numpy as np
 import cv2
 
 import sys
+import threading
 
 import robo_color as color
 import robo_move as move
+
 # 디버그용으로 임시로 쓰고 말 것들
 
 DEBUG_MODE = True
@@ -129,6 +131,33 @@ def remoteCtrl(key):
             move.do(macro[c])
             return macro[c]
     return -1
+
+# -----------------------------------------------
+# https://codeday.me/ko/qa/20190403/183242.html
+def setInterval(interval, times = -1):
+    # This will be the actual decorator,
+    # with fixed interval and times parameter
+    def outer_wrap(function):
+        # This will be the function to be
+        # called
+        def wrap(*args, **kwargs):
+            stop = threading.Event()
+
+            # This is another function to be executed
+            # in a different thread to simulate setInterval
+            def inner_wrap():
+                i = 0
+                while i != times and not stop.isSet():
+                    stop.wait(interval)
+                    function(*args, **kwargs)
+                    i += 1
+
+            t = threading.Timer(0, inner_wrap)
+            t.daemon = True
+            t.start()
+            return stop
+        return wrap
+    return outer_wrap
 # -----------------------------------------------
 if __name__ == "__main__":
     record()
