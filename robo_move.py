@@ -104,15 +104,15 @@ def center_of_contour(contour):
 def context(cmask):
     # 현재 로봇이 처한 상황을 파악
     if not findLine(cmask):
-        return 'Return to Line'
+        return STOP_MOTION.STABLE # return to line
     
     if endOfLine(cmask):
-        return 'End of Line'
+        return STOP_MOTION.STAND # end of line
     
     if not findObstacles(cmask):
         return dirCalibration(cmask) # Running | Walking
 
-    return 'Undefined'
+    return STOP_MOTION.LOWER # undefined
     # --------
     # --------
 
@@ -129,13 +129,13 @@ def endOfLine(cmask):
     return len(conts) == 0
 # --------
 def findObstacles(cmask):
-    g_msk = cmask['green']
-    r_msk = cmask['red']
+    g_msk = cmask['green'][cam.HEIGHT*2//3:,:]
+    r_msk = cmask['red'][cam.HEIGHT*2//3:,:]
     conts = objContTrace(g_msk) + objContTrace(r_msk)
     return len(conts) > 0
 # -----------------------------------------------
 def dirCalibration(cmask):
-    y_msk = cmask['yellow'][cam.HEIGHT//3:,:]
+    y_msk = cmask['yellow'][cam.HEIGHT//2:,:]
 
     # Line direction
     line_probs = objContTrace(y_msk)
@@ -150,11 +150,11 @@ def dirCalibration(cmask):
 
     if abs(dx) > 0.2:
         if dx > 0:
-            return 'Turn left'
+            return STEP.TURN_LEFT
         else:
-            return 'Turn right'
+            return STEP.TURN_RIGHT
     else:
-        return 'Go straight'
+        return STEP.FORWARD
 
 
 def walking():

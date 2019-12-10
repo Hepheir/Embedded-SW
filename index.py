@@ -36,25 +36,21 @@ serial_queue = []
 
 @debug.setInterval(main_routine_time_s)
 def main_routine(main_routine_args):
+    global serial_queue
     cmasks = color.colorMaskAll(frame)
-    context = move.context(cmasks)
+    action = move.context(cmasks)
 
-    predefined = {
-        'Go straight' : move.LOOP_MOTION.WALK_FORWARD,
-        'Turn left' : move.STEP.TURN_LEFT,
-        'Turn right' : move.STEP.TURN_RIGHT,
-        'Return to Line' : move.STOP_MOTION.STABLE,
-        'End of Line' : move.STOP_MOTION.STABLE,
-        'Undefined' : move.STOP_MOTION.LOWER
-    }
+    if not debug.DEBUG_MODE:
+        del serial_queue[1:]
+        serial_queue.append(action)
 
-    for cntx in predefined:
-        if context == cntx:
-            del serial_queue[:]
-            serial_queue.append(predefined[cntx])
+    cv2.line(frame, (0, cam.HEIGHT//2), (cam.WIDTH, cam.HEIGHT//2), (192,192,192), 1)
+    for h in [1,2,3]:
+        h = cam.HEIGHT*h//3 - 1
+        cv2.line(frame, (0, h), (cam.WIDTH, h), (255,255,255), 1)
 
     main_routine_args['frame'] = frame
-    main_routine_args['context'] = context
+    main_routine_args['context'] = '?'
     main_routine_args['color_masks'] = cmasks
     main_routine_args['stacked_cmask'] = debug.stackedColorMasks(frame, main_routine_args['color_masks'])
 
@@ -74,8 +70,7 @@ def sub_routine(sub_routine_args):
 # ******************************************************************
 if __name__ == '__main__':
     serial.init()
-    # cam.init(0 if debug.isRasp() else '1.mp4')
-    cam.init(0)
+    cam.init(0 if debug.isRasp() else '1.mp4')
     color.init()
     # --------
     frame = cam.getFrame()
