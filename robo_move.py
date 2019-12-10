@@ -178,11 +178,15 @@ def onLine(frame, cmask):
     vx,vy,x,y = cv2.fitLine(line_obj, cv2.DIST_L2,0,0.01,0.01)
 
     dx = vx*(vy/abs(vy))
-    if not debug.DEBUG_MODE and abs(dx) > 0.2:
-        if dx > 0:
-            do(STEP.TURN_LEFT)
+    if not debug.DEBUG_MODE:
+        if abs(dx) > 0.2:
+            if dx > 0:
+                do(STEP.TURN_LEFT)
+            else:
+                do(STEP.TURN_RIGHT)
         else:
-            do(STEP.TURN_RIGHT)
+            do(STEP.FORWARD)
+    
     return dx
 
     roi_c_l = cmask[:,                : cam.WIDTH//3   ]

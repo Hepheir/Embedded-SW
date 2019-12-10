@@ -57,12 +57,6 @@ if __name__ == '__main__':
         try:
             # 현재 상황 파악
             context = move.context(frame)
-
-            if not debug.DEBUG_MODE:
-                if context is move.STATUS.WALKING:
-                    serial.TX_data(2) # 전진종종걸음
-                else:
-                    serial.TX_data(12) # 안정화자세
             
 
             cv2.imshow('Frame', frame)
