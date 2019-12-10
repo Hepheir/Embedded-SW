@@ -86,6 +86,7 @@ class MACRO:
 class SENSOR:
     DISTANCE = None # 적외선 센서 거리측정
 
+line_tracing_sensitivity = 20
 # -----------------------------------------------
 def get(sensor):
     serial.TX_data(sensor)
@@ -154,6 +155,8 @@ def findObstacles(cmask):
     return len(conts) > 0
 # -----------------------------------------------
 def dirCalibration(cmask, prescaler=1/2):
+    ltr_shift_sen = 30
+    ltr_turn_sen = 25
     lowerh = cam.HEIGHT * prescaler
     upperh = cam.HEIGHT - 1
     y_msk = cmask['yellow'][lowerh:,:]
@@ -171,19 +174,14 @@ def dirCalibration(cmask, prescaler=1/2):
     upperx = vx/vy * (upperh - y) + x
 
     cx = (lowerx + upperx - cam.WIDTH) / (2 * cam.WIDTH) * 100
-    if cx < -10:
-        return STEP.LEFT
-    elif cx > 10:
-        return STEP.RIGHT
+    if abs(cx) > ltr_shift_sen:
+        return STEP.RIGHT if cx > 0 else STEP.LEFT
 
     # 회전각 보정
     dx = vx*(vy/abs(vy)) * 100
-    if abs(dx) > 15:
-        if dx > 0:
-            return STEP.TURN_LEFT
-        else:
-            return STEP.TURN_RIGHT
-    
+    if abs(dx) > ltr_turn_sen:
+        return STEP.TURN_LEFT if dx > 0 else STEP.TURN_RIGHT
+        
     # 문제가 없으면 전진
     return LOOP_MOTION.WALK_FORWARD
 
