@@ -135,6 +135,7 @@ if __name__ == '__main__':
 cv2.destroyAllWindows()
 for stop in routine_stoppers:
     stop.set()
+time.sleep(max([main_routine_time_s, sub_routine_time_s]))
 
 cam.Video.release()
 
