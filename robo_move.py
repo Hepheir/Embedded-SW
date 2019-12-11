@@ -87,7 +87,6 @@ class MACRO:
 class SENSOR:
     DISTANCE = None # 적외선 센서 거리측정
 
-line_tracing_sensitivity = 20
 # -----------------------------------------------
 def get(sensor):
     serial.TX_data(sensor)
@@ -111,8 +110,20 @@ def context(cmask):
     if not stadingOnLine(cmask):
         return MACRO.TEMP # return to line
     
+    # 만약 선이 끊겨있다면..
     if isEndOfLine(cmask):
-        return endOfLine(cmask)
+        y_msk = cmask['yellow'][cam.HEIGHT//2:,:]
+        
+        msk_l = y_msk[:,:cam.WIDTH//3]
+        if len(objContTrace(msk_l)):
+            return STEP.TURN_LEFT
+
+        msk_r = y_msk[:,cam.WIDTH*2//3:]
+        if len(objContTrace(msk_r)):
+            return STEP.TURN_RIGHT
+
+        # 문 / 셔터 / 림보인지 검사 시작
+        return STOP_MOTION.LIMBO
     
     # --------
     # if not findObstacles(cmask):
@@ -129,23 +140,12 @@ def stadingOnLine(cmask):
 # --------
 def isEndOfLine(cmask):
     y_msk = cmask['yellow']
-    roi = y_msk[:cam.HEIGHT*2//3,:]
+    roi = y_msk[:cam.HEIGHT//4,:]
     conts = objContTrace(roi)
     return len(conts) == 0
 # --------
 def endOfLine(cmask):
-    y_msk = cmask['yellow'][cam.HEIGHT//2:,:]
-    
-    msk_l = y_msk[:,:cam.WIDTH//3]
-    if len(objContTrace(msk_l)):
-        return STEP.TURN_LEFT
-
-    msk_r = y_msk[:,cam.WIDTH*2//3:]
-    if len(objContTrace(msk_r)):
-        return STEP.TURN_RIGHT
-
-    # 문 / 셔터 / 림보인지 검사 시작
-    return STOP_MOTION.LIMBO
+    pass
 # --------
 def findObstacles(cmask):
     g_msk = cmask['green'][cam.HEIGHT*2//3:,:]

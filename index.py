@@ -46,11 +46,12 @@ def main_routine(main_routine_args):
         del serial_queue[:]
         serial_queue.append(action)
 
-    cv2.line(frame, (cam.CENTER[0],0), (cam.CENTER[0], cam.HEIGHT), (192,192,192), 1)
-    cv2.line(frame, (0, cam.CENTER[1]), (cam.WIDTH, cam.CENTER[1]), (192,192,192), 1)
-    for h in [1,2,3]:
-        h = cam.HEIGHT*h//3 - 1
-        cv2.line(frame, (0, h), (cam.WIDTH, h), (255,255,255), 1)
+    for x in [1,2,3]:
+        x = cam.WIDTH*x//3 - 1
+        cv2.line(frame, (x, 0), (x, cam.HEIGHT), (255,255,255), 1)
+    for y in [1,2,3]:
+        y = cam.HEIGHT*y//3 - 1
+        cv2.line(frame, (0, y), (cam.WIDTH, y), (255,255,255), 1)
 
     main_routine_args['frame'] = frame
     main_routine_args['context'] = '?'
@@ -80,7 +81,10 @@ if __name__ == '__main__':
     serial_queue.append(move.HEAD.PITCH_LOWER_45)
     frame = cam.getFrame()
     key_chr = '_'
-    
+
+    fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+    recorder = cv2.VideoWriter('%s.avi' % time.ctime() ,fourcc, 15.0, cam.RESOLUTION)
+
     routine_stoppers.append( main_routine(main_routine_args) )
     routine_stoppers.append(  sub_routine( sub_routine_args) )
 
@@ -91,6 +95,8 @@ if __name__ == '__main__':
     print('')
     while True:
         frame = cam.getFrame(imshow=True)
+        recorder.write(frame)
+
         key = debug.waitKey(10)
         key_chr = chr(key) if key else key_chr
         # --------
@@ -129,6 +135,9 @@ if __name__ == '__main__':
 cv2.destroyAllWindows()
 for stop in routine_stoppers:
     stop.set()
+
+cam.Video.release()
+
 print('')
 print('')
 print('Exit program')
