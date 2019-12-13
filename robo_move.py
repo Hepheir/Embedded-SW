@@ -187,7 +187,7 @@ def isLineDetectable(mask):
 # --------
 def isEndOfLine(mask):
     mskv = detectVertLine(mask)
-    roi = mskv[:cam.HEIGHT//2,:]
+    roi = mskv[:cam.HEIGHT//3,:]
     conts = objContTrace(roi)
     return len(conts) == 0
 # --------
@@ -228,7 +228,7 @@ def findObstacles(cmask):
 # -----------------------------------------------
 def dirCalibration(mask):
     ltr_turn_sen    = 24
-    ltr_shift_sen   = 24
+    ltr_shift_sen   = 20
     # v 로봇 카메라가 표시할 수 있는 최하단으로 부터, 가상으로 화면을 확장 시켰다고 가정시, 추정되는 로봇으로 부터 땅에 내린 수선의 발 위치
     bottom_y_ext    = cam.CENTER[1] * 2/3
     

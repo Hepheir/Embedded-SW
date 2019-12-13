@@ -134,9 +134,9 @@ if __name__ == '__main__':
                 str([act.code for act in action_queue]) + ' ')
             cv2.imshow('frame', main_routine_args['frame'])
             cv2.imshow('scmsk full', main_routine_args['scmsk full'])
-            cv2.imshow('y', ymsk)
-            cv2.imshow('h', move.detectHoriLine(ymsk))
-            cv2.imshow('v', move.detectVertLine(ymsk))
+            # cv2.imshow('y', ymsk)
+            # cv2.imshow('h', move.detectHoriLine(ymsk))
+            # cv2.imshow('v', move.detectVertLine(ymsk))
         except:
             pass
 
