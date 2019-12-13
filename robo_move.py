@@ -115,12 +115,12 @@ def center_of_contour(contour):
     cy = int(M["m01"] / M["m00"])
     return (cx, cy)
 # -----------------------------------------------
-def detectVertLine(mask, erodity=16):
+def detectVertLine(mask, erodity=15):
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, erodity*2+1))
     mask = cv2.erode(mask, kernel)
     return mask
 # -----------------------------------------------
-def detectHoriLine(mask, erodity=16):
+def detectHoriLine(mask, erodity=15):
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (erodity*2+1, 3))
     mask = cv2.erode(mask, kernel)
     return mask
