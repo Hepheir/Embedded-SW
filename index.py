@@ -108,7 +108,7 @@ if __name__ == '__main__':
             continue
         elif key_chr == ' ':
             del action_queue[:]
-            action_queue[0] = move.STOP_MOTION.STABLE
+            action_queue.append(move.STOP_MOTION.STABLE)
             key_chr = '_'
             paused = not paused
             continue
