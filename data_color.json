@@ -69,7 +69,7 @@
     },
     {
         "color_name" : "gray",
-        "detectable" : true,
+        "detectable" : false,
         "rgb" : [128, 128, 128],
         
         "hsv_lower" : [0,0,72],
