@@ -115,8 +115,9 @@ if __name__ == '__main__':
             continue
         # --------
         if key:
-            code, actname = debug.remoteCtrl(key)
-            if not (code is None):
+            retval = debug.remoteCtrl(key)
+            if not (retval is None):
+                code, actname = retval
                 serial_queue.append(code)
         # --------
         if paused:
