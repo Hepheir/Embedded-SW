@@ -150,8 +150,8 @@ def context(cmask):
     elif isObject():
         return STOP_MOTION.STAND
 
-    elif isBridge(cmask):
-        return dirCalibration_Lower(cmask['yellow'])
+    # elif isBridge(cmask):
+    #     return dirCalibration_Lower(cmask['yellow'])
 
     else:
         return dirCalibration(cmask['yellow']) # undefined

@@ -29,10 +29,10 @@ key_chr = None
 
 routine_stoppers = []
 
-main_routine_time_s = 0.8
+main_routine_time_s = 0.4
 main_routine_args = {}
 
-sub_routine_time_s = 1.2
+sub_routine_time_s = 1
 sub_routine_args = {}
 
 action_queue = []
