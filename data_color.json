@@ -58,7 +58,7 @@
     },
     {
         "color_name" : "white",
-        "detectable" : true,
+        "detectable" : false,
         "rgb" : [255, 255, 255],
         
         "hsv_lower" : [0,0,0],

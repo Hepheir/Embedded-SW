@@ -158,12 +158,13 @@ def stadingOnLine(mask):
 # --------
 def isEndOfLine(mask):
     mskv = detectVertLine(mask)
-    roi = mskv[:cam.HEIGHT//2,:]
+    roi = mskv[:cam.HEIGHT//3,:]
     conts = objContTrace(roi)
     return len(conts) == 0
 # --------
 def isCurve(mask):
     mskh = detectHoriLine(mask)
+
 # --------
 def isDoor():
     pass

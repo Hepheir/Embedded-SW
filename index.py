@@ -38,19 +38,22 @@ sub_routine_args = {}
 action_queue = []
 
 # ******************************************************************
+def veryImportantAction(action):
+    global action_queue
+    if not (action.code is None):
+        del action_queue[:]
+        action_queue.append(action)
 
 @debug.setInterval(main_routine_time_s)
 def main_routine(main_routine_args):
-    global action_queue
     cmasks = color.colorMaskAll(frame)
     action = move.context(cmasks)
 
     if not debug.DEBUG_MODE:
-        del action_queue[:]
-        action_queue.append(action)
+        veryImportantAction(action)
 
     main_routine_args['frame']      = frame
-    main_routine_args['color_masks']    = cmasks
+    main_routine_args['color_masks'] = cmasks
     main_routine_args['scmsk full'] = debug.stackedColorMasks(frame, main_routine_args['color_masks'])
     main_routine_args['scmsk 1/3']  = debug.stackedColorMasks(frame[cam.HEIGHT//2:,:], color.colorMaskAll(frame[cam.HEIGHT//2:,:]))
 
@@ -93,7 +96,7 @@ if __name__ == '__main__':
     print('Start mainloop')
     print('')
     while True:
-        key = debug.waitKey(10)
+        key = debug.waitKey(1)
         key_chr = chr(key) if key else key_chr
         # --------
         if key == 27: # ESC
@@ -111,9 +114,7 @@ if __name__ == '__main__':
         # --------
         if key:
             action = debug.remoteCtrl(key)
-            if not (action.code is None):
-                del action_queue[:]
-                action_queue.append(action)
+            veryImportantAction(action)
         # --------
         if not paused:
             frame = cam.getFrame(imshow=True)
