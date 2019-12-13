@@ -87,7 +87,7 @@ if __name__ == '__main__':
         fourcc = cv2.VideoWriter_fourcc(*'MJPG')
         recorder = cv2.VideoWriter('records/%s.avi' % time.ctime() ,fourcc, 15.0, cam.RESOLUTION)
     # --------
-    serial_queue.append(move.HEAD.PITCH_LOWER_45)
+    serial_queue.append(move.HEAD.PITCH_LOWER_45[0])
     frame = cam.getFrame()
     key_chr = '_'
 
