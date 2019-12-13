@@ -45,8 +45,10 @@ class LOOP_MOTION:
     TURN_LEFT       = Action(40, '')
     TURN_RIGHT      = Action(41, '')
 
-    TURN_LOWER_LEFT = Action(42, '')
-    TURN_LOWER_RIGHT = Action(43, '')
+    TURN_LOWER_LEFT     = Action(42, '')
+    TURN_LOWER_RIGHT    = Action(43, '')
+
+    RUN_FORWARD = Action(44, 'RUN_FORWARD')
 
 class STEP:
     FORWARD     = Action(64, '')
@@ -91,7 +93,7 @@ class SENSOR:
     DISTANCE = None # 적외선 센서 거리측정
 
 NO_ACTION = Action(None, None)
-ERROR     = Action(STOP_MOTION.STAND, 'ERROR')
+ERROR     = Action(STOP_MOTION.STAND.code, 'ERROR')
 
 # -----------------------------------------------
 def get(sensor):
