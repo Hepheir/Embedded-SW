@@ -32,12 +32,13 @@ class STOP_MOTION:
     LIMBO   = Action(13, 'LIMBO')
 
 class LOOP_MOTION:
-    WALK_FORWARD    = Action(32, 'WALK_FORWARD')
+    # WALK_FORWARD    = Action(32, 'WALK_FORWARD')
+    WALK_FORWARD    = Action(45, 'WALK_FORWARD')
     WALK_BACKWARD   = Action(33, 'WALK_BACKWARD')
     WALK_LEFT       = Action(34, 'WALK_LEFT')
     WALK_RIGHT      = Action(35, 'WALK_RIGHT')
 
-    LOWER_FORWARD   = Action(36, '')
+    LOWER_FORWARD   = Action(36, 'LOWER_FORWARD')
     LOWER_BACKWARD  = Action(37, '')
     LOWER_LEFT      = Action(38, '')
     LOWER_RIGHT     = Action(39, '')
@@ -48,7 +49,7 @@ class LOOP_MOTION:
     TURN_LOWER_LEFT     = Action(42, '')
     TURN_LOWER_RIGHT    = Action(43, '')
 
-    RUN_FORWARD = Action(44, 'RUN_FORWARD')
+    RUN_FORWARD = Action(45, 'RUN_FORWARD')
 
 class STEP:
     FORWARD     = Action(64, '')
