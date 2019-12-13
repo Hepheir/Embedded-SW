@@ -32,8 +32,7 @@ class STOP_MOTION:
     LIMBO   = Action(13, 'LIMBO')
 
 class LOOP_MOTION:
-    # WALK_FORWARD    = Action(32, 'WALK_FORWARD')
-    WALK_FORWARD    = Action(45, 'WALK_FORWARD')
+    WALK_FORWARD    = Action(32, 'WALK_FORWARD')
     WALK_BACKWARD   = Action(33, 'WALK_BACKWARD')
     WALK_LEFT       = Action(34, 'WALK_LEFT')
     WALK_RIGHT      = Action(35, 'WALK_RIGHT')
@@ -259,9 +258,10 @@ def dirCalibration(mask):
     if abs(dx) > ltr_turn_sen:
         return STEP.TURN_RIGHT if dx > 0 else STEP.TURN_LEFT
         
-
+    if isCurve(mask):
+        return LOOP_MOTION.WALK_FORWARD
     # 문제가 없으면 전진
-    return LOOP_MOTION.WALK_FORWARD
+    return LOOP_MOTION.RUN_FORWARD
 
 def dirCalibration_Lower(mask):
     res = dirCalibration(mask)
