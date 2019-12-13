@@ -266,7 +266,7 @@ def context_look_forward(cmask):
         doorMode = True
         return MACRO.OPEN_DOOR
 
-    elif isShutter():
+    elif isShutter(cmask['gray']):
         return MACRO.SHUTTER
 
     elif isTunnel():
