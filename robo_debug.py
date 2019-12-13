@@ -138,7 +138,7 @@ def remoteCtrl(key):
     for c in macro:
         if key is ord(c):
             return macro[c]
-    return move.Action(None, None)
+    return move.ERROR
 
 # -----------------------------------------------
 # https://codeday.me/ko/qa/20190403/183242.html

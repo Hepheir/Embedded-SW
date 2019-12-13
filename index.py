@@ -43,6 +43,10 @@ action_queue = []
 # ******************************************************************
 def veryImportantAction(action):
     global action_queue
+    if action is None:
+        print('action is None!')
+        return
+        
     if not (action.code is None):
         del action_queue[:]
         action_queue.append(action)

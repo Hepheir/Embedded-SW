@@ -178,8 +178,7 @@ def isLookingDownward(mask):
     if not conts:
         return False
     area = np.sum([cv2.contourArea(c) for c in conts])
-    _isLookingDownward = area > 3000
-    return _isLookingDownward
+    return area > 3000
 # -----------------------------------------------
 def isLineDetectable(mask):
     conts = objContTrace(mask)
@@ -220,7 +219,7 @@ def isBridge(cmasks):
     isR, isB = [_(m) for m in [red,black]]
     return isR and isB
 # --------
-def findObstacles(cmask):
+def isFoundObstacles(cmask):
     g_msk = cmask['green'][cam.HEIGHT*2//3:,:]
     r_msk = cmask['red'][cam.HEIGHT*2//3:,:]
     conts = objContTrace(g_msk) + objContTrace(r_msk)
