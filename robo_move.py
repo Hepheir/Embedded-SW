@@ -46,8 +46,8 @@ class LOOP_MOTION:
 class STEP:
     FORWARD = (64, '')
     BACKWARD = (65, '')
-    LEFT = (9, 'LEFT') # 66
-    RIGHT = (8, 'RIGHT') # 67
+    LEFT = (66, 'LEFT')
+    RIGHT = (67, 'RIGHT')
 
     LOWER_FORWARD = (68, '')
     LOWER_BACKWARD = (69, '')
