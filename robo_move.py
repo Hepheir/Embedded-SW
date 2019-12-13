@@ -187,7 +187,7 @@ def isLineDetectable(mask):
 # --------
 def isEndOfLine(mask):
     mskv = detectVertLine(mask)
-    roi = mskv[:cam.HEIGHT//3,:]
+    roi = mskv[:cam.HEIGHT*2//3,:]
     conts = objContTrace(roi)
     return len(conts) == 0
 # --------
