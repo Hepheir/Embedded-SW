@@ -126,6 +126,15 @@ def detectHoriLine(mask, erodity=15):
     return mask
 # -----------------------------------------------
 def context(cmask):
+    if isLookingDownward(cmask['gray']):
+        return context_look_downward(cmask)
+    else:
+        return context_look_forward(cmask)
+# -----------------------------------------------
+def context_look_forward(cmask):
+    pass
+# -----------------------------------------------
+def context_look_downward(cmask):
     # 현재 로봇이 처한 상황을 파악
     if not stadingOnLine(cmask['yellow']):
         return STOP_MOTION.LOWER # return to line
@@ -141,7 +150,7 @@ def context(cmask):
         elif isShutter():
             return MACRO.SHUTTER
 
-        elif isLimbo():
+        elif isTunnel():
             return STOP_MOTION.LIMBO
 
         else:
@@ -158,6 +167,10 @@ def context(cmask):
     # --------
 
 # -----------------------------------------------
+def isLookingDownward(mask):
+    roi = mask[:,:]
+    return True
+
 def stadingOnLine(mask):
     conts = objContTrace(mask)
     return len(conts) > 0
@@ -180,7 +193,7 @@ def isDoor():
 def isShutter():
     pass
 # --------
-def isLimbo():
+def isTunnel():
     pass
 # --------
 def isObject():
