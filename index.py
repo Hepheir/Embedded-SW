@@ -55,7 +55,8 @@ def main_routine(main_routine_args):
     main_routine_args['frame']      = frame
     main_routine_args['color_masks'] = cmasks
     main_routine_args['scmsk full'] = debug.stackedColorMasks(frame, main_routine_args['color_masks'])
-    main_routine_args['scmsk 1/3']  = debug.stackedColorMasks(frame[cam.HEIGHT//2:,:], color.colorMaskAll(frame[cam.HEIGHT//2:,:]))
+    main_routine_args['h'] = move.detectHoriLine(cmasks['yellow'])
+    main_routine_args['v'] = move.detectVertLine(cmasks['yellow'])
 
 
 @debug.setInterval(sub_routine_time_s)
@@ -133,6 +134,8 @@ if __name__ == '__main__':
                 str([act.code for act in action_queue]) + ' ')
             cv2.imshow('frame', main_routine_args['frame'])
             cv2.imshow('scmsk full', main_routine_args['scmsk full'])
+            cv2.imshow('h', main_routine_args['h'])
+            cv2.imshow('v', main_routine_args['v'])
         except:
             pass
 
