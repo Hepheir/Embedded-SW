@@ -32,7 +32,7 @@ key_chr = None
 
 routine_stoppers = []
 
-main_routine_time_s = 0.4
+main_routine_time_s = 0.1
 main_routine_args = {}
 
 sub_routine_time_s = 1
