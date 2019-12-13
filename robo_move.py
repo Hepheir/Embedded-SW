@@ -90,7 +90,7 @@ class MACRO:
     SHUTTER     = Action(128, 'SHUTTER')
     OPEN_DOOR   = Action(129, 'OPEN_DOOR')
     TUNNEL      = Action(130, 'TUNNEL')
-    END_OF_LINE = Action(None, 'END_OF_LINE')
+    END_OF_LINE = Action(132, 'END_OF_LINE')
     
 
 NO_ACTION = Action(None, None)
@@ -113,49 +113,49 @@ def center_of_contour(contour):
     cy = int(M["m01"] / M["m00"])
     return (cx, cy)
 # -----------------------------------------------
-def detectVertLine(mask, erodity=15):
+def detectVertLine(mask_line, erodity=15):
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, erodity*2+1))
-    mask = cv2.erode(mask, kernel)
-    return mask
+    return cv2.erode(mask_line, kernel)
 # -----------------------------------------------
-def detectHoriLine(mask, erodity=15):
+def detectHoriLine(mask_line, erodity=15):
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (erodity*2+1, 3))
-    mask = cv2.erode(mask, kernel)
-    return mask
+    return cv2.erode(mask_line, kernel)
 # -----------------------------------------------
-def isLookingDownward(mask):
-    roi = mask[cam.HEIGHT*7//8:,:]
+def isLookingDownward(mask_bodyshadow):
+    roi = mask_bodyshadow[cam.HEIGHT*7//8:,:]
     conts = objContTrace(roi, 0)
     if not conts:
         return False
     area = np.sum([cv2.contourArea(c) for c in conts])
     return area > 3000
 # -----------------------------------------------
-def isLineDetectable(mask):
-    conts = objContTrace(mask)
+def isLineDetectable(mask_line):
+    conts = objContTrace(mask_line)
     return len(conts) > 0
 # --------
-def isNearEOL(mask):
-    mskv = detectVertLine(mask)
+def isNearEOL(mask_line):
+    mskv = detectVertLine(mask_line)
     roi = mskv[:cam.HEIGHT//8,:]
     conts = objContTrace(roi)
     return len(conts) == 0
 # --------
-def isEndOfLine(mask):
-    mskv = detectVertLine(mask)
+def isEndOfLine(mask_line):
+    mskv = detectVertLine(mask_line)
     roi = mskv[:cam.HEIGHT*2//3,:]
     conts = objContTrace(roi)
     return len(conts) == 0
 # --------
-def isCurve(mask):
+def isCurve(mask_line):
+    mask = mask_line
     mskh = detectHoriLine(mask)
     conts = objContTrace(mskh)
     return len(conts) > 0
 # --------
-def isDoor():
-    pass
+def isDoor(mask_doorhandle):
+    conts = objContTrace(mask_doorhandle)
+    return len(conts) > 0
 # --------
-def isShutter():
+def isShutter(mask_shutter):
     pass
 # --------
 def isTunnel():
@@ -194,8 +194,25 @@ def context(cmask):
     else:
         return context_look_forward(cmask)
 # -----------------------------------------------
+
+
+
+
+# -----------------------------------------------
 def context_look_forward(cmask):
     if isLineDetectable(cmask['yellow']):
+        return HEAD.PITCH_LOWER_90
+
+    elif isDoor(cmask['blue']):
+        return MACRO.OPEN_DOOR
+
+    elif isShutter():
+        return MACRO.SHUTTER
+
+    elif isTunnel():
+        return MACRO.TUNNEL
+
+    else:
         return HEAD.PITCH_LOWER_90
 # -----------------------------------------------
 def context_look_downward(cmask):
@@ -207,16 +224,6 @@ def context_look_downward(cmask):
     if isEndOfLine(cmask['yellow']):
         if isCurve(cmask['yellow']):
             return STEP.TURN_LEFT_WIDE
-
-        elif isDoor():
-            return MACRO.OPEN_DOOR
-
-        elif isShutter():
-            return MACRO.SHUTTER
-
-        elif isTunnel():
-            return MACRO.TUNNEL
-
         else:
             return MACRO.END_OF_LINE
 
