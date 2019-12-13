@@ -159,7 +159,7 @@ def context_look_downward(cmask):
             return STOP_MOTION.LIMBO
 
         else:
-            return HEAD.PITCH_CENTER
+            return HEAD.PITCH_LOWER_45
 
     elif isObject():
         return STOP_MOTION.STAND
