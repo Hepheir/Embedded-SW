@@ -115,14 +115,14 @@ def center_of_contour(contour):
     cy = int(M["m01"] / M["m00"])
     return (cx, cy)
 # -----------------------------------------------
-def detectVertLine(mask, erodity=18):
-    mask = cv2.erode(mask, cv2.getStructuringElement(cv2.MORPH_RECT, (1, erodity)))
-    mask = cv2.dilate(mask, cv2.getStructuringElement(cv2.MORPH_RECT, (1, erodity)))
+def detectVertLine(mask, erodity=16):
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, erodity*2+1))
+    mask = cv2.erode(mask, kernel)
     return mask
 # -----------------------------------------------
-def detectHoriLine(mask, erodity=18):
-    mask = cv2.erode(mask, cv2.getStructuringElement(cv2.MORPH_RECT, (erodity,1)))
-    mask = cv2.dilate(mask, cv2.getStructuringElement(cv2.MORPH_RECT, (erodity,1)))
+def detectHoriLine(mask, erodity=16):
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (erodity*2+1, 3))
+    mask = cv2.erode(mask, kernel)
     return mask
 # -----------------------------------------------
 def context(cmask):
@@ -189,7 +189,7 @@ def isObject():
 def isBridge(cmasks):
     red = cmasks['red']
     black = cmasks['black']
-    
+
     def _(m):
         m = m[cam.HEIGHT*2//3:,:]
         c = objContTrace(m)

@@ -61,6 +61,13 @@ def init(filename="data_color.json"):
     for ref in COLOR_REFERENCES:
         if ref['detectable']:
             DETECTABLE_COLORS.append(ref)
+    
+    for i in range(len(DETECTABLE_COLORS)-1):
+        for j in range(i, len(DETECTABLE_COLORS)-1):
+            if DETECTABLE_COLORS[j]['importance'] < DETECTABLE_COLORS[j+1]['importance']:
+                temp = DETECTABLE_COLORS[i]
+                DETECTABLE_COLORS[i] = DETECTABLE_COLORS[j+1]
+                DETECTABLE_COLORS[j+1] = temp
 
     print('    Data loaded from', filename)
     print('    Detectable colors :', [ref['color_name'] for ref in DETECTABLE_COLORS])
@@ -169,3 +176,5 @@ def trackBar_update(frame):
     mask = cv2.inRange(frame, lowerb, upperb)
     cv2.imshow(trackBar_winname, mask)
 #-----------------------------------------------
+if __name__ == '__main__':
+    init()
