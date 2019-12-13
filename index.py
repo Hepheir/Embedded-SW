@@ -129,6 +129,7 @@ if __name__ == '__main__':
                 '[key=%c]' % key_chr +
                 '[act=%s]' % action.name +
                 '[d=%c]' % ('T' if debug.DEBUG_MODE else 'F') +
+                '[p=%c]' % ('T' if paused else 'F') +
                 str([act.code for act in action_queue]) + ' ')
             cv2.imshow('frame', main_routine_args['frame'])
             cv2.imshow('scmsk full', main_routine_args['scmsk full'])

@@ -16,8 +16,6 @@ class Action():
         self.code = serial_code
         self.name = act_name
 
-NO_ACTION = Action(None, None)
-
 class STATUS:
     LINE_MISSING = 'LINE MISSING'
     WALKING = 'WALKING'
@@ -88,11 +86,12 @@ class ARM:
 class MACRO:
     SHUTTER     = Action(128, 'SHUTTER')
     OPEN_DOOR   = Action(129, 'OPEN_DOOR')
-
-    TEMP        = Action(1, '')
     
 class SENSOR:
     DISTANCE = None # 적외선 센서 거리측정
+
+NO_ACTION = Action(None, None)
+ERROR     = Action(STOP_MOTION.STAND, 'ERROR')
 
 # -----------------------------------------------
 def get(sensor):
@@ -142,7 +141,7 @@ def context(cmask):
             return STOP_MOTION.LIMBO
 
         else:
-            return STOP_MOTION.LOWER
+            return ERROR
 
     elif isObject():
         return STOP_MOTION.STAND
@@ -164,6 +163,8 @@ def isEndOfLine(mask):
 # --------
 def isCurve(mask):
     mskh = detectHoriLine(mask)
+    conts = objContTrace(mskh)
+    return len(conts) > 0
 
 # --------
 def isDoor():
