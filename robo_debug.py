@@ -121,15 +121,15 @@ def remoteCtrl(key):
         'z' : move.HEAD.PITCH_LOWER_45,
         'c' : move.HEAD.PITCH_LOWER_90,
 
-        '1' : 1, '2' : 2, '3' : 3,
-        '4' : 4, '5' : 5, '6' : 6,
-        '7' : 7, '8' : 8, '9' : 9,
-                 '0' : 0
+        '1' : (1,None), '2' : (2,None), '3' : (3,None),
+        '4' : (4,None), '5' : (5,None), '6' : (6,None),
+        '7' : (7,None), '8' : (8,None), '9' : (9,None),
+                        '0' : (0,None)
     }
     for c in macro:
         if key is ord(c):
             return macro[c]
-    return None
+    return (None, None)
 
 # -----------------------------------------------
 # https://codeday.me/ko/qa/20190403/183242.html
