@@ -11,7 +11,7 @@ import robo_move as move
 
 # 디버그용으로 임시로 쓰고 말 것들
 
-DEBUG_MODE = False
+DEBUG_MODE = True
 
 # -----------------------------------------------
 def python_version():
