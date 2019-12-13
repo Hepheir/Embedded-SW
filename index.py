@@ -87,7 +87,7 @@ if __name__ == '__main__':
         fourcc = cv2.VideoWriter_fourcc(*'MJPG')
         recorder = cv2.VideoWriter('records/%s.avi' % time.ctime() ,fourcc, 15.0, cam.RESOLUTION)
     # --------
-    serial_queue.append(move.HEAD.PITCH_LOWER_45[0])
+    # serial_queue.append(move.HEAD.PITCH_LOWER_90[0])
     frame = cam.getFrame()
     key_chr = '_'
 
@@ -115,9 +115,9 @@ if __name__ == '__main__':
             continue
         # --------
         if key:
-            remote = debug.remoteCtrl(key)
-            if not (remote is None):
-                serial_queue.append(remote)
+            code, actname = debug.remoteCtrl(key)
+            if not (code is None):
+                serial_queue.append(code)
         # --------
         if paused:
             continue
