@@ -149,7 +149,7 @@ def context(cmask):
     elif isObject():
         return STOP_MOTION.STAND
 
-    elif isBridge(cmask):
+    elif isBridge(cmasks):
         return dirCalibration_Lower(cmask['yellow'])
 
     else:
@@ -244,8 +244,11 @@ def dirCalibration_Lower(mask):
         (STEP.TURN_LEFT,    STEP.LOWER_TURN_LEFT),
         (STEP.TURN_RIGHT,   STEP.LOWER_TURN_RIGHT),
 
-        (STEP.LEFT,     STEP.LOWER_LEFT),
-        (STEP.RIGHT,    STEP.LOWER_RIGHT)
+        # (STEP.LEFT,     STEP.LOWER_LEFT),
+        # (STEP.RIGHT,    STEP.LOWER_RIGHT)
+
+        (STEP.LEFT,     LOOP_MOTION.LOWER_FORWARD),
+        (STEP.RIGHT,    LOOP_MOTION.LOWER_FORWARD)
     ]
 
     for old, new in mapping:
