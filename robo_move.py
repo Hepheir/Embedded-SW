@@ -164,7 +164,7 @@ def stadingOnLine(mask):
 # --------
 def isEndOfLine(mask):
     mskv = detectVertLine(mask)
-    roi = mskv[:cam.HEIGHT//3,:]
+    roi = mskv[:cam.HEIGHT//2,:]
     conts = objContTrace(roi)
     return len(conts) == 0
 # --------
