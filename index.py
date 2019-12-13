@@ -50,8 +50,6 @@ def main_routine(main_routine_args):
         action_queue.append(action)
 
     main_routine_args['frame']      = frame
-    main_routine_args['act_name']   = action.name
-    main_routine_args['context']    = '?'
     main_routine_args['color_masks']    = cmasks
     main_routine_args['scmsk full'] = debug.stackedColorMasks(frame, main_routine_args['color_masks'])
     main_routine_args['scmsk 1/3']  = debug.stackedColorMasks(frame[cam.HEIGHT//2:,:], color.colorMaskAll(frame[cam.HEIGHT//2:,:]))
@@ -59,14 +57,12 @@ def main_routine(main_routine_args):
 
 @debug.setInterval(sub_routine_time_s)
 def sub_routine(sub_routine_args):
-    if not action_queue:
-        sub_routine_args['tx_data'] = -1
-    else:
+    if action_queue:
         action = action_queue[0]
         del action_queue[0]
 
         serial.TX_data(action.code)
-        sub_routine_args['tx_data'] = action.code
+        sub_routine_args['action'] = action
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
@@ -116,21 +112,21 @@ if __name__ == '__main__':
         if key:
             action = debug.remoteCtrl(key)
             if not (action.code is None):
+                del action_queue[:]
                 action_queue.append(action)
         # --------
-        if paused:
-            continue
-        # --------
-        frame = cam.getFrame(imshow=True)
-        if doRecord:
-            recorder.write(frame)
+        if not paused:
+            frame = cam.getFrame(imshow=True)
+            if doRecord:
+                recorder.write(frame)
         # --------
         try:
+            action = sub_routine_args['action']
             debug._print('\r'+' '*64)
             debug._print('\r' +
                 '[%s]' % debug.runtime_ms_str() +
                 '[key=%c]' % key_chr +
-                '[act=%s]' % main_routine_args['act_name'] +
+                '[act=%s]' % action.name +
                 '[d=%c]' % ('T' if debug.DEBUG_MODE else 'F') +
                 str([act.code for act in action_queue]) + ' ')
             cv2.imshow('frame', main_routine_args['frame'])
