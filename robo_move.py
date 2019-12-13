@@ -55,20 +55,18 @@ class STEP:
     BACKWARD    = Action(65, '')
     LEFT        = Action(66, 'LEFT')
     RIGHT       = Action(67, 'RIGHT')
-
-    LOWER_FORWARD   = Action(68, '')
-    LOWER_BACKWARD  = Action(69, '')
-    LOWER_LEFT      = Action(70, '')
-    LOWER_RIGHT     = Action(71, '')
-
     TURN_LEFT   = Action(72, 'TURN_LEFT')
     TURN_RIGHT  = Action(73, 'TURN_RIGHT')
 
     TURN_LEFT_WIDE   = Action(74, 'TURN_LEFT_WIDE')
     TURN_RIGHT_WIDE  = Action(75, 'TURN_RIGHT_WIDE')
 
-    TURN_LOWER_LEFT     = Action(80, '')
-    TURN_LOWER_RIGHT    = Action(81, '')
+    LOWER_FORWARD   = Action(68, '')
+    LOWER_BACKWARD  = Action(69, '')
+    LOWER_LEFT      = Action(70, '')
+    LOWER_RIGHT     = Action(71, '')
+    LOWER_TURN_LEFT     = Action(80, '')
+    LOWER_TURN_RIGHT    = Action(81, '')
 
 class HEAD:
     # 좌우
@@ -151,6 +149,9 @@ def context(cmask):
     elif isObject():
         return STOP_MOTION.STAND
 
+    elif isBridge(cmask):
+        return dirCalibration_Lower(cmask['yellow'])
+
     else:
         return dirCalibration(cmask['yellow']) # undefined
     # --------
@@ -183,6 +184,12 @@ def isLimbo():
 # --------
 def isObject():
     pass
+# --------
+def isBridge(cmasks):
+    red = cmasks['red']
+    black = cmasks['black']
+    isR, isB = [len(objContTrace(m)) > 0 for m in [red,black]]
+    return isR and isB
 # --------
 def findObstacles(cmask):
     g_msk = cmask['green'][cam.HEIGHT*2//3:,:]
@@ -226,4 +233,22 @@ def dirCalibration(mask):
         
 
     # 문제가 없으면 전진
-    return LOOP_MOTION.WALK_FORWARD   
+    return LOOP_MOTION.WALK_FORWARD
+
+def dirCalibration_Lower(mask):
+    res = dirCalibration(mask)
+
+    mapping = [
+        (LOOP_MOTION.WALK_FORWARD, LOOP_MOTION.LOWER_FORWARD),
+
+        (STEP.TURN_LEFT,    STEP.LOWER_TURN_LEFT),
+        (STEP.TURN_RIGHT,   STEP.LOWER_TURN_RIGHT),
+
+        (STEP.LEFT,     STEP.LOWER_LEFT),
+        (STEP.RIGHT,    STEP.LOWER_RIGHT)
+    ]
+
+    for old, new in mapping:
+        if res is old:
+            return new
+    return res
