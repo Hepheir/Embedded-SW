@@ -11,7 +11,7 @@ import robo_move as move
 
 # 디버그용으로 임시로 쓰고 말 것들
 
-DEBUG_MODE = True
+DEBUG_MODE = False
 
 # -----------------------------------------------
 def python_version():
@@ -124,7 +124,7 @@ def remoteCtrl(key):
         '1' : 1, '2' : 2, '3' : 3,
         '4' : 4, '5' : 5, '6' : 6,
         '7' : 7, '8' : 8, '9' : 9,
-        '0' : 0
+                 '0' : 0
     }
     for c in macro:
         if key is ord(c):
