@@ -17,7 +17,10 @@ import time
 
 # ******************************************************************
 
-video_fname = 'records/Wed Dec 11 09:15:59 2019.avi'
+video_fps = 15
+video_fname = 'records/t.mp4' if not debug.isRasp() else 0
+video_offset = 80 * 1000 if not debug.isRasp() else 0
+
 doRecord = False
 paused = False
 
@@ -70,13 +73,13 @@ def sub_routine(sub_routine_args):
 # ******************************************************************
 if __name__ == '__main__':
     serial.init()
-    cam.init(0 if debug.isRasp() else video_fname)
+    cam.init(video_fname, video_offset)
     color.init()
     # --------
     recorder = None
     if doRecord:
         fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-        recorder = cv2.VideoWriter('records/%s.avi' % time.ctime() ,fourcc, 15.0, cam.RESOLUTION)
+        recorder = cv2.VideoWriter('records/%s.avi' % time.ctime() ,fourcc, video_fps, cam.RESOLUTION)
     # --------
     frame = cam.getFrame()
     key_chr = '_'
@@ -87,9 +90,6 @@ if __name__ == '__main__':
     ]
 
     time.sleep(max([main_routine_time_s, sub_routine_time_s]))
-    # --------
-    action_queue.append(move.HEAD.PITCH_LOWER_90)
-    time.sleep(sub_routine_time_s)
     # --------
     print('')
     print('Start mainloop')

@@ -106,7 +106,11 @@ def objContTrace(mask, minObjSize=50):
     contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
     if not contours:
         return []
-    return list(filter(lambda c: cv2.contourArea(c) > minObjSize, contours))
+
+    if minObjSize > 0:
+        return list(filter(lambda c: cv2.contourArea(c) > minObjSize, contours))
+    else:
+        return contours
 # -----------------------------------------------
 def center_of_contour(contour):
 	# compute the center of the contour
@@ -126,17 +130,18 @@ def detectHoriLine(mask, erodity=15):
     return mask
 # -----------------------------------------------
 def context(cmask):
-    if isLookingDownward(cmask['gray']):
+    if isLookingDownward(cmask['black']):
         return context_look_downward(cmask)
     else:
         return context_look_forward(cmask)
 # -----------------------------------------------
 def context_look_forward(cmask):
-    pass
+    if isLineDetectable(cmask['yellow']):
+        return HEAD.PITCH_LOWER_90
 # -----------------------------------------------
 def context_look_downward(cmask):
     # 현재 로봇이 처한 상황을 파악
-    if not stadingOnLine(cmask['yellow']):
+    if not isLineDetectable(cmask['yellow']):
         return STOP_MOTION.LOWER # return to line
     
     # 만약 선이 끊겨있다면..
@@ -154,7 +159,7 @@ def context_look_downward(cmask):
             return STOP_MOTION.LIMBO
 
         else:
-            return ERROR
+            return HEAD.PITCH_CENTER
 
     elif isObject():
         return STOP_MOTION.STAND
@@ -168,10 +173,15 @@ def context_look_downward(cmask):
 
 # -----------------------------------------------
 def isLookingDownward(mask):
-    roi = mask[:,:]
-    return True
-
-def stadingOnLine(mask):
+    roi = mask[cam.HEIGHT*7//8:,:]
+    conts = objContTrace(roi, 0)
+    if not conts:
+        return False
+    area = np.sum([cv2.contourArea(c) for c in conts])
+    _isLookingDownward = area > 3000
+    return _isLookingDownward
+# -----------------------------------------------
+def isLineDetectable(mask):
     conts = objContTrace(mask)
     return len(conts) > 0
 # --------
@@ -185,7 +195,6 @@ def isCurve(mask):
     mskh = detectHoriLine(mask)
     conts = objContTrace(mskh)
     return len(conts) > 0
-
 # --------
 def isDoor():
     pass

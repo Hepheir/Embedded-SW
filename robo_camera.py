@@ -8,7 +8,7 @@ Video = None
 RESOLUTION = (WIDTH, HEIGHT)
 CENTER = (WIDTH//2, HEIGHT//2)
 # -----------------------------------------------
-def init(device=0):
+def init(device=0, offset_ms=0):
     global Video
 
     print('"robo_camera.py" initialized')
@@ -23,6 +23,7 @@ def init(device=0):
     print('    Successfully opened video capturing device.')
     Video.set(cv2.CAP_PROP_FRAME_WIDTH,  WIDTH)
     Video.set(cv2.CAP_PROP_FRAME_HEIGHT, HEIGHT)
+    Video.set(cv2.CAP_PROP_POS_MSEC, offset_ms)
 
     print('    Screen resolution :', RESOLUTION)
     print('    >> capturing enabled.')
