@@ -138,7 +138,7 @@ def context(cmask):
             return STOP_MOTION.LOWER
 
     elif isObject():
-        pass
+        return STOP_MOTION.STAND
 
     else:
         return dirCalibration(cmask['yellow']) # undefined

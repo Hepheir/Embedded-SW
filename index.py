@@ -139,7 +139,6 @@ if __name__ == '__main__':
                 ' ')
             cv2.imshow('frame', main_routine_args['frame'])
             cv2.imshow('scmsk full', main_routine_args['scmsk full'])
-            cv2.imshow('scmsk 1/3', main_routine_args['scmsk 1/3'])
             cv2.imshow('vert', cv2.erode(main_routine_args['color_masks']['yellow'],  cv2.getStructuringElement(cv2.MORPH_RECT, (1, 25))))
         except:
             pass
