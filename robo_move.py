@@ -64,8 +64,11 @@ class STEP:
     TURN_LEFT   = Action(72, 'TURN_LEFT')
     TURN_RIGHT  = Action(73, 'TURN_RIGHT')
 
-    TURN_LOWER_LEFT     = Action(74, '')
-    TURN_LOWER_RIGHT    = Action(75, '')
+    TURN_LEFT_WIDE   = Action(74, 'TURN_LEFT_WIDE')
+    TURN_RIGHT_WIDE  = Action(75, 'TURN_RIGHT_WIDE')
+
+    TURN_LOWER_LEFT     = Action(80, '')
+    TURN_LOWER_RIGHT    = Action(81, '')
 
 class HEAD:
     # 좌우
@@ -131,7 +134,7 @@ def context(cmask):
     # 만약 선이 끊겨있다면..
     if isEndOfLine(cmask['yellow']):
         if isCurve(cmask['yellow']):
-            return STEP.TURN_LEFT
+            return STEP.TURN_LEFT_WIDE
 
         elif isDoor():
             return MACRO.OPEN_DOOR
