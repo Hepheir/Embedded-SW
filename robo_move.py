@@ -141,7 +141,7 @@ def context_look_forward(cmask):
 def context_look_downward(cmask):
     # 현재 로봇이 처한 상황을 파악
     if not isLineDetectable(cmask['yellow']):
-        return STOP_MOTION.LOWER # return to line
+        return HEAD.PITCH_LOWER_45
     
     # 만약 선이 끊겨있다면..
     if isEndOfLine(cmask['yellow']):
@@ -162,9 +162,6 @@ def context_look_downward(cmask):
 
     elif isObject():
         return STOP_MOTION.STAND
-
-    # elif isBridge(cmask):
-    #     return dirCalibration_Lower(cmask['yellow'])
 
     else:
         return dirCalibration(cmask['yellow']) # undefined
@@ -258,6 +255,7 @@ def dirCalibration(mask):
     if abs(dx) > ltr_turn_sen:
         return STEP.TURN_RIGHT if dx > 0 else STEP.TURN_LEFT
         
+    # if isCurve(mask) or isBridge(mask):
     if isCurve(mask):
         return LOOP_MOTION.WALK_FORWARD
     # 문제가 없으면 전진
