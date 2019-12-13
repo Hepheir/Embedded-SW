@@ -182,58 +182,6 @@ def isFoundObstacles(cmask):
     conts = objContTrace(g_msk) + objContTrace(r_msk)
     return len(conts) > 0
 # -----------------------------------------------
-
-
-
-
-
-# -----------------------------------------------
-def context(cmask):
-    if isLookingDownward(cmask['black']):
-        return context_look_downward(cmask)
-    else:
-        return context_look_forward(cmask)
-# -----------------------------------------------
-
-
-
-
-# -----------------------------------------------
-def context_look_forward(cmask):
-    if isLineDetectable(cmask['yellow']):
-        return HEAD.PITCH_LOWER_90
-
-    elif isDoor(cmask['blue']):
-        return MACRO.OPEN_DOOR
-
-    elif isShutter():
-        return MACRO.SHUTTER
-
-    elif isTunnel():
-        return MACRO.TUNNEL
-
-    else:
-        return HEAD.PITCH_LOWER_90
-# -----------------------------------------------
-def context_look_downward(cmask):
-    # 현재 로봇이 처한 상황을 파악
-    if not isLineDetectable(cmask['yellow']):
-        return MACRO.END_OF_LINE
-    
-    # 만약 선이 끊겨있다면..
-    if isEndOfLine(cmask['yellow']):
-        if isCurve(cmask['yellow']):
-            return STEP.TURN_LEFT_WIDE
-        else:
-            return MACRO.END_OF_LINE
-
-    elif isObject():
-        return STOP_MOTION.STAND
-
-    else:
-        return dirCalibration(cmask['yellow']) # undefined
-    # --------
-# -----------------------------------------------
 def dirCalibration(mask):
     ltr_turn_sen    = 24
     ltr_shift_sen   = 20
@@ -273,24 +221,75 @@ def dirCalibration(mask):
         return LOOP_MOTION.WALK_FORWARD
     # 문제가 없으면 전진
     return LOOP_MOTION.RUN_FORWARD
+# -----------------------------------------------
 
-def dirCalibration_Lower(mask):
-    res = dirCalibration(mask)
 
-    mapping = [
-        (LOOP_MOTION.WALK_FORWARD, LOOP_MOTION.LOWER_FORWARD),
 
-        (STEP.TURN_LEFT,    STEP.LOWER_TURN_LEFT),
-        (STEP.TURN_RIGHT,   STEP.LOWER_TURN_RIGHT),
 
-        # (STEP.LEFT,     STEP.LOWER_LEFT),
-        # (STEP.RIGHT,    STEP.LOWER_RIGHT)
+doorMode = False
 
-        (STEP.LEFT,     LOOP_MOTION.LOWER_FORWARD),
-        (STEP.RIGHT,    LOOP_MOTION.LOWER_FORWARD)
-    ]
+# -----------------------------------------------
+def context(cmask):
+    global doorMode
+    if doorMode:
+        doorMode = False 
+        return [
+            STEP.TURN_LEFT_WIDE,
 
-    for old, new in mapping:
-        if res is old:
-            return new
-    return res
+            LOOP_MOTION.WALK_BACKWARD,
+            STOP_MOTION.STABLE,
+
+            MACRO.OPEN_DOOR,
+            MACRO.OPEN_DOOR,
+            MACRO.OPEN_DOOR,
+            MACRO.OPEN_DOOR,
+            MACRO.OPEN_DOOR,
+            STOP_MOTION.STABLE,
+
+            STEP.TURN_RIGHT_WIDE
+        ]
+    if isLookingDownward(cmask['black']):
+        return context_look_downward(cmask)
+    else:
+        return context_look_forward(cmask)
+# -----------------------------------------------
+
+
+
+
+# -----------------------------------------------
+def context_look_forward(cmask):
+    if isLineDetectable(cmask['yellow']):
+        return HEAD.PITCH_LOWER_90
+
+    elif isDoor(cmask['blue']):
+        doorMode = True
+        return MACRO.OPEN_DOOR
+
+    elif isShutter():
+        return MACRO.SHUTTER
+
+    elif isTunnel():
+        return MACRO.TUNNEL
+
+    else:
+        return HEAD.PITCH_LOWER_90
+# -----------------------------------------------
+def context_look_downward(cmask):
+    # 현재 로봇이 처한 상황을 파악
+    if not isLineDetectable(cmask['yellow']):
+        return MACRO.END_OF_LINE
+    
+    # 만약 선이 끊겨있다면..
+    if isEndOfLine(cmask['yellow']):
+        if isCurve(cmask['yellow']):
+            return STEP.TURN_LEFT_WIDE
+        else:
+            return MACRO.END_OF_LINE
+
+    elif isObject():
+        return STOP_MOTION.STAND
+
+    else:
+        return dirCalibration(cmask['yellow']) # undefined
+# -----------------------------------------------

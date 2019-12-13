@@ -38,6 +38,7 @@ main_routine_args = {}
 sub_routine_time_s = 1
 sub_routine_args = {}
 
+macroMode = False
 action_queue = []
 
 # ******************************************************************
@@ -46,7 +47,8 @@ def veryImportantAction(action):
     if action is None:
         print('action is None!')
         return
-        
+
+    macroMode = False
     if not (action.code is None):
         del action_queue[:]
         action_queue.append(action)
@@ -66,12 +68,15 @@ def main_routine(main_routine_args):
 
 @debug.setInterval(sub_routine_time_s)
 def sub_routine(sub_routine_args):
+    global macroMode
     if action_queue:
         action = action_queue[0]
         del action_queue[0]
 
         serial.TX_data(action.code)
         sub_routine_args['action'] = action
+    elif macroMode and len(action_queue) == 0:
+        macroMode = False
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
@@ -117,7 +122,12 @@ if __name__ == '__main__':
         # --------
         if key:
             action = debug.remoteCtrl(key)
-            veryImportantAction(action)
+            if type(action) is type([]):
+                macroMode = True
+                action_queue = action
+
+            if not macroMode:
+                veryImportantAction(action)
         # --------
         if not paused:
             frame = cam.getFrame(imshow=True)
