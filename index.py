@@ -35,45 +35,38 @@ main_routine_args = {}
 sub_routine_time_s = 1.2
 sub_routine_args = {}
 
-serial_queue = []
+action_queue = []
 
 # ******************************************************************
 
 @debug.setInterval(main_routine_time_s)
 def main_routine(main_routine_args):
-    global serial_queue
+    global action_queue
     cmasks = color.colorMaskAll(frame)
-    code,actname = move.context(cmasks)
+    action = move.context(cmasks)
 
     if not debug.DEBUG_MODE:
-        del serial_queue[:]
-        serial_queue.append(code)
+        del action_queue[:]
+        action_queue.append(action)
 
-    for x in [1,2,3]:
-        x = cam.WIDTH*x//3 - 1
-        cv2.line(frame, (x, 0), (x, cam.HEIGHT), (255,255,255), 1)
-    for y in [1,2,3]:
-        y = cam.HEIGHT*y//3 - 1
-        cv2.line(frame, (0, y), (cam.WIDTH, y), (255,255,255), 1)
-
-    main_routine_args['frame'] = frame
-    main_routine_args['actname'] = actname
-    main_routine_args['context'] = '?'
-    main_routine_args['color_masks'] = cmasks
+    main_routine_args['frame']      = frame
+    main_routine_args['act_name']   = action.name
+    main_routine_args['context']    = '?'
+    main_routine_args['color_masks']    = cmasks
     main_routine_args['scmsk full'] = debug.stackedColorMasks(frame, main_routine_args['color_masks'])
-    main_routine_args['scmsk 1/3'] = debug.stackedColorMasks(frame[cam.HEIGHT//2:,:], color.colorMaskAll(frame[cam.HEIGHT//2:,:]))
+    main_routine_args['scmsk 1/3']  = debug.stackedColorMasks(frame[cam.HEIGHT//2:,:], color.colorMaskAll(frame[cam.HEIGHT//2:,:]))
 
 
 @debug.setInterval(sub_routine_time_s)
 def sub_routine(sub_routine_args):
-    if not serial_queue:
+    if not action_queue:
         sub_routine_args['tx_data'] = -1
     else:
-        sub_routine_args['tx_data'] = serial_queue[0]
+        action = action_queue[0]
+        del action_queue[0]
 
-        del serial_queue[0]
-        serial.TX_data(sub_routine_args['tx_data'])
-
+        serial.TX_data(action.code)
+        sub_routine_args['tx_data'] = action.code
 # ******************************************************************
 # ******************************************************************
 # ******************************************************************
@@ -87,14 +80,18 @@ if __name__ == '__main__':
         fourcc = cv2.VideoWriter_fourcc(*'MJPG')
         recorder = cv2.VideoWriter('records/%s.avi' % time.ctime() ,fourcc, 15.0, cam.RESOLUTION)
     # --------
-    serial_queue.append(move.HEAD.PITCH_LOWER_90[0])
     frame = cam.getFrame()
     key_chr = '_'
 
-    routine_stoppers.append( main_routine(main_routine_args) )
-    routine_stoppers.append(  sub_routine( sub_routine_args) )
+    routine_stoppers = [
+        main_routine(main_routine_args),
+        sub_routine( sub_routine_args)
+    ]
 
     time.sleep(max([main_routine_time_s, sub_routine_time_s]))
+    # --------
+    action_queue.append(move.HEAD.PITCH_LOWER_90)
+    time.sleep(sub_routine_time_s)
     # --------
     print('')
     print('Start mainloop')
@@ -118,7 +115,7 @@ if __name__ == '__main__':
             retval = debug.remoteCtrl(key)
             if not (retval is None):
                 code, actname = retval
-                serial_queue.append(code)
+                action_queue.append(code)
         # --------
         if paused:
             continue
@@ -132,12 +129,9 @@ if __name__ == '__main__':
             debug._print('\r' +
                 '[%s]' % debug.runtime_ms_str() +
                 '[key=%c]' % key_chr +
-                '[txq=%d]' % len(serial_queue) +
-                '[tx0=%d]' % (serial_queue[0] if len(serial_queue) else -1) +
-                '[act=%s]' % main_routine_args['actname'] +
+                '[act=%s]' % main_routine_args['act_name'] +
                 '[d=%c]' % ('T' if debug.DEBUG_MODE else 'F') +
-                str(serial_queue) + 
-                ' ')
+                str([act.code for act in action_queue]) + ' ')
             cv2.imshow('frame', main_routine_args['frame'])
             cv2.imshow('scmsk full', main_routine_args['scmsk full'])
         except:
