@@ -134,6 +134,7 @@ if __name__ == '__main__':
                 str([act.code for act in action_queue]) + ' ')
             cv2.imshow('frame', main_routine_args['frame'])
             cv2.imshow('scmsk full', main_routine_args['scmsk full'])
+            cv2.imshow('y', main_routine_args['color_masks']['yellow'])
             cv2.imshow('h', main_routine_args['h'])
             cv2.imshow('v', main_routine_args['v'])
         except:
