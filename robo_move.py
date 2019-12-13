@@ -89,17 +89,12 @@ class ARM:
 class MACRO:
     SHUTTER     = Action(128, 'SHUTTER')
     OPEN_DOOR   = Action(129, 'OPEN_DOOR')
+    TUNNEL      = Action(130, 'TUNNEL')
+    END_OF_LINE = Action(None, 'END_OF_LINE')
     
-class SENSOR:
-    DISTANCE = None # 적외선 센서 거리측정
 
 NO_ACTION = Action(None, None)
 ERROR     = Action(STOP_MOTION.STAND.code, 'ERROR')
-
-# -----------------------------------------------
-def get(sensor):
-    serial.TX_data(sensor)
-    return serial.RX_data
 # -----------------------------------------------
 def objContTrace(mask, minObjSize=50):
     contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
@@ -127,46 +122,6 @@ def detectHoriLine(mask, erodity=15):
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (erodity*2+1, 3))
     mask = cv2.erode(mask, kernel)
     return mask
-# -----------------------------------------------
-def context(cmask):
-    if isLookingDownward(cmask['black']):
-        return context_look_downward(cmask)
-    else:
-        return context_look_forward(cmask)
-# -----------------------------------------------
-def context_look_forward(cmask):
-    if isLineDetectable(cmask['yellow']):
-        return HEAD.PITCH_LOWER_90
-# -----------------------------------------------
-def context_look_downward(cmask):
-    # 현재 로봇이 처한 상황을 파악
-    if not isLineDetectable(cmask['yellow']):
-        return HEAD.PITCH_LOWER_45
-    
-    # 만약 선이 끊겨있다면..
-    if isEndOfLine(cmask['yellow']):
-        if isCurve(cmask['yellow']):
-            return STEP.TURN_LEFT_WIDE
-
-        elif isDoor():
-            return MACRO.OPEN_DOOR
-
-        elif isShutter():
-            return MACRO.SHUTTER
-
-        elif isTunnel():
-            return STOP_MOTION.LIMBO
-
-        else:
-            return HEAD.PITCH_LOWER_45
-
-    elif isObject():
-        return STOP_MOTION.STAND
-
-    else:
-        return dirCalibration(cmask['yellow']) # undefined
-    # --------
-
 # -----------------------------------------------
 def isLookingDownward(mask):
     roi = mask[cam.HEIGHT*7//8:,:]
@@ -220,6 +175,51 @@ def isFoundObstacles(cmask):
     r_msk = cmask['red'][cam.HEIGHT*2//3:,:]
     conts = objContTrace(g_msk) + objContTrace(r_msk)
     return len(conts) > 0
+# -----------------------------------------------
+
+
+
+
+
+# -----------------------------------------------
+def context(cmask):
+    if isLookingDownward(cmask['black']):
+        return context_look_downward(cmask)
+    else:
+        return context_look_forward(cmask)
+# -----------------------------------------------
+def context_look_forward(cmask):
+    if isLineDetectable(cmask['yellow']):
+        return HEAD.PITCH_LOWER_90
+# -----------------------------------------------
+def context_look_downward(cmask):
+    # 현재 로봇이 처한 상황을 파악
+    if not isLineDetectable(cmask['yellow']):
+        return MACRO.END_OF_LINE
+    
+    # 만약 선이 끊겨있다면..
+    if isEndOfLine(cmask['yellow']):
+        if isCurve(cmask['yellow']):
+            return STEP.TURN_LEFT_WIDE
+
+        elif isDoor():
+            return MACRO.OPEN_DOOR
+
+        elif isShutter():
+            return MACRO.SHUTTER
+
+        elif isTunnel():
+            return MACRO.TUNNEL
+
+        else:
+            return MACRO.END_OF_LINE
+
+    elif isObject():
+        return STOP_MOTION.STAND
+
+    else:
+        return dirCalibration(cmask['yellow']) # undefined
+    # --------
 # -----------------------------------------------
 def dirCalibration(mask):
     ltr_turn_sen    = 24
