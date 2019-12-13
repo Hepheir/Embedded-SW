@@ -106,30 +106,39 @@ def record():
 # -----------------------------------------------
 def remoteCtrl(key):
     macro = {
-        ' ' : move.STOP_MOTION.STABLE,
+        'z' : move.STOP_MOTION.STABLE,
         'x' : move.STOP_MOTION.LOWER,
         
         'w' : move.LOOP_MOTION.WALK_FORWARD,
         's' : move.LOOP_MOTION.WALK_BACKWARD,
-        'a' : move.LOOP_MOTION.TURN_LEFT,
-        'd' : move.LOOP_MOTION.TURN_RIGHT,
+        'a' : move.STEP.TURN_LEFT,
+        'd' : move.STEP.TURN_RIGHT,
+        'q' : move.STEP.LEFT,
+        'e' : move.STEP.RIGHT,
 
-        'r' : move.HEAD.YAW_CENTER,
-        'q' : move.HEAD.YAW_LEFT_90,
-        'e' : move.HEAD.YAW_RIGHT_90,
+        'o' : move.HEAD.YAW_CENTER,
+        'i' : move.HEAD.YAW_LEFT_90,
+        'p' : move.HEAD.YAW_RIGHT_90,
 
-        'z' : move.HEAD.PITCH_LOWER_45,
-        'c' : move.HEAD.PITCH_LOWER_90,
+        'r' : move.HEAD.PITCH_CENTER,
+        'f' : move.HEAD.PITCH_LOWER_45,
+        'v' : move.HEAD.PITCH_LOWER_90,
 
-        '1' : (1,None), '2' : (2,None), '3' : (3,None),
-        '4' : (4,None), '5' : (5,None), '6' : (6,None),
-        '7' : (7,None), '8' : (8,None), '9' : (9,None),
-                        '0' : (0,None)
+        '1' : move.Action(1,None),
+        '2' : move.Action(2,None),
+        '3' : move.Action(3,None),
+        '4' : move.Action(4,None),
+        '5' : move.Action(5,None),
+        '6' : move.Action(6,None),
+        '7' : move.Action(7,None),
+        '8' : move.Action(8,None),
+        '9' : move.Action(9,None),
+        '0' : move.Action(0,None)
     }
     for c in macro:
         if key is ord(c):
             return macro[c]
-    return (None, None)
+    return move.Action(None, None)
 
 # -----------------------------------------------
 # https://codeday.me/ko/qa/20190403/183242.html

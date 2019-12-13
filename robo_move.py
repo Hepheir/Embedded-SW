@@ -69,14 +69,14 @@ class STEP:
 
 class HEAD:
     # 좌우
-    YAW_CENTER      = Action(96, '')
-    YAW_LEFT_90     = Action(97, '')
-    YAW_RIGHT_90    = Action(98, '')
+    YAW_CENTER      = Action(96, 'YAW_CENTER')
+    YAW_LEFT_90     = Action(97, 'YAW_LEFT_90')
+    YAW_RIGHT_90    = Action(98, 'YAW_RIGHT_90')
     YAW_LEFT_45     = Action(99, '')
     YAW_RIGHT_45    = Action(100, '')
     
     # 상하
-    PITCH_CENTER    = Action(101, '')
+    PITCH_CENTER    = Action(101, 'PITCH_CENTER')
     PITCH_LOWER_45  = Action(102, 'PITCH_LOWER_45')
     PITCH_LOWER_90  = Action(103, 'PITCH_LOWER_90')
 
@@ -86,8 +86,8 @@ class ARM:
     UP      = Action(114, '')
 
 class MACRO:
-    SHUTTER     = Action(128, '')
-    OPEN_DOOR   = Action(129, '')
+    SHUTTER     = Action(128, 'SHUTTER')
+    OPEN_DOOR   = Action(129, 'OPEN_DOOR')
 
     TEMP        = Action(1, '')
     

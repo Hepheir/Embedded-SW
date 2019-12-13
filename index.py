@@ -107,15 +107,16 @@ if __name__ == '__main__':
             debug.DEBUG_MODE = not debug.DEBUG_MODE
             continue
         elif key_chr == ' ':
+            del action_queue[:]
+            action_queue[0] = move.STOP_MOTION.STABLE
             key_chr = '_'
             paused = not paused
             continue
         # --------
         if key:
-            retval = debug.remoteCtrl(key)
-            if not (retval is None):
-                code, actname = retval
-                action_queue.append(code)
+            action = debug.remoteCtrl(key)
+            if not (action.code is None):
+                action_queue.append(action)
         # --------
         if paused:
             continue
