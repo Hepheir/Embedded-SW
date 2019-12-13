@@ -135,6 +135,12 @@ def isLineDetectable(mask):
     conts = objContTrace(mask)
     return len(conts) > 0
 # --------
+def isNearEOL(mask):
+    mskv = detectVertLine(mask)
+    roi = mskv[:cam.HEIGHT//8,:]
+    conts = objContTrace(roi)
+    return len(conts) == 0
+# --------
 def isEndOfLine(mask):
     mskv = detectVertLine(mask)
     roi = mskv[:cam.HEIGHT*2//3,:]
@@ -256,7 +262,7 @@ def dirCalibration(mask):
         return STEP.TURN_RIGHT if dx > 0 else STEP.TURN_LEFT
         
     # if isCurve(mask) or isBridge(mask):
-    if isCurve(mask):
+    if isCurve(mask) or isNearEOL(mask):
         return LOOP_MOTION.WALK_FORWARD
     # 문제가 없으면 전진
     return LOOP_MOTION.RUN_FORWARD
