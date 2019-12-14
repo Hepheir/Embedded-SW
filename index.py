@@ -46,6 +46,7 @@ def veryImportantAction(action):
     global action_queue
     global macroMode
     if action is None:
+        cv2.imshow('None Action', frame)
         print('action is None!')
         return
 
@@ -57,6 +58,7 @@ def veryImportantAction(action):
         macroMode = True
         action_queue = action
         print('Macro registered : ' + str(action))
+        cv2.imshow('When Macro Registered', frame)
         return
 
     if not (action.code is None):
