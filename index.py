@@ -98,8 +98,6 @@ if __name__ == '__main__':
     frame = cam.getFrame()
     key_chr = '_'
 
-    action_queue.append(move.HEAD.PITCH_LOWER_90)
-
     routine_stoppers = [
         main_routine(main_routine_args),
         sub_routine( sub_routine_args)
