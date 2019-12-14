@@ -145,7 +145,7 @@ if __name__ == '__main__':
             ymsk = main_routine_args['color_masks']['yellow']
             action = sub_routine_args['action']
 
-            debug._print('\r'+' '*128)
+            debug._print('\r'+' '*92)
             debug._print('\r' +
                 '[%s]' % debug.runtime_ms_str() +
                 '[key=%c]' % key_chr +
