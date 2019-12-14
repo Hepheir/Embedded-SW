@@ -242,7 +242,7 @@ def context(cmask):
             LOOP_MOTION.WALK_BACKWARD,
             STOP_MOTION.STABLE,
 
-            MACRO.OPEN_DOOR,
+            MACRO.OPEN_DOOR, # go right
             MACRO.OPEN_DOOR,
             MACRO.OPEN_DOOR,
             MACRO.OPEN_DOOR,
