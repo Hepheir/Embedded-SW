@@ -234,21 +234,23 @@ def context(cmask):
     if doorMode:
         doorMode = False 
         return [
+
+            STEP.TURN_LEFT_WIDE,
+
+            LOOP_MOTION.WALK_BACKWARD,
+            LOOP_MOTION.WALK_BACKWARD,
+            LOOP_MOTION.WALK_BACKWARD,
+            STOP_MOTION.STABLE,
+
+            MACRO.OPEN_DOOR,
+            MACRO.OPEN_DOOR,
+            MACRO.OPEN_DOOR,
+            MACRO.OPEN_DOOR,
+            MACRO.OPEN_DOOR,
+            MACRO.OPEN_DOOR,
+            STOP_MOTION.STABLE,
             STEP.TURN_RIGHT_WIDE,
 
-            LOOP_MOTION.WALK_FORWARD,
-            LOOP_MOTION.WALK_FORWARD,
-            LOOP_MOTION.WALK_FORWARD,
-            STOP_MOTION.STABLE,
-
-            MACRO.OPEN_DOOR,
-            MACRO.OPEN_DOOR,
-            MACRO.OPEN_DOOR,
-            MACRO.OPEN_DOOR,
-            MACRO.OPEN_DOOR,
-            STOP_MOTION.STABLE,
-
-            STEP.TURN_LEFT_WIDE
         ]
     if isLookingDownward(cmask['black']):
         return context_look_downward(cmask)
