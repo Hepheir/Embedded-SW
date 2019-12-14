@@ -236,8 +236,9 @@ def context(cmask):
         return [
             STEP.TURN_RIGHT_WIDE,
 
-            LOOP_MOTION.WALK_BACKWARD,
-            LOOP_MOTION.WALK_BACKWARD,
+            LOOP_MOTION.WALK_FORWARD,
+            LOOP_MOTION.WALK_FORWARD,
+            LOOP_MOTION.WALK_FORWARD,
             STOP_MOTION.STABLE,
 
             MACRO.OPEN_DOOR,
