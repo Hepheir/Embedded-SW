@@ -100,6 +100,13 @@ if __name__ == '__main__':
         sub_routine( sub_routine_args)
     ]
 
+    try:
+        open('1.txt', 'r')
+        macroMode = True
+        action_queue = [move.STOP_MOTION.STABLE] * 40
+    except:
+        pass
+
     time.sleep(max([main_routine_time_s, sub_routine_time_s]))
     # --------
     print('')
