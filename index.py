@@ -24,7 +24,7 @@ video_offset = 80 * 1000 if not debug.isRasp() else 0
 doRecord = False
 paused = False
 
-MACRO_CNT_MAX = 5
+MACRO_CNT_MAX = 36
 macroCnt = MACRO_CNT_MAX
 
 # ******************************************************************
