@@ -48,6 +48,10 @@ def veryImportantAction(action):
         print('action is None!')
         return
 
+    if type(action) is type([]):
+        macroMode = True
+        action_queue = action
+
     macroMode = False
     if not (action.code is None):
         del action_queue[:]
