@@ -255,7 +255,7 @@ DOOR_MACRO = [
 
 # -----------------------------------------------
 def context(cmask):
-    if not isLookingDownward(cmask):
+    if not isLookingDownward(cmask['black']):
         return HEAD.PITCH_LOWER_90
 
     # 현재 로봇이 처한 상황을 파악
