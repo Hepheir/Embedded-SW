@@ -235,7 +235,7 @@ def dirCalibration(mask):
 
 
 
-DOOR_MACRO = np.array([
+DOOR_MACRO = [
     LOOP_MOTION.WALK_BACKWARD,
     LOOP_MOTION.WALK_BACKWARD,
     STOP_MOTION.STABLE,
@@ -257,7 +257,7 @@ DOOR_MACRO = np.array([
     STOP_MOTION.STABLE,
 
     STEP.TURN_RIGHT
-])
+]
 
 # -----------------------------------------------
 def context(cmask):
@@ -274,7 +274,29 @@ def context(cmask):
             return STEP.TURN_LEFT_WIDE
             
         elif isDoor(cmask):
-            return DOOR_MACRO.copy()
+            return [
+                LOOP_MOTION.WALK_BACKWARD,
+                LOOP_MOTION.WALK_BACKWARD,
+                STOP_MOTION.STABLE,
+                STOP_MOTION.STABLE,
+                STOP_MOTION.STABLE,
+
+                STEP.TURN_LEFT_WIDE,
+
+                STOP_MOTION.STABLE,
+
+                MACRO.OPEN_DOOR, # go right
+                MACRO.OPEN_DOOR,
+                MACRO.OPEN_DOOR,
+                MACRO.OPEN_DOOR,
+                MACRO.OPEN_DOOR,
+                MACRO.OPEN_DOOR,
+                STOP_MOTION.STABLE,
+                STOP_MOTION.STABLE,
+                STOP_MOTION.STABLE,
+
+                STEP.TURN_RIGHT
+            ]
 
     return dirCalibration(cmask['yellow']) # undefined
 # -----------------------------------------------
