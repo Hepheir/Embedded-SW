@@ -158,7 +158,7 @@ def isDoor(cmask):
     if isBridge(cmask):
         return LOOP_MOTION.WALK_FORWARD
 
-    conts = objContTrace(cmask['blue'])
+    conts = objContTrace(cmask['blue'][:cam.HEIGHT//3,:])
     return len(conts) > 0
 # --------
 def isShutter(mask_shutter):
