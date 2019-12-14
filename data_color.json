@@ -3,7 +3,7 @@
     {
         "color_name" : "yellow",
         "detectable" : true,
-        "importance" : 2,
+        "importance" : 20,
         "rgb" : [255, 255, 0],
 
         "hsv_lower" : [ 18, 36,  0],
@@ -15,7 +15,7 @@
     {
         "color_name" : "green",
         "detectable" : true,
-        "importance" : 1,
+        "importance" : 10,
         "rgb" : [0, 255, 0],
 
         "hsv_lower" : [0,72,0],
@@ -27,7 +27,7 @@
     {
         "color_name" : "red",
         "detectable" : true,
-        "importance" : 1,
+        "importance" : 10,
         "rgb" : [255, 0, 0],
 
         
@@ -40,7 +40,7 @@
     {
         "color_name" : "blue",
         "detectable" : true,
-        "importance" : 1,
+        "importance" : 10,
         "rgb" : [0, 0, 255],
 
         "hsv_lower" : [  0, 72, 0],
@@ -52,7 +52,7 @@
     {
         "color_name" : "black",
         "detectable" : true,
-        "importance" : 0,
+        "importance" : 1,
         "rgb" : [  0,  0,  0],
 
         "hsv_lower" : [0,0,0],
