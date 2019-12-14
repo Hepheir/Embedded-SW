@@ -297,6 +297,11 @@ def context(cmask):
 
                 STEP.TURN_RIGHT
             ]
+        elif isTunnel(cmask):
+            return MACRO.TUNNEL
+        
+        elif isShutter(cmask['gray']):
+            return MACRO.SHUTTER
 
     return dirCalibration(cmask['yellow']) # undefined
 # -----------------------------------------------
