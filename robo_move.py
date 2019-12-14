@@ -234,7 +234,7 @@ def context(cmask):
     if doorMode:
         doorMode = False 
         return [
-            STEP.TURN_LEFT_WIDE,
+            STEP.TURN_RIGHT_WIDE,
 
             LOOP_MOTION.WALK_BACKWARD,
             LOOP_MOTION.WALK_BACKWARD,
@@ -247,7 +247,7 @@ def context(cmask):
             MACRO.OPEN_DOOR,
             STOP_MOTION.STABLE,
 
-            STEP.TURN_RIGHT_WIDE
+            STEP.TURN_LEFT_WIDE
         ]
     if isLookingDownward(cmask['black']):
         return context_look_downward(cmask)
