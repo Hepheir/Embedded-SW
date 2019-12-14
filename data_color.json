@@ -43,7 +43,7 @@
         "importance" : 10,
         "rgb" : [0, 0, 255],
 
-        "hsv_lower" : [  0, 72, 0],
+        "hsv_lower" : [  0, 90, 0],
         "hsv_upper" : [255,255,255],
 
         "yuv_lower" : [ 32,148,  0],
@@ -56,14 +56,14 @@
         "rgb" : [  0,  0,  0],
 
         "hsv_lower" : [0,0,0],
-        "hsv_upper" : [255,255,92],
+        "hsv_upper" : [255,255,128],
     
         "yuv_lower" : [0,0,0],
-        "yuv_upper" : [80,255,255]
+        "yuv_upper" : [92,255,255]
     },
     {
         "color_name" : "white",
-        "detectable" : false,
+        "detectable" : true,
         "importance" : 0,
         "rgb" : [255, 255, 255],
         
