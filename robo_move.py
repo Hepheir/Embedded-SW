@@ -152,11 +152,14 @@ def isCurve(mask_line):
     return len(conts) > 0
 # --------
 def isDoor(cmask):
+    if not isNearEOL(cmask['yellow']):
+        return LOOP_MOTION.WALK_FORWARD
+
     if isBridge(cmask):
         return LOOP_MOTION.WALK_FORWARD
-    else:
-        conts = objContTrace(cmask['blue'])
-        return len(conts) > 0
+        
+    conts = objContTrace(cmask['blue'])
+    return len(conts) > 0
 # --------
 def isShutter(mask_shutter):
     conts = objContTrace(mask_shutter)

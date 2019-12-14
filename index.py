@@ -56,7 +56,7 @@ def veryImportantAction(action):
     if not macroMode and type(action) is type([]):
         macroMode = True
         action_queue = action
-        print('Macro registered')
+        print('Macro registered : ' + str(action))
         return
 
     if not (action.code is None):
