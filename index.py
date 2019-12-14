@@ -58,7 +58,7 @@ def veryImportantAction(action):
         macroMode = True
         action_queue = action
         print('Macro registered : ' + str(action))
-        cv2.imshow('When Macro Registered', frame)
+        cv2.imwrite('When Macro Registered %s.jpg' % debug.runtime_ms_str(), frame)
         return
 
     if not (action.code is None):
