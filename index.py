@@ -44,15 +44,21 @@ action_queue = []
 # ******************************************************************
 def veryImportantAction(action):
     global action_queue
+    global macroMode
     if action is None:
         print('action is None!')
         return
 
-    if type(action) is type([]):
-        print('list was given')
+    if macroMode:
+        print('aborted')
         return
 
-    macroMode = False
+    if not macroMode and type(action) is type([]):
+        macroMode = True
+        action_queue = action
+        print('Macro registered')
+        return
+
     if not (action.code is None):
         del action_queue[:]
         action_queue.append(action)
@@ -139,12 +145,7 @@ if __name__ == '__main__':
         # --------
         if key:
             action = debug.remoteCtrl(key)
-            if type(action) is type([]):
-                macroMode = True
-                action_queue = action
-
-            if not macroMode:
-                veryImportantAction(action)
+            veryImportantAction(action)
         # --------
         if not paused:
             frame = cam.getFrame(imshow=True)
