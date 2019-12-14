@@ -24,6 +24,9 @@ video_offset = 80 * 1000 if not debug.isRasp() else 0
 doRecord = False
 paused = False
 
+MACRO_CNT_MAX = 5
+macroCnt = MACRO_CNT_MAX
+
 # ******************************************************************
 
 frame = None
@@ -45,6 +48,7 @@ action_queue = []
 def veryImportantAction(action):
     global action_queue
     global macroMode
+    global macroCnt
     if action is None:
         cv2.imshow('None Action', frame)
         print('action is None!')
@@ -55,6 +59,11 @@ def veryImportantAction(action):
         return
 
     if not macroMode and type(action) is type([]):
+        if macroCnt > 0:
+            macroCnt -= 1
+            return
+        
+        macroCnt = MACRO_CNT_MAX
         macroMode = True
         action_queue = action
         print('Macro registered : ' + str(action))
@@ -114,7 +123,7 @@ if __name__ == '__main__':
     try:
         open('1.txt', 'r')
         macroMode = True
-        action_queue = 50 * [move.STOP_MOTION.STABLE]
+        action_queue = 10 * [move.STOP_MOTION.STABLE]
     except:
         pass
 
