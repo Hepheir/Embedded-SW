@@ -169,8 +169,12 @@ def isShutter(mask_shutter):
     return area > 6000
 # --------
 def isTunnel(cmask):
-    return not ( isDoor(cmask['blue']) or isFoundObstacles(cmask['red'], cmask['green']) )
+    conts = objContTrace(cmask['white'])
+    if not conts:
+        return False
 
+    area = np.sum([cv2.contourArea(c) for c in conts])
+    return area > 10000
 # --------
 def isBridge(cmasks):
     red = cmasks['red']
@@ -190,13 +194,13 @@ def isFoundObstacles(cmask):
     conts = objContTrace(g_msk) + objContTrace(r_msk)
     return len(conts) > 0
 # -----------------------------------------------
-def dirCalibration(mask):
+def dirCalibration(cmask):
     ltr_turn_sen    = 24
     ltr_shift_sen   = 22
     # v 로봇 카메라가 표시할 수 있는 최하단으로 부터, 가상으로 화면을 확장 시켰다고 가정시, 추정되는 로봇으로 부터 땅에 내린 수선의 발 위치
     bottom_y_ext    = cam.CENTER[1] * 2/3
     
-    mskv = detectVertLine(mask)
+    mskv = detectVertLine(cmask['yellow'])
     line_probs = objContTrace(mskv)
     if not line_probs:
         return NO_ACTION
@@ -225,7 +229,7 @@ def dirCalibration(mask):
         return STEP.TURN_RIGHT if dx > 0 else STEP.TURN_LEFT
         
     # if isCurve(mask) or isBridge(mask):
-    if isCurve(mask) or isNearEOL(mask):
+    if isCurve(cmask['yellow']) or isNearEOL(cmask['yellow']) or isBridge(cmask):
         return LOOP_MOTION.WALK_FORWARD
     # 문제가 없으면 전진
     return LOOP_MOTION.RUN_FORWARD
@@ -275,25 +279,16 @@ def context(cmask):
             
         elif isDoor(cmask):
             return [
-                LOOP_MOTION.WALK_BACKWARD,
-                LOOP_MOTION.WALK_BACKWARD,
-                STOP_MOTION.STABLE,
-                STOP_MOTION.STABLE,
-                STOP_MOTION.STABLE,
+                LOOP_MOTION.WALK_BACKWARD, LOOP_MOTION.WALK_BACKWARD,
+                STOP_MOTION.STABLE, STOP_MOTION.STABLE, STOP_MOTION.STABLE,
 
                 STEP.TURN_LEFT_WIDE,
 
                 STOP_MOTION.STABLE,
 
                 MACRO.OPEN_DOOR, # go right
-                MACRO.OPEN_DOOR,
-                MACRO.OPEN_DOOR,
-                MACRO.OPEN_DOOR,
-                MACRO.OPEN_DOOR,
-                MACRO.OPEN_DOOR,
-                STOP_MOTION.STABLE,
-                STOP_MOTION.STABLE,
-                STOP_MOTION.STABLE,
+                MACRO.OPEN_DOOR, MACRO.OPEN_DOOR, MACRO.OPEN_DOOR, MACRO.OPEN_DOOR, MACRO.OPEN_DOOR,
+                STOP_MOTION.STABLE, STOP_MOTION.STABLE, 
 
                 STEP.TURN_RIGHT
             ]
@@ -303,7 +298,7 @@ def context(cmask):
         elif isShutter(cmask['gray']):
             return MACRO.SHUTTER
 
-    return dirCalibration(cmask['yellow']) # undefined
+    return dirCalibration(cmask) # undefined
 # -----------------------------------------------
 
 

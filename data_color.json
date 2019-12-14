@@ -59,7 +59,7 @@
         "hsv_upper" : [255,255,128],
     
         "yuv_lower" : [0,0,0],
-        "yuv_upper" : [92,255,255]
+        "yuv_upper" : [108,255,255]
     },
     {
         "color_name" : "white",
