@@ -58,7 +58,7 @@ def main_routine(main_routine_args):
     cmasks = color.colorMaskAll(frame)
     action = move.context(cmasks)
 
-    if not debug.DEBUG_MODE:
+    if not debug.DEBUG_MODE and not macroMode:
         veryImportantAction(action)
 
     main_routine_args['frame']      = frame
@@ -119,6 +119,11 @@ if __name__ == '__main__':
             key_chr = '_'
             paused = not paused
             continue
+        elif key_chr == '/':
+            macroMode = True
+            key_chr = '_'
+            action_queue = move.debug()
+            continue
         # --------
         if key:
             action = debug.remoteCtrl(key)
@@ -138,14 +143,16 @@ if __name__ == '__main__':
             ymsk = main_routine_args['color_masks']['yellow']
             action = sub_routine_args['action']
 
-            debug._print('\r'+' '*64)
+            debug._print('\r'+' '*128)
             debug._print('\r' +
                 '[%s]' % debug.runtime_ms_str() +
                 '[key=%c]' % key_chr +
-                '[act=%s]' % action.name +
-                '[d=%c]' % ('T' if debug.DEBUG_MODE else 'F') +
-                '[p=%c]' % ('T' if paused else 'F') +
-                str([act.code for act in action_queue]) + ' ')
+                '[D=%c]' % ('T' if debug.DEBUG_MODE else 'F') +
+                '[P=%c]' % ('T' if paused else 'F') +
+                '[M=%c]' % ('T' if macroMode else 'F') +
+                str([act.code for act in action_queue]) + 
+                '[act=%s]' % action.name
+                )
             cv2.imshow('frame', main_routine_args['frame'])
             cv2.imshow('scmsk full', main_routine_args['scmsk full'])
             # cv2.imshow('y', ymsk)

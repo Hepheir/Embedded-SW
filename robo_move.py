@@ -293,3 +293,19 @@ def context_look_downward(cmask):
     else:
         return dirCalibration(cmask['yellow']) # undefined
 # -----------------------------------------------
+def debug():
+    return [
+        STEP.TURN_LEFT_WIDE,
+
+        LOOP_MOTION.WALK_BACKWARD,
+        STOP_MOTION.STABLE,
+
+        MACRO.OPEN_DOOR,
+        MACRO.OPEN_DOOR,
+        MACRO.OPEN_DOOR,
+        MACRO.OPEN_DOOR,
+        MACRO.OPEN_DOOR,
+        STOP_MOTION.STABLE,
+
+        STEP.TURN_RIGHT_WIDE
+    ]
