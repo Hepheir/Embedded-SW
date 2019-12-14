@@ -235,7 +235,7 @@ def dirCalibration(mask):
 
 
 
-DOOR_MACRO = [
+DOOR_MACRO = np.array([
     LOOP_MOTION.WALK_BACKWARD,
     LOOP_MOTION.WALK_BACKWARD,
     STOP_MOTION.STABLE,
@@ -257,7 +257,7 @@ DOOR_MACRO = [
     STOP_MOTION.STABLE,
 
     STEP.TURN_RIGHT
-]
+])
 
 # -----------------------------------------------
 def context(cmask):
