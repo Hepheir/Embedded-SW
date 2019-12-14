@@ -307,5 +307,5 @@ def debug():
         MACRO.OPEN_DOOR,
         STOP_MOTION.STABLE,
 
-        STEP.TURN_RIGHT_WIDE
+        STEP.TURN_LEFT_WIDE
     ]
