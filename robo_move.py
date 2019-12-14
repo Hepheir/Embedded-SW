@@ -228,7 +228,6 @@ def dirCalibration(mask):
 
 
 
-doorMode = False
 
 DOOR_MACRO = [
     LOOP_MOTION.WALK_BACKWARD,
@@ -256,10 +255,6 @@ DOOR_MACRO = [
 
 # -----------------------------------------------
 def context(cmask):
-    global doorMode
-    if doorMode:
-        doorMode = False 
-        return DOOR_MACRO
 
     # 현재 로봇이 처한 상황을 파악
     if not isLineDetectable(cmask['yellow']):
@@ -273,8 +268,7 @@ def context(cmask):
                 STEP.TURN_LEFT_WIDE
             ]
         elif isDoor(cmask['blue']):
-            doorMode = True
-            return MACRO.END_OF_LINE
+            return DOOR_MACRO
 
     else:
         return dirCalibration(cmask['yellow']) # undefined
