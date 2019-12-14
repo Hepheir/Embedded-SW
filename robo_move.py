@@ -276,7 +276,13 @@ def context(cmask):
     # 만약 선이 끊겨있다면..
     if isEndOfLine(cmask['yellow']):
         if isCurve(cmask['yellow']):
-            return [STEP.TURN_LEFT_WIDE]
+            return [
+                STEP.TURN_LEFT_WIDE,
+                STEP.TURN_LEFT,
+                STOP_MOTION.STABLE,
+                STOP_MOTION.STABLE,
+                STOP_MOTION.STABLE,
+                STEP.TURN_LEFT]
         print('eol but not curve')
             
         if isDoor(cmask):
