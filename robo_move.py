@@ -276,9 +276,6 @@ def context(cmask):
             doorMode = True
             return MACRO.END_OF_LINE
 
-    elif isFoundObstacles():
-        return STOP_MOTION.STAND
-
     else:
         return dirCalibration(cmask['yellow']) # undefined
 # -----------------------------------------------
