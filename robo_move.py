@@ -82,14 +82,14 @@ class HEAD:
     PITCH_LOWER_90  = Action(103, 'PITCH_LOWER_90')
 
 class ARM:
-    DOWN    = Action(112, '')
+    CAN_WHIP    = Action(112, 'CAN_WHIP')
     MID     = Action(113, '')
     UP      = Action(114, '')
 
 class MACRO:
     SHUTTER     = Action(128, 'SHUTTER')
     OPEN_DOOR   = Action(129, 'OPEN_DOOR')
-    TUNNEL      = Action(130, 'TUNNEL')
+    TUNNEL      = Action(131, 'TUNNEL')
     END_OF_LINE = Action(132, 'END_OF_LINE')
     
 
@@ -136,7 +136,7 @@ def isLineDetectable(mask_line):
 def isNearEOL(mask_line):
     mskv = detectVertLine(mask_line)
     roi = mskv[:cam.HEIGHT//8,:]
-    conts = objContTrace(roi)
+    conts = objContTrace(roi, 20)
     return len(conts) == 0
 # --------
 def isEndOfLine(mask_line):
@@ -156,13 +156,15 @@ def isDoor(mask_doorhandle):
     return len(conts) > 0
 # --------
 def isShutter(mask_shutter):
-    pass
+    conts = objContTrace(mask_shutter)
+    if not conts:
+        return False
+    area = np.sum([cv2.contourArea(c) for c in conts])
+    return area > 6000
 # --------
-def isTunnel():
-    pass
-# --------
-def isObject():
-    pass
+def isTunnel(cmask):
+    return not ( isDoor(cmask['blue']) or isFoundObstacles(cmask['red'], cmask['green']) )
+
 # --------
 def isBridge(cmasks):
     red = cmasks['red']
@@ -229,6 +231,12 @@ def dirCalibration(mask):
 doorMode = False
 
 DOOR_MACRO = [
+    LOOP_MOTION.WALK_BACKWARD,
+    LOOP_MOTION.WALK_BACKWARD,
+    STOP_MOTION.STABLE,
+    STOP_MOTION.STABLE,
+    STOP_MOTION.STABLE,
+
     STEP.TURN_LEFT_WIDE,
 
     STOP_MOTION.STABLE,
@@ -239,12 +247,11 @@ DOOR_MACRO = [
     MACRO.OPEN_DOOR,
     MACRO.OPEN_DOOR,
     MACRO.OPEN_DOOR,
-    MACRO.OPEN_DOOR,
-    MACRO.OPEN_DOOR,
-    MACRO.OPEN_DOOR,
+    STOP_MOTION.STABLE,
+    STOP_MOTION.STABLE,
     STOP_MOTION.STABLE,
 
-    STEP.TURN_RIGHT_WIDE
+    STEP.TURN_RIGHT
 ]
 
 # -----------------------------------------------
@@ -253,10 +260,27 @@ def context(cmask):
     if doorMode:
         doorMode = False 
         return DOOR_MACRO
-    if isLookingDownward(cmask['black']):
-        return context_look_downward(cmask)
+
+    # 현재 로봇이 처한 상황을 파악
+    if not isLineDetectable(cmask['yellow']):
+        return LOOP_MOTION.WALK_BACKWARD
+    
+    # 만약 선이 끊겨있다면..
+    if isEndOfLine(cmask['yellow']):
+        if isCurve(cmask['yellow']):
+            return [
+                ARM.CAN_WHIP,
+                STEP.TURN_LEFT_WIDE
+            ]
+        elif isDoor(cmask['blue']):
+            doorMode = True
+            return MACRO.END_OF_LINE
+
+    elif isFoundObstacles():
+        return STOP_MOTION.STAND
+
     else:
-        return context_look_forward(cmask)
+        return dirCalibration(cmask['yellow']) # undefined
 # -----------------------------------------------
 
 
@@ -266,37 +290,7 @@ def context(cmask):
 def context_look_forward(cmask):
     if isLineDetectable(cmask['yellow']):
         return HEAD.PITCH_LOWER_90
-
-    elif isDoor(cmask['blue']):
-        doorMode = True
-        return MACRO.OPEN_DOOR
-
-    elif isShutter(cmask['gray']):
-        return MACRO.SHUTTER
-
-    elif isTunnel():
-        return MACRO.TUNNEL
-
-    else:
-        return HEAD.PITCH_LOWER_90
-# -----------------------------------------------
-def context_look_downward(cmask):
-    # 현재 로봇이 처한 상황을 파악
-    if not isLineDetectable(cmask['yellow']):
-        return MACRO.END_OF_LINE
-    
-    # 만약 선이 끊겨있다면..
-    if isEndOfLine(cmask['yellow']):
-        if isCurve(cmask['yellow']):
-            return STEP.TURN_LEFT_WIDE
-        else:
-            return MACRO.END_OF_LINE
-
-    elif isObject():
-        return STOP_MOTION.STAND
-
-    else:
-        return dirCalibration(cmask['yellow']) # undefined
+        
 # -----------------------------------------------
 def debug():
     return DOOR_MACRO
