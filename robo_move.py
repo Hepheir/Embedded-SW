@@ -157,7 +157,7 @@ def isDoor(cmask):
 
     if isBridge(cmask):
         return LOOP_MOTION.WALK_FORWARD
-        
+
     conts = objContTrace(cmask['blue'])
     return len(conts) > 0
 # --------
@@ -276,8 +276,7 @@ def context(cmask):
         elif isDoor(cmask):
             return DOOR_MACRO
 
-    else:
-        return dirCalibration(cmask['yellow']) # undefined
+    return dirCalibration(cmask['yellow']) # undefined
 # -----------------------------------------------
 
 
