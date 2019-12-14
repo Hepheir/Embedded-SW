@@ -228,30 +228,31 @@ def dirCalibration(mask):
 
 doorMode = False
 
+DOOR_MACRO = [
+    STEP.TURN_LEFT_WIDE,
+
+    LOOP_MOTION.WALK_BACKWARD,
+    LOOP_MOTION.WALK_BACKWARD,
+    LOOP_MOTION.WALK_BACKWARD,
+    STOP_MOTION.STABLE,
+
+    MACRO.OPEN_DOOR, # go right
+    MACRO.OPEN_DOOR,
+    MACRO.OPEN_DOOR,
+    MACRO.OPEN_DOOR,
+    MACRO.OPEN_DOOR,
+    MACRO.OPEN_DOOR,
+    STOP_MOTION.STABLE,
+
+    STEP.TURN_RIGHT_WIDE
+]
+
 # -----------------------------------------------
 def context(cmask):
     global doorMode
     if doorMode:
         doorMode = False 
-        return [
-
-            STEP.TURN_LEFT_WIDE,
-
-            LOOP_MOTION.WALK_BACKWARD,
-            LOOP_MOTION.WALK_BACKWARD,
-            LOOP_MOTION.WALK_BACKWARD,
-            STOP_MOTION.STABLE,
-
-            MACRO.OPEN_DOOR, # go right
-            MACRO.OPEN_DOOR,
-            MACRO.OPEN_DOOR,
-            MACRO.OPEN_DOOR,
-            MACRO.OPEN_DOOR,
-            MACRO.OPEN_DOOR,
-            STOP_MOTION.STABLE,
-            STEP.TURN_RIGHT_WIDE,
-
-        ]
+        return DOOR_MACRO
     if isLookingDownward(cmask['black']):
         return context_look_downward(cmask)
     else:
@@ -298,18 +299,4 @@ def context_look_downward(cmask):
         return dirCalibration(cmask['yellow']) # undefined
 # -----------------------------------------------
 def debug():
-    return [
-        STEP.TURN_RIGHT_WIDE,
-
-        LOOP_MOTION.WALK_BACKWARD,
-        STOP_MOTION.STABLE,
-
-        MACRO.OPEN_DOOR,
-        MACRO.OPEN_DOOR,
-        MACRO.OPEN_DOOR,
-        MACRO.OPEN_DOOR,
-        MACRO.OPEN_DOOR,
-        STOP_MOTION.STABLE,
-
-        STEP.TURN_LEFT_WIDE
-    ]
+    return DOOR_MACRO
