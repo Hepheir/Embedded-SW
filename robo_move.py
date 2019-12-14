@@ -147,7 +147,7 @@ def isEndOfLine(mask_line):
 # --------
 def isCurve(mask_line):
     mask = mask_line
-    mskh = detectHoriLine(mask)
+    mskh = detectHoriLine(mask, erodity=17)
     conts = objContTrace(mskh)
     return len(conts) > 0
 # --------
