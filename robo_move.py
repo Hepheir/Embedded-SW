@@ -264,7 +264,6 @@ def context(cmask):
     if isEndOfLine(cmask['yellow']):
         if isCurve(cmask['yellow']):
             return [
-                ARM.CAN_WHIP,
                 STEP.TURN_LEFT_WIDE
             ]
         elif isDoor(cmask['blue']):
