@@ -6,11 +6,11 @@
         "importance" : 2,
         "rgb" : [255, 255, 0],
 
-        "hsv_lower" : [ 20, 40,  0],
-        "hsv_upper" : [ 40,255,255],
+        "hsv_lower" : [ 18, 36,  0],
+        "hsv_upper" : [ 42,255,255],
 
-        "yuv_lower" : [ 42,  0,128],
-        "yuv_upper" : [248,132,224]
+        "yuv_lower" : [ 16,  0,128],
+        "yuv_upper" : [248,148,224]
     },
     {
         "color_name" : "green",

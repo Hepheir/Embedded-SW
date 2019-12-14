@@ -151,9 +151,12 @@ def isCurve(mask_line):
     conts = objContTrace(mskh)
     return len(conts) > 0
 # --------
-def isDoor(mask_doorhandle):
-    conts = objContTrace(mask_doorhandle)
-    return len(conts) > 0
+def isDoor(cmask):
+    if isBridge(cmask):
+        return LOOP_MOTION.WALK_FORWARD
+    else:
+        conts = objContTrace(cmask['blue'])
+        return len(conts) > 0
 # --------
 def isShutter(mask_shutter):
     conts = objContTrace(mask_shutter)
@@ -267,7 +270,7 @@ def context(cmask):
         if isCurve(cmask['yellow']):
             return STEP.TURN_LEFT_WIDE
             
-        elif isDoor(cmask['blue']):
+        elif isDoor(cmask):
             return DOOR_MACRO
 
     else:
