@@ -147,7 +147,7 @@ def isEndOfLine(mask_line):
 # --------
 def isCurve(mask_line):
     mask = mask_line
-    mskh = detectHoriLine(mask, erodity=17)
+    mskh = detectHoriLine(mask)
     conts = objContTrace(mskh)
     return len(conts) > 0
 # --------
@@ -281,8 +281,9 @@ def context(cmask):
                 STOP_MOTION.STABLE,
                 STOP_MOTION.STABLE,
             ]
+        print('eol but not curve')
             
-        elif isDoor(cmask):
+        if isDoor(cmask):
             return [
                 LOOP_MOTION.WALK_BACKWARD, LOOP_MOTION.WALK_BACKWARD,
                 STOP_MOTION.STABLE, STOP_MOTION.STABLE, STOP_MOTION.STABLE,
