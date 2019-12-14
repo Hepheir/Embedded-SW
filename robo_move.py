@@ -162,11 +162,12 @@ def isDoor(cmask):
     return len(conts) > 0
 # --------
 def isShutter(mask_shutter):
-    conts = objContTrace(mask_shutter)
-    if not conts:
-        return False
-    area = np.sum([cv2.contourArea(c) for c in conts])
-    return area > 6000
+    return False
+    # conts = objContTrace(mask_shutter)
+    # if not conts:
+    #     return False
+    # area = np.sum([cv2.contourArea(c) for c in conts])
+    # return area > 6000
 # --------
 def isTunnel(cmask):
     conts = objContTrace(cmask['white'])
