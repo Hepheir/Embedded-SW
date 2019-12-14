@@ -127,7 +127,7 @@ def isLookingDownward(mask_bodyshadow):
     if not conts:
         return False
     area = np.sum([cv2.contourArea(c) for c in conts])
-    return area > 3000
+    return area > 1600
 # -----------------------------------------------
 def isLineDetectable(mask_line):
     conts = objContTrace(mask_line)
