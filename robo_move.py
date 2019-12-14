@@ -141,7 +141,7 @@ def isNearEOL(mask_line):
 # --------
 def isEndOfLine(mask_line):
     mskv = detectVertLine(mask_line)
-    roi = mskv[:cam.HEIGHT*2//3,:]
+    roi = mskv[:cam.HEIGHT//2,:]
     conts = objContTrace(roi)
     return len(conts) == 0
 # --------
