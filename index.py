@@ -49,8 +49,8 @@ def veryImportantAction(action):
         return
 
     if type(action) is type([]):
-        macroMode = True
-        action_queue = action
+        print('list was given')
+        return
 
     macroMode = False
     if not (action.code is None):
