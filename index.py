@@ -75,6 +75,7 @@ def sub_routine(sub_routine_args):
 
         serial.TX_data(action.code)
         sub_routine_args['action'] = action
+
     elif macroMode and len(action_queue) == 0:
         macroMode = False
 # ******************************************************************
@@ -103,7 +104,7 @@ if __name__ == '__main__':
     try:
         open('1.txt', 'r')
         macroMode = True
-        action_queue = [move.STOP_MOTION.STABLE] * 40
+        action_queue = 50 * [move.STOP_MOTION.STABLE]
     except:
         pass
 
