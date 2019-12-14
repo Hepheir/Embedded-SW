@@ -70,7 +70,7 @@ def main_routine(main_routine_args):
     cmasks = color.colorMaskAll(frame)
     action = move.context(cmasks)
 
-    if not debug.DEBUG_MODE and not macroMode:
+    if not debug.DEBUG_MODE:
         veryImportantAction(action)
 
     main_routine_args['frame']      = frame
