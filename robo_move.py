@@ -295,7 +295,7 @@ def context_look_downward(cmask):
 # -----------------------------------------------
 def debug():
     return [
-        STEP.TURN_LEFT_WIDE,
+        STEP.TURN_RIGHT_WIDE,
 
         LOOP_MOTION.WALK_BACKWARD,
         STOP_MOTION.STABLE,
