@@ -274,7 +274,7 @@ def context(cmask):
             return STEP.TURN_LEFT_WIDE
             
         elif isDoor(cmask):
-            return DOOR_MACRO
+            return DOOR_MACRO.copy()
 
     return dirCalibration(cmask['yellow']) # undefined
 # -----------------------------------------------
