@@ -199,7 +199,7 @@ def dirCalibration(cmask):
     ltr_turn_sen    = 24
     ltr_shift_sen   = 16
     # v 로봇 카메라가 표시할 수 있는 최하단으로 부터, 가상으로 화면을 확장 시켰다고 가정시, 추정되는 로봇으로 부터 땅에 내린 수선의 발 위치
-    bottom_y_ext    = 50 # cam.CENTER[1] * 2/3
+    bottom_y_ext    = -20 # cam.CENTER[1] * 2/3
     
     mskv = detectVertLine(cmask['yellow'])
     line_probs = objContTrace(mskv)
