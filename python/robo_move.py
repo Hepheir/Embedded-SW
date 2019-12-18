@@ -277,6 +277,7 @@ def context(cmask):
     if isEndOfLine(cmask['yellow']):
         if isCurve(cmask['yellow']):
             return STEP.TURN_LEFT_WIDE
+
         print('eol but not curve')
             
         if isDoor(cmask):

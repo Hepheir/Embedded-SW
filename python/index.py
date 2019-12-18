@@ -82,9 +82,9 @@ def main_routine(main_routine_args):
     if not debug.DEBUG_MODE:
         veryImportantAction(action)
 
-    main_routine_args['frame']      = frame
+    main_routine_args['frame']       = frame
     main_routine_args['color_masks'] = cmasks
-    main_routine_args['scmsk full'] = debug.stackedColorMasks(frame, main_routine_args['color_masks'])
+    main_routine_args['scmsk full']  = debug.stackedColorMasks(frame, main_routine_args['color_masks'])
 
 
 @debug.setInterval(sub_routine_time_s)
