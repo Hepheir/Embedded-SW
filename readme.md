@@ -1,5 +1,12 @@
 # 제 17회 Embedded S/W 경진대회
 
+```shell
+pip install virtualenv
+virtualenv env
+source env/bin/activate
+(env) pip install opencv-python==3.4.8.29
+```
+
 ## 개요
 본 레포지토리는 2019년도에 개최된 [제 17회 임베디드 S/W 경진대회 - 지능형 휴머노이드] 대회 본선에서 사용할 소스코드를 저장하는 공간이다.
 

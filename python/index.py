@@ -18,7 +18,7 @@ import time
 # ******************************************************************
 
 video_fps = 15
-video_fname = 'records/a.mp4' if not debug.isRasp() else 0
+video_fname = 0 # 'records/a.mp4' if not debug.isRasp() else 0
 video_offset = 170 * 1000 if not debug.isRasp() else 0
 
 doRecord = False
